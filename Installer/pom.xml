@@ -71,7 +71,7 @@
 				<artifactId>maven-scm-plugin</artifactId>
 				<version>1.5</version>
 				<executions>
-                                        <execution>
+					<execution>
 						<id>svn-gamebots-ut3-staging</id>
 						<phase>process-resources</phase>
 						<goals>
@@ -176,9 +176,9 @@
 									<outputDirectory>${staging.dir}/ut2004environment</outputDirectory>
 									<destFileName>${environment.artifactId}-${environment.version}.jar</destFileName>
 								</artifactItem>
-                                                                
-                                                                <artifactItem>
-								<groupId>${environment3.groupId}</groupId>
+
+								<artifactItem>
+									<groupId>${environment3.groupId}</groupId>
 									<artifactId>${environment3.artifactId}</artifactId>
 									<version>${environment3.version}</version>
 									<type>jar</type>
@@ -245,11 +245,11 @@
 		<environment.artifactId>goal-ut2004-environment</environment.artifactId>
 		<environment.version>${project.version}</environment.version>
 		<environment.classifier>eis_environment</environment.classifier>
-                
-   		<environment3.groupId>${project.groupId}</environment3.groupId>
+
+		<environment3.groupId>${project.groupId}</environment3.groupId>
 		<environment3.artifactId>goal-ut3-environment</environment3.artifactId>
 		<environment3.version>${project.version}</environment3.version>
-		<environment3.classifier>eis_environment</environment3.classifier>             
+		<environment3.classifier>eis_environment</environment3.classifier>
 
 		<!-- Information for visualizer to include in installer -->
 		<visualizer.groupId>${project.groupId}</visualizer.groupId>
@@ -280,7 +280,7 @@
 
 		<nl.tudelft.ii.svn>https://ii.tudelft.nl/svn</nl.tudelft.ii.svn>
 		<gamebots.ut2004.svn>${nl.tudelft.ii.svn}/goal/UnrealEnvironment/v3/GameBotsUT2004</gamebots.ut2004.svn>
-                <gamebots.ut3.svn>svn://artemis.ms.mff.cuni.cz/pogamut/trunk/project/Main/Gamebots/GameBotsUT3/src/main/ut3/Release</gamebots.ut3.svn>
+		<gamebots.ut3.svn>svn://artemis.ms.mff.cuni.cz/pogamut/trunk/project/Main/Gamebots/GameBotsUT3/src/main/ut3/Release</gamebots.ut3.svn>
 	</properties>
 
 </project>
