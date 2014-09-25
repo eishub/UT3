@@ -1,0 +1,94 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>cz.cuni.amis.pogamut.ut2004</groupId>
+		<artifactId>pogamut-ut2004-pom</artifactId>
+		<version>3.5.4-SNAPSHOT</version>
+		<relativePath>../../Poms/PogamutUT2004Pom/pom.xml</relativePath>
+	</parent>
+
+
+	<groupId>nl.tudelft.goal</groupId>
+	<artifactId>goal-emohawk-environment</artifactId>
+	<name>goal-emohawk-environment</name>
+
+	<dependencies>
+
+		<dependency>
+			<groupId>nl.tudelft.goal</groupId>
+			<artifactId>goal-base-unreal-environment</artifactId>
+			<version>3.5.4-SNAPSHOT</version>
+		</dependency>
+
+		<dependency>
+			<groupId>cz.cuni.amis.pogamut</groupId>
+			<artifactId>pogamut-emohawk</artifactId>
+			<version>3.5.4-SNAPSHOT</version>
+		</dependency>
+
+
+		<dependency>
+			<groupId>apleis</groupId>
+			<artifactId>eis</artifactId>
+			<version>0.3</version>
+			<scope>provided</scope>
+		</dependency>
+
+
+		<dependency>
+			<groupId>cz.cuni.amis.pogamut.ut2004</groupId>
+			<artifactId>sposh-ut2004</artifactId>
+			<version>3.5.4-SNAPSHOT</version>
+		</dependency>
+
+
+	</dependencies>
+	<repositories>
+		<repository>
+			<id>amis-artifactory</id>
+			<name>AMIS Artifactory</name>
+			<url>http://diana.ms.mff.cuni.cz:8081/artifactory/repo</url>
+		</repository>
+	</repositories>
+
+
+
+	<properties>
+		<environment.main.class>nl.tudelft.goal.emohawk.environment.EmohawkEnvironment</environment.main.class>
+	</properties>
+
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<configuration>
+					<finalName>Environment-${project.name}-${project.version}</finalName>
+					<outputDirectory>${basedir}</outputDirectory>
+					<appendAssemblyId>false</appendAssemblyId>
+					<descriptorRefs>
+						<descriptorRef>jar-with-dependencies</descriptorRef>
+					</descriptorRefs>
+					<archive>
+						<manifest>
+							<mainClass>${environment.main.class}</mainClass>
+						</manifest>
+					</archive>
+				</configuration>
+				<executions>
+					<execution>
+						<id>make-assembly</id> <!-- this is used for inheritance merges -->
+						<phase>package</phase> <!-- append to the packaging phase. -->
+						<goals>
+							<goal>attached</goal> <!-- goals == mojos -->
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+
+
+</project>

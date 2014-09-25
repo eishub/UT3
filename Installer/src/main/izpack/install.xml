@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="iso-8859-1" standalone="yes" ?>
+
+<!-- Pogamut UT2004 platform Izpack installation script. Ant targets http://jira.codehaus.org/browse/IZPACK-158 -->
+
+<installation version="1.0" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<!-- The info section. The meaning of the tags should be natural ... -->
+	<info>
+		<appname>${app.name}</appname>
+		<appversion>${app.version}</appversion>
+		<authors>
+			<author name="AMIS Group, Charles University in Prague" email="amis@artemis.ms.mff.cuni.cz" />
+			<author name="Rien Korstanje, Delft University of Technology" email="rien.korstanje@gmail.com" />
+			<author name="Lennard de Rijk, Delft University of Technology" email="lennie@4lennie.nl" />
+			<author name="Wouter Pasman, Delft University of Technology" email="w.pasman@tudelft.nl" />
+			<author name="Koen Hindriks, Delft University of Technology" email="k.v.hindriks@tudelft.nl" />
+                        <author name="Peter Evers, Delft University of Technology" email="p.h.evers@student.tudelft.nl" />
+                        <author name="Michiel Hegemans, Delft University of Technology" email="M.Hegemans@student.tudelft.nl" />
+
+		</authors>
+		<javaversion>1.6</javaversion>
+
+		<!-- We can not use run priveleged for serveral reasons. 
+		 	On OSX: All installed files are set to be owned by root which does not permit editing by user
+		 	On Win: Install on DW can not use priveledged account.  -->
+		<!-- <run-privileged />  -->
+	</info>
+
+	<conditions>
+                <condition type="packselection" id="ut3cnd">
+                        <packid>ut3pack</packid>
+                </condition>
+		<condition type="packselection" id="ut2004cnd">
+			<packid>ut2004pack</packid>
+		</condition>
+		<condition type="packselection" id="environmentcnd">
+			<packid>unrealgoalpack</packid>
+		</condition>
+                <condition type="packselection" id="environment3cnd">
+                        <packid>unreal3goalpack</packid>
+                </condition>
+		<condition type="packselection" id="examplecnd">
+			<packid>examplepack</packid>
+		</condition>
+                <condition type="packselection" id="examplecnd3">
+                        <packid>examplepackut3</packid>
+                </condition>
+		<condition type="or" id="unrealgoalcnd">
+                        <condition type="ref" refid="environment" />
+			<condition type="ref" refid="examplecnd" />
+		</condition>
+	</conditions>
+
+
+	<!-- The gui preferences indication. Sets the installer window to 640x480. 
+		It will not be able to change the size. -->
+	<guiprefs width="640" height="480" resizable="yes" />
+
+	<!-- The locale section. Just the english langpacks. -->
+	<locale>
+		<langpack iso3="eng" />
+	</locale>
+
+	<native type="izpack" name="ShellLink.dll" />
+	<native type="izpack" name="ShellLink_x64.dll" />
+
+	<!-- The resources section. The ids must be these ones if you want to use 
+		the LicencePanel and/or the InfoPanel. -->
+	<resources>
+		<res id="HTMLInfoPanel.prereqs" src="InstallerPrereqs.html" />
+		<res id="HTMLLicencePanel.licence" src="PogamutInstallerLicense.html" />
+		<res id="userInputSpec.xml" src="userInputSpec.xml" />
+		<res id="shortcutSpec.xml" src="Win_shortcutSpec.xml"/>
+		<res id="TargetPanel.dir" src="TargetPanel.dir" />
+	</resources>
+
+	<!-- The panels section. We indicate here which panels we want to use. The 
+		order will be respected. -->
+	<panels>
+		<panel classname="HelloPanel" />
+		<panel classname="HTMLInfoPanel" id="prereqs" />
+		<panel classname="HTMLLicencePanel" />
+		<panel classname="TreePacksPanel" />
+
+		<panel classname="TargetPanel" />
+		<panel classname="UserInputPanel" id="ut2004panel" condition="ut2004cnd" />
+                <panel classname="UserInputPanel" id="ut3panel" condition="ut3cnd" />
+                <panel classname="UserInputPanel" id="unrealgoalpanel" condition="unrealgoalcnd" />
+                
+
+		<panel classname="ShortcutPanel" />
+
+		<panel classname="InstallPanel" />
+		<panel classname="FinishPanel" />
+	</panels>
+
+	<!-- The packs section. -->
+	<packs>
+                <refpack file="packs/UT3Packs.xml" />
+		<refpack file="packs/UT2004Packs.xml" />
+	</packs>
+
+</installation>

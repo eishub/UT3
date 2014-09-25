@@ -1,0 +1,29 @@
+environment {
+	env = "goal-ut3-environment-3.5.4-SNAPSHOT.jar".
+	init = [
+			botServer = "ut://127.0.0.1:3000",
+			controlServer = "ut://127.0.0.1:3001",
+			visualizer = "rmi://127.0.0.1:1099",
+			logLevel = "WARNING", 
+			bots = [
+					[
+						["name", "Follower 1"],
+						["skill", 3],
+						["skin", "BotB"], 
+						["team", "blue"]	,
+						["logLevel", "OFF"]
+					]
+			]
+		].
+
+}
+
+agentfiles {
+	"follower.goal" [name=follower] .
+}
+
+launchpolicy {
+    when [type=bot,max=5]@env do launch bot:follower . 
+
+}
+

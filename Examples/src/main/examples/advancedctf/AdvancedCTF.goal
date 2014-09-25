@@ -1,0 +1,404 @@
+%%
+% A Simple bot demonstrating the use of all percepts and actions. 
+% @Author M.P. Korstanje
+%%
+init module {
+	knowledge{
+		
+		% Bot can be considered armed if he has one of these weapons.
+		armed :- weapon(bio_rifle,Ammo,_), Ammo > 0.
+		armed :- weapon(shock_rifle,Ammo,_), Ammo > 0.
+		armed :- weapon(link_gun,Ammo,_), Ammo > 0.
+		armed :- weapon(minigun,Ammo,_), Ammo > 0.
+		armed :- weapon(flak_cannon,Ammo,_), Ammo > 0.
+		armed :- weapon(rocket_launcher,Ammo,_), Ammo > 0.
+		armed :- weapon(lightning_gun,Ammo,_), Ammo > 0.
+		armed :- weapon(sniper_rifle,Ammo,_), Ammo > 0.
+
+		% My health
+		myHealth(Health) :- status(Health,_,_,_).
+		izHealthy :- myHealth(Health), Health >= 100.
+		izLowHealth :- myHealth(Health), Health =< 50.
+		izSuperHealthy :- myHealth(Health), Health >= 199.
+		myArmor(Armor) :- status(_,Armor,_,_).
+		hasSmallArmor :-  myArmor(Armor), Armor >= 50.
+		hasSuperArmor :-  myArmor(Armor), Armor >= 150.
+		
+		willBoost(health) :- not(izHealthy).
+		willBoost(mini_health) :- not(izSuperHealthy).
+		willBoost(super_health) :- not(izSuperHealthy).
+		
+		willBoost(small_armor) :- not(hasSmallArmor).
+		willBoost(super_armor) :- not(hasSuperArmor).
+
+		itemSpawned(NavPoint) :- itemSpawns(NavPoint, spawned).
+		
+		% The team this bot is on.
+		myTeam(Team) :- self(_,_,Team).
+		
+		% The other team
+		oppTeam(blue) :- myTeam(red).
+		oppTeam(red) :- myTeam(blue).
+
+		% Location of this bot
+		myLocation(Location) :- orientation(Location,_,_).
+		
+		%The navpoints of the flag bases.
+		myFlagBase(Nav) :- myTeam(Team),base(Team,Nav).
+		oppFlagBase(Nav) :- oppTeam(Team),base(Team,Nav).
+		
+		%Does this bot have the flag?
+		hasFlag :- self(Holder,_,_), flag(_, Holder, _).
+		
+		%Is our flag taken
+		flagTaken :- myTeam(Team), flagState(Team,held).
+		%Do we hold opponent flag
+		flagHeld :- oppTeam(Team), flagState(Team,held).
+		
+		%dropped flag 
+		flagDropped(Team, Location) :- flag(Team,none,Location).
+		
+		%flag carrier
+		carrier(UnrealID,Team,Location) :- flag(_,UnrealID,_), bot(UnrealID,_,Team, Location,_, _).
+		
+		
+		% Computes distance between pickup and self. Maps pickup(UnrealId,Type,Name) --> item(pickup(UnrealId,Type,Name), Distance).
+		distancePickupSelf([], []).
+		distancePickupSelf([pickup(UnrealId,Location,Type,Name) | PickupTail], [item(pickup(UnrealId,Location,Type,Name), Distance) |ItemTail]) 
+				:- myLocation(MyLocation), distance(Location,MyLocation,Distance), distancePickupSelf(PickupTail,ItemTail).
+		
+				
+				
+		% List all picksups for weapons we dont have
+		unownedWeaponPickups(Pickups)  :- findall(pickup(UnrealID, Position, weapon, ItemType),(pickup(UnrealID, Position, weapon, ItemType), not(weapon(ItemType,_,_))),Pickups).
+		% Nearest weapon pick up for a weapon we don't have yet
+		nearestWeaponPickup(UnrealId,Distance) :- unownedWeaponPickups(Pickups), distancePickupSelf(Pickups, ItemList), minItem(ItemList,item(pickup(UnrealId,_,_,_), Distance)).
+		
+		% List all pickups for health and armor that will boost
+		boostPickups(Pickups)  :- findall(pickup(UndrealId, Position, Label, ItemType),(pickup(UndrealId, Position, Category, ItemType), willBoost(ItemType),itemSpawned(UndrealId), not(atLocation(UndrealId)) ),Pickups).
+		% Nearest pickup for health and armor that will boost
+		nearestBoostPickup(UnrealId,Distance) :- boostPickups(Pickups), distancePickupSelf(Pickups, ItemList), minItem(ItemList,item(pickup(UnrealId,_,_,_), Distance)).
+		
+		adrenalinePickups(Pickups)  :- findall(pickup(UndrealId, Position, adrenaline, ItemType),(pickup(UndrealId, Position, adrenaline, ItemType),itemSpawned(UndrealId), not(atLocation(UndrealId)) ),Pickups).
+		
+		nearestAdrenalinePickup(UndrealId, Distance) :- adrenalinePickups(Pickups), distancePickupSelf(Pickups, ItemList), minItem(ItemList,item(pickup(UndrealId,_,_,_), Distance)).
+		
+		%Adds first two locations, returns result in third 
+		locationAdd(location(X1,Y1,Z1),location(X2,Y2,Z2), location(X,Y,Z)) :-  X is X1 + X2, Y is Y1 + Y2, Z is Z1 + Z2.
+		% Measures distance between two locations.
+		distance(location(X1,Y1,Z1),location(X2,Y2,Z2),Distance) :- Distance is sqrt((X1 - X2) ** 2 + (Y1 - Y2) ** 2 +(Z1 - Z2) ** 2 ).			
+		% Holds if the distance between both locations is less then the MaxDistance.
+		distanceLt(Location1,Location2,MaxDistance) :- distance(Location1,Location2,Distance), Distance < MaxDistance.								 
+		
+		atLocation(Location) :- myLocation(MyLocation), distanceLt(Location,MyLocation,80).
+		atLocation(NavPointId) :-pickup(NavPointId, Position, _, _),atLocation(Position). 
+			
+		%Takes a list of item(Item,Weight) and finds the item with minimum weight. 											 
+		minItem([item(Item,Weight)|Tail],item(MinItem,MinWeight)) :- minItem(item(Item,Weight), Tail, item(MinItem,MinWeight)).
+		%Helper to find min item.
+		minItem(item(Item,Weight), [], item(Item,Weight)).
+		minItem(item(Item,Weight), [item(CandidateItem,CandidateWeight)|Tail], item(MinItem,MinWeight)) :-
+			(Weight  =< CandidateWeight, minItem(item(Item,Weight),Tail,item(MinItem,MinWeight)))
+			,! %If we have a match, we don't have to back track.
+			; (minItem(item(CandidateItem,CandidateWeight),Tail,item(MinItem,MinWeight))).
+
+	}
+	
+	beliefs{
+		% We are going nowhere.
+		destination(none). 
+		navigation(none,none).
+		% We look at nothing.
+		lookingAt(none). 
+		% We target the closest enemy
+		target(closestEnemy).
+		
+		% We start with no ID, name or team.
+		self(none,none,none).
+		% We start with location and rotation unknown.
+		orientation(none,none,velocity(0,0,0)).
+		% We start with 100 health, 0 shield, 0 adrenaline and no active combos. 
+		status(100,0,0,none).
+		% Our starting weapon is the assault rifle.
+		currentWeapon(assault_rifle,none).
+		% Our starting score
+		score(0,0,0).
+		% Our team starting score
+		teamScore(0,0).
+		% The game we are playing
+		game(none,none, none, none).
+
+		
+		% Start of event module
+		startEventModule(0).
+		% End of event module
+		endEventModule(0).
+		% Time spent in event module
+		eventModuleTime(0).
+		% Time spent in main module + time spend in other agents.
+		mainModuleTime(0).
+	}
+	goals{
+		beNot. % never achieved, slightly philosophical.
+	}
+	
+	program {
+		if true then look([enemyFlagCarrier,nearestEnemy, friendlyFlagCarrier]) + 
+					shoot([enemyFlagCarrier,nearestEnemy]) + prefer(weapon(shock_rifle,secondary)).
+	}
+
+	actionspec{
+		
+		navigate(Destination) {
+			pre{destination(PrevDestination)}
+			post{not(destination(PrevDestination)), destination(Destination)} 
+		}
+		
+		stop {
+			pre{true}
+			post{true}
+		}
+		
+		respawn {
+			pre{true}
+			post{true}
+		}
+		
+		combo(Combo) {
+			pre{status(_,_,Adrenaline,_), Adrenaline >= 100}
+			post{true}
+		}
+		
+		dropWeapon {                                      
+			pre{ currentWeapon(Weapon,_), Weapon \== shield_gun, Weapon \== translocator}
+			post{true}
+		}
+		
+		path(From,To) {
+			pre{true}
+			post{true}
+		}
+
+		shoot(Targets){
+			pre{target(PrevTargets)}
+			post{not(target(PrevTargets)), target(Targets)}
+		}
+		
+		stopShooting{
+			pre{target(PrevTargets)}
+			post{not(target(PrevTargets)), target([])}
+		}
+		
+		prefer(WeaponRangePrefs,WeaponPrefs){
+			pre{true}
+			post{true}
+		}
+
+		prefer(WeaponPref){
+			pre{true}
+			post{true}
+		}
+		
+		look(Targets){
+			pre{lookingAt(PrevTargets)}
+			post{not(lookingAt(PrevTargets)),lookingAt(Targets)}	
+			
+		}
+		
+		
+		
+	}
+}
+
+main module {
+	
+	program{
+	
+		% Rules for using power ups.
+		if bel(true) then combo(booster).
+		
+		% Rules for getting weapons and other items
+		if bel(not(armed), nearestWeaponPickup(UnrealId,_)) then navigate(UnrealId).
+		if bel(izLowHealth, nearestBoostPickup(UnrealId,Distance)) then navigate(UnrealId).		
+		if bel(not(hasFlag), nearestWeaponPickup(UnrealId,Distance), Distance < 500) then navigate(UnrealId). % pickup of opportunity
+		if bel(not(hasFlag), nearestAdrenalinePickup(UnrealId,Distance), Distance < 500) then navigate(UnrealId). % pickup of opportunity
+		if bel(not(hasFlag), nearestBoostPickup(UnrealId,Distance), Distance < 1000) then navigate(UnrealId).	% pickup of opportunity
+		
+		% Go after people with flags. Tries to follow the carrier while visible. When carrier not visible, 
+		% bot will stop running to last seen location and run else where. Needs additional logic to make 
+		% following effective (e.g carrier broadcasts position, bot runs there, or run to last known location 
+		% of carrier). Perhaps a module of sorts?
+		if bel(myTeam(Team), carrier(UnrealID,Team,Location) ) then navigate(Location).
+		if bel(not(hasFlag), oppTeam(Team), carrier(UnrealID,Team,Location) ) then navigate(Location). 
+		
+		%Rules for capturing the flag. Not that advanced.   
+		if bel(flagDropped(_, Location)) then navigate(Location). % Recover dropped flags, for any team.
+		if bel(	   hasFlag,  myFlagBase(Location)) then navigate(Location). %Return flag if we have it.
+		if bel(not(hasFlag), not(flagHeld), oppFlagBase(Location)) then navigate(Location). %Capture flag if it is not captured.
+		if bel(not(hasFlag), flagTaken, oppFlagBase(Location)) then navigate(Location). % Return our flag if it taken.
+		
+		% Follow enemy
+		if bel(oppTeam(Team), bot(UnrealID,_,Team,_,_,_)) then navigate(UnrealID). 
+		
+		% Find enenmy and weapons by looking at inventory spots
+		if bel(nearestBoostPickup(UnrealId,Distance)) then navigate(UnrealId).		
+		if bel(nearestWeaponPickup(UnrealId,Distance)) then navigate(UnrealId). 
+		if bel(nearestBoostPickup(UnrealId,Distance)) then navigate(UnrealId).
+		if bel(nearestAdrenalinePickup(UnrealId,Distance)) then navigate(UnrealId).
+		if bel(not(navigation(navigating,_)), pickup(UnrealId, Location, Category, ItemType)) then navigate(UnrealId). % walk random place
+		
+		
+	}	
+	
+}
+
+
+event module{
+	
+	knowledge{
+		
+		%Unit * Time * UT Speed. 
+		spawnTime(u_damage_pack, SpawnTime) :- SpawnTime is 3 * 27.5 * 1.1.
+		spawnTime(super_shield_pack, SpawnTime) :- SpawnTime is 2 * 27.5 * 1.1.
+		spawnTime(ItemType, SpawnTime) :- SpawnTime is 27.5 * 1.1. 
+	}
+	
+
+	
+	program {
+		
+		%%
+		% Time keeping		
+		%%
+		
+		%Set start time.
+		forall bel(startEventModule(LastRound), get_time(Now)) 
+		do delete(startEventModule(LastRound)) + insert(startEventModule(Now)).
+		
+		%Compute time main module + every other agent took.
+		forall bel(mainModuleTime(OldDelta), startEventModule(Start), endEventModule(End), Delta is Start - End ) 
+		do delete(mainModuleTime(OldDelta)) + insert(mainModuleTime(Delta)).
+
+		%%
+		% Action percepts
+		%%
+		
+		%Requested path. Always.
+		forall bel(percept(path(Lenght,Path))) do insert(path(Lenght,Path)). 
+
+		%%
+		% Information about the bot
+		%%
+		
+		% Update navigation state. On Change
+		forall bel(navigation(OldStatus,OldDest),  percept(navigation(Status,Destination)))
+		do delete( navigation(OldStatus,OldDest)) + insert(navigation(Status,Destination)).
+		
+		% Add info about self. On change.
+		forall bel(self(OldID,OldName,OldTeam), percept(self(ID,Name,Team))) 
+		do delete( self(OldID,OldName,OldTeam)) + insert(self(ID,Name,Team)).
+
+		% Add logic iteration. On change.
+		forall bel(logic(OldIterations), percept(logic(Iterations))) 
+		do delete( logic(OldIterations)) + insert(logic(Iterations)).
+		
+		% Update moving. On change.
+		forall bel(orientation(OldPosition,OldRotation,OldVelocity),   percept(orientation(Position,Rotation,Velocity))) 
+		do delete (orientation(OldPosition,OldRotation,OldVelocity)) +  insert(orientation(Position,Rotation,Velocity)).
+
+		% Update status. On change.
+		forall bel(status(OldHealth,OldArmor,OldAdrenaline,OldCombo),  percept(status(Health,Armor,Adrenaline,Combo))) 
+		do delete( status(OldHealth,OldArmor,OldAdrenaline,OldCombo)) + insert(status(Health,Armor,Adrenaline,Combo)).
+		
+		% Update track reckord. On change.
+		forall bel(score(OldKills,OldDeaths,OldSuicides),  percept(score(Kills,Deaths,Suicides))) 
+		do delete( score(OldKills,OldDeaths,OldSuicides)) + insert(score(Kills,Deaths,Suicides)).
+		
+		% Update currentweapon. On Change.
+		forall bel(percept(currentWeapon(Weapon,FireMode)), currentWeapon(OldWeapon,OldFireMode)) 
+		do delete(currentWeapon(OldWeapon,OldFireMode)) + insert(currentWeapon(Weapon,FireMode)) .
+		
+		% Update weapons in inventory. On change with negation.
+		forall bel(percept(weapon(Name,PriAmmo,SecAmmo))) do insert(weapon(Name,PriAmmo,SecAmmo)).
+		forall bel(percept(not(weapon(Name,PriAmmo,SecAmmo)))) do delete(weapon(Name,PriAmmo,SecAmmo)).
+		
+		% Add fragged percept. Always.
+		%forall bel(percept(fragged(Time,KillerId,VictemId, Weapon))) do insert(fragged(Time,KillerId,VictemId, Weapon)).
+		
+		%%
+		% Game info
+		%%
+		
+		% The navPoints, some 500 of them. Once.
+		forall bel(percept(navPoint(ID,Position,Neighbours))) do insert(navPoint(ID,Position,Neighbours)).
+		
+		% The navPoints we can see, ignore first batch.
+		forall bel(percept(pickup(ID))) do insert(pickup(ID)).
+		forall bel(percept(not(pickup(ID)))) do delete(pickup(ID)).
+
+		% The pickup spots on the map. Once.
+		forall bel(percept(pickup(UnrealID, Label, ItemType)), percept(navPoint(UnrealID,Position,_))) do insert(pickup(UnrealID, Position,Label, ItemType)).
+		forall bel(percept(pickup(UnrealID, Label, ItemType))) do insert(itemSpawns(UnrealID,0)).
+		
+		% The base. Has flag. Once
+		forall bel(percept(base(Team, UnrealID))) do insert(base(Team, UnrealID)).
+
+		% Information about the game. On Change.
+		forall bel(game(OldGametype, OldMap, OldTeamScoreLimit, OldRemainingTime),  percept(game(Gametype, Map, TeamScoreLimit, RemainingTime))) 
+		do delete( game(OldGametype, OldMap, OldTeamScoreLimit, OldRemainingTime)) + insert(game(Gametype, Map, TeamScoreLimit, RemainingTime)).
+
+		% Team score. On change
+		forall bel(teamScore(OldTeamScore, OldOpponentTeamScore),  percept(teamScore(TeamScore, OpponentTeamScore))) 
+		do delete( teamScore(OldTeamScore, OldOpponentTeamScore)) + insert(teamScore(TeamScore, OpponentTeamScore)).
+
+
+		%%
+		% See percepts
+		%%
+
+		% Flag state. On change with negation.		
+		forall bel(percept(flagState(Team,FlagState))) do insert(flagState(Team,FlagState)).
+		forall bel(percept(not(flagState(Team,FlagState)))) do delete(flagState(Team,FlagState)).
+		
+		% See an item. On change with negation.
+		forall bel(percept(item(UnrealID, Label, ItemType, NavPointId)))  do insert(item(UnrealID, Label, ItemType, NavPointId)).
+		forall bel(percept(not(item(UnrealID, Label, ItemType, NavPointId)))) do delete(item(UnrealID, Label, ItemType, NavPointId)).
+		
+		% We see the item so the item is spawned,
+		forall bel(itemSpawns(NavPointId,OldSpawnTime),number(OldSpawnTime), item(_, _, _, NavPointId)) 
+		do delete(itemSpawns(NavPointId,OldSpawnTime)) + insert(itemSpawns(NavPointId,spawned)).
+		
+		% We see the navpoint but we don't see the item, compute time when item will spawn 
+		forall bel(itemSpawns(NavPointId,spawned), pickup(NavPointId),
+		not(item(_, _, _, NavPointId)), pickup(NavPointId, _, _, ItemType),
+		spawnTime(ItemType, SpawnDelay), get_time(Now), SpawnTime is Now + SpawnDelay) 
+		do delete(itemSpawns(NavPointId,spawned)) + insert(itemSpawns(NavPointId,SpawnTime)).
+		
+		%Time has passed, item must be spawned now
+		forall bel(itemSpawns(NavPointId,SpawnTime),number(SpawnTime), get_time(Now), Now >= SpawnTime) 
+		do delete(itemSpawns(NavPointId,SpawnTime)) + insert(itemSpawns(NavPointId,spawned)).
+	
+		% See a flag. On change with negation.
+		forall bel(percept(flag(Team, HolderId, Location))) do insert(flag(Team, HolderId, Location)).
+		forall bel(percept(not(flag(Team, HolderId, Location)))) do delete(flag(Team, HolderId, Location)).
+		
+		% See a bot. On change with negation.
+		forall bel(percept(	   bot(ID,Name,Team,Postion,Weapon,FireMode)))  do insert(bot(ID,Name,Team,Postion,Weapon,FireMode)).
+		forall bel(percept(not(bot(ID,Name,Team,Postion,Weapon,FireMode)))) do delete(bot(ID,Name,Team,Postion,Weapon,FireMode)).
+		
+		
+		%%
+		% Time keeping		
+		%%
+		
+		%Set end time
+		forall bel(endEventModule(OldTime), get_time(Now)) do delete(endEventModule(OldTime)) + insert(endEventModule(Now)).
+		
+		% Compute time percept processing took.
+		forall bel(eventModuleTime(OldDelta), startEventModule(Start), endEventModule(End), Delta is  End - Start ) 
+		do delete(eventModuleTime(OldDelta)) + insert(eventModuleTime(Delta)).
+		
+		forall bel(navigation(navigatin,Destination), destination(Destination2), not(Destination = Destination2)) do insert(mismatch(Destination,Destination2)).
+
+	}
+}

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<installation version="1.0">
+
+	<packs>
+		<pack id="ut3pack" name="Unreal Tournament 3 stuff"
+			required="no">
+			<description>Files specific to Unreal Tournament 3.</description>
+		</pack>
+
+		<pack name="GameBotsUT3" id="gb3utpack" parent="ut3pack"
+			required="no">
+			<description>GameBotsUT3 network interface for Unreal Tournament
+				3 used to control bots and export information about the game
+				state. To install GameBotsUT3 you must have UT3 installed
+				and patched first!
+			</description>
+			<fileset dir="GameBotsUT3" targetdir="$UT3_HOME" />
+		</pack>
+
+		<pack name="Maps" id="mapspackut3" parent="ut3pack" required="no">
+			<description>Customized Unreal Tournament maps for the UnrealGoal
+				bot.</description>
+			<fileset dir="maps/UT3" targetdir="${UT3_HOME}" />
+		</pack>
+                
+                <pack name="Scripts" id="scriptspackut3" parent="ut3pack"
+			required="no">
+			<description>Easy startup scripts for the UT server.</description>
+
+			<fileset dir="ut3scripts/" targetdir="${UT3_HOME}" />
+                </pack>
+
+		<pack name="Unreal 3 Goal Environment" id="unreal3goalpack"
+			required="no" parent="ut3pack">
+			<description>Files specific to Unreal GOAL environment.</description>
+			<fileset dir="ut3environment" targetdir="${INSTALL_PATH}" />
+		</pack>
+
+		<pack name="Example Agents" id="examplepackut3" required="no" parent="ut3goalpack">
+			<description>Various examples of GOAL agents for the UT3
+				Environment.</description>
+			<fileset dir="examples" targetdir="${INSTALL_PATH}${FILE_SEPARATOR}GOALagents" />
+		</pack>
+
+		<pack name="Visualizer" id="visualizerpackut3" required="no">
+			<description>A visualizer for Unreal Tournament.</description>
+			<fileset dir="visualizer" targetdir="${INSTALL_PATH}${FILE_SEPARATOR}Visualizer" />
+		</pack>
+
+		<pack name="Documentation" id="documentationpackut3" required="no">
+			<description>Manuals for the Environment, UT3 and the Visualizer.
+			</description>
+			<fileset dir="documentation" targetdir="${INSTALL_PATH}${FILE_SEPARATOR}Documentation" />
+		</pack>
+
+
+	</packs>
+</installation>

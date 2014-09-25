@@ -1,0 +1,76 @@
+<userInput>
+	<!-- Install -->
+	<panel id="ut2004panel">
+		<!-- <createForPack name="Unreal Tournament 2004 stuff" /> -->
+
+		<field type="title" txt="Unreal Tournament 2004 home directory selection" bold="true" size="1" />
+		<field type="search" variable="UT2004_HOME">
+			<description align="right" txt="" id="" />
+			<spec txt="Path to Unreal Tournament 2004 (e.g. C:\UT2004\):"
+				checkfilename="KarmaData" type="directory" result="directory">
+
+				<!-- WINDOWS -->
+				<choice value="C:\UT2004" os="windows" />
+				<choice value="C:\Unreal Anthology\UT2004" os="windows" />
+				<choice value="C:\Games\UT2004" os="windows" />
+				<choice value="C:\Games\Unreal Anthology\UT2004" os="windows" />
+				<choice value="C:\Program Files\Unreal Anthology\UT2004" os="windows" />
+				<choice value="C:\Program Files\UT2004" os="windows" />
+				<choice value="C:\Program Files (x86)\Unreal Anthology\UT2004"
+					os="windows" />
+				<choice value="C:\Program Files (x86)\UT2004" os="windows" />
+
+				<choice value="D:\UT2004" os="windows" />
+				<choice value="D:\Unreal Anthology\UT2004" os="windows" />
+				<choice value="D:\Games\UT2004" os="windows" />
+				<choice value="D:\Games\Unreal Anthology\UT2004" os="windows" />
+				<choice value="D:\Program Files\Unreal Anthology\UT2004" os="windows" />
+				<choice value="D:\Program Files\UT2004" os="windows" />
+				<choice value="D:\Program Files (x86)\Unreal Anthology\UT2004"
+					os="windows" />
+				<choice value="D:\Program Files (x86)\UT2004" os="windows" />
+
+				<!-- DEVEL -->
+				<choice value="D:\Games\UT2004-Devel" os="windows" /><!-- jakub.gemrot -->
+				<choice value="E:\Windows\Hry\Unreal Anthology\UT2004" os="windows" /><!-- rudolf.kadlec -->
+				<choice value="C:\Users\mpkorstanje\School\Program Files\UT2004" /><!-- mpkorstanje -->>
+
+				<!-- UNIX -->
+				<!-- dunno... -->
+			</spec>
+		</field>
+	</panel>
+        
+        <panel id="ut3panel">
+		<!-- <createForPack name="Unreal Tournament 3 stuff" /> -->
+
+		<field type="title" txt="Unreal Tournament 3 home directory selection" bold="true" size="1" />
+		<field type="search" variable="UT3_HOME">
+			<description align="right" txt="" id="" />
+			<spec txt="Path to Unreal Tournament 3 (e.g. C:\Program Files (x86)\Unreal Tournament 3):"
+				checkfilename="UTGame" type="directory" result="directory">
+
+				<!-- WINDOWS -->
+				<choice value="C:\Program Files (x86)\Unreal Tournament 3" os="windows" />
+                                <choice value="C:\Program Files\Unreal Tournament 3" os="windows" />
+				<choice value="C:\UT3" os="windows" />
+				<choice value="C:\Games\UT3" os="windows" />
+			</spec>
+		</field>
+	</panel>
+
+	<panel id="unrealgoalpanel">
+		<field type="title" txt="GOAL directory selection" bold="true" size="1" />
+
+		<field type="dir" align="left" variable="GOAL_HOME">
+			<spec txt="Path to GOAL" size="25"
+				set="${USER_HOME}${FILE_SEPARATOR}GOAL" mustExist="false" create="true" />
+		</field>
+
+		<!-- TODO: Make a guess after GOAL install directory. -->
+
+	</panel>
+
+
+
+</userInput>

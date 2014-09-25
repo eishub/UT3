@@ -1,0 +1,173 @@
+%%
+% This agent is paranoid. When it sees another person it will try to hide itself. 
+% When alone this agent likes to stay at home, visit the cinema or visist a diner.  
+%
+% @Author M.P. Korstanje
+%%
+init module {
+	knowledge{  
+		
+		% Computes the 3D distance between two locations.
+		% Can be used with location(X,Y,Z), Navpoint ID's or navPoints.
+		distance(location(X1,Y1,Z1),location(X2,Y2,Z2), Distance) :- Distance is abs(sqrt((X1-X2) **2 + (Y1-Y2)**2 + (Z1-Z2)**2)). 
+		distance(navPoint(_,Location1,_), navPoint(_,Location2,_), Distance) :- distance(Location1, Location2, Distance).
+		distance(NavID1,NavID2, Distance) :- navPoint(NavID1,Location1,_), navPoint(NavID2,Location2,_),distance(Location1, Location2, Distance).
+		distance(location(X1,Y1,Z1),navPoint(_,Location,_), Distance) :- distance(location(X1,Y1,Z1), Location, Distance).
+		distance(navPoint(_,Location,_),location(X1,Y1,Z1), Distance) :- distance(location(X1,Y1,Z1), Location, Distance).
+		distance(NavID1,location(X1,Y1,Z1), Distance) :- navPoint(NavID1,Location1,_) ,distance(Location1, location(X1,Y1,Z1), Distance).
+		distance(location(X1,Y1,Z1),NavID1, Distance) :- navPoint(NavID1,Location1,_) ,distance(Location1, location(X1,Y1,Z1), Distance).
+		distance(NavID1,navPoint(_,Location2,_), Distance) :- navPoint(NavID1,Location1,_) ,distance(Location1,Location2, Distance).
+		distance(navPoint(_,Location2,_),NavID1, Distance) :- navPoint(NavID1,Location1,_) ,distance(Location1,Location2, Distance).
+				
+		% Holds when the distance to the location is less then MaxDistance.
+		distanceLt(Location1,Location2,MaxDistance) :- distance(Location1,Location2,Distance), Distance < MaxDistance.
+		
+		% Holds if we are within 200 UT units of the location.
+		atLocation(Location) :- myLocation(MyLocation), distanceLt(MyLocation,Location,200).
+		
+		% Returns the location I'm at.
+		myLocation(Location) :- self(_,_,Location,_,_,_,_).
+	}
+	beliefs{
+		% The last destination used by walkTo and runTo. Usefull for debugging.
+		destination(none).
+	}
+	
+	actionspec{
+		
+		stop {
+			pre {true}
+			post {true}
+		}
+		
+		walkTo(Destination) {
+			pre {destination(PreviousDestination)}
+			post {not(destination(PreviousDestination)),destination(Destination)}
+		}
+
+		runTo(Destination) {
+			pre {destination(PreviousDestination)}
+			post {not(destination(PreviousDestination)),destination(Destination)}
+		}
+		
+		jump {
+			pre {true}
+			post {true}					
+		}
+
+		
+		turn(Degrees) {
+			pre {true}
+			post {true}					
+		}
+		
+		skip {
+			pre {true}
+			post {true}				
+		}
+	}
+}
+
+event module {
+	
+	program{
+	
+		% Update the state of the navigation.
+		forall bel(navigation(X)) do delete (navigation(X)).
+		forall bel(percept(navigation(X))) do insert (navigation(X)).
+		
+		% Store all navpoints.
+		forall bel(percept(navPoint(ID,Location,Neighbours)))  do insert(navPoint(ID,Location,Neighbours)).
+		
+		%Store all places.
+		forall bel(percept(place(ID,Location,Range)))  do insert(place(ID,Location,Range)).
+
+		%Update self percept.
+		forall bel(self(ID,Name,Location,Rotation,EmoteL,EmoteC,EmoteR)) do delete(self(ID,Name,Location,Rotation,EmoteL,EmoteC,EmoteR)). 
+		forall bel(percept(self(ID,Name,Location,Rotation,EmoteL,EmoteC,EmoteR))) do insert(self(ID,Name,Location,Rotation,EmoteL,EmoteC,EmoteR)). 
+
+		%Update percepts of people that we see.
+		forall bel(person(ID,Name,Location,Rotation,EmoteL,EmoteC,EmoteR)) do delete(person(ID,Name,Location,Rotation,EmoteL,EmoteC,EmoteR)). 		
+		forall bel( percept(person(ID,Name,Location,Rotation,EmoteL,EmoteC,EmoteR)))  do insert(person(ID,Name,Location,Rotation,EmoteL,EmoteC,EmoteR)). 
+		
+		% Update when we last saw them.
+		forall bel( percept(person(ID,Name,Location,Rotation,EmoteL,EmoteC,EmoteR)), not(lastSeen(Name,Past)),get_time(Now) )  
+			do insert(lastSeen(Name,Now)).
+		forall bel( percept(person(ID,Name,Location,Rotation,EmoteL,EmoteC,EmoteR)), lastSeen(Name,Past),get_time(Now) )  
+			do delete(lastSeen(Name,Past)) + insert(lastSeen(Name,Now)). 
+		
+		%Store all available emoticons.
+		%forall bel(percept(emoticon(Name))) do insert (emoticon(Name)).
+	}	
+}
+
+
+main module {
+	
+		knowledge{ 
+			% The agent feels paranoid if it has seen a Stalker in the last minute.
+			feelsParanoid :- lastSeen('Stalker',Past), get_time(Now), Now - Past < 60. %one minute
+		}
+	
+		program{
+			
+			if bel(feelsParanoid) then hide.
+
+			if bel(not(navigation(traveling)), navPoint(ID,_,_)) then walkTo(ID).
+
+		}
+}
+
+module hide {
+	
+	knowledge {
+		home(Location) :- place(barbara_home,Location,_).
+		
+	}
+	
+	program{
+		% If we see someone while traveling, plan a new desitination.
+		if bel(navigation(traveling), person(_,_,_,_,_,_,_)) then stop + jump + runaway. 
+		
+		% If we are traveling, keep doing that.
+		if bel (navigation(traveling)) then skip.	
+		
+		% Walk to home
+		if bel(home(Location),not(atLocation(Location))) then walkTo(Location).
+		
+		%When at home, look around.
+		if bel(home(Location),atLocation(Location)) then turn(15).
+	}
+}
+
+
+module runaway  {
+	
+	knowledge {
+
+		awayFromPerson(NavID) :- 
+				% Collect the locations of ourselves, a person we see and the 
+				% navpoint we're testing.
+				person(_,_,PersonPosition,_,_,_,_), %todo: need to find the closest person here.
+				self(_,_,SelfPosition,_,_,_,_),
+				navPoint(NavID,NavPosition,_),
+				% Measure the distance between the three.
+				distance(NavPosition,PersonPosition,NavPersonDistance), 
+				distance(NavPosition,SelfPosition, NavSelfDistance),
+				distance(PersonPosition,SelfPosition, SelfPersonDistance),
+				% The Navpoint is away from a person if it lies closer to us then the person 
+				% and if it is outside a sphere with the radius with the radius of the distance
+				% from Self-Person.  
+				NavSelfDistance < NavPersonDistance, NavPersonDistance > SelfPersonDistance.	
+	}
+	
+	goals{
+		navigation(traveling).	
+	} 
+	
+	program{
+		% Run to a random nav point away from a person.
+		if bel(navPoint(ID,_,_), awayFromPerson(ID)) then runTo(ID).
+	}
+}
+

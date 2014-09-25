@@ -1,0 +1,19 @@
+environment {
+	"Environment-goal-emohawk-environment-3.3.2-SNAPSHOT.jar".
+		init = [
+			botNames = ["Jan"],
+			%botNames = ["Jan", "Pier"],
+			botServer = "ut://127.0.0.1:3000",	
+			logLevel = "OFF"
+		].
+
+}
+
+agentfiles {
+	"comprehension.goal" [name=unrealgoalfile] .
+}
+
+launchpolicy {
+    when [type=bot,max=3]@env do launch bot:unrealgoalfile . 
+}
+

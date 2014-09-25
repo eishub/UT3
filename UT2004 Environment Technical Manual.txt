@@ -1,0 +1,82 @@
+UT2004 Environment Technical manual
+===================================
+
+16 Folders, what is going on here?
+
+Quick start
+-----------
+
+If you just want to get started with the UT2004 environment follow these steps.
+
+ 1. Install GOAL
+ 2. Install UT2004
+ 3. Install the UT2004 Patch. You can get the patch from UT2004Patch/ folder for this.
+ 4. Install the Environment. Use mvn install to build it. You can then get the Installer from Installer/target/
+
+Overview
+---------
+ 
+For ease of use the project has been divided into several sub projects. To make dependency management and buildign easier most projects use maven. Please familiarize yourself with maven.
+
+All projects are currently build overnight by [Jekins in Prague http://diana.ms.mff.cuni.cz:8080/]. 
+
+Each project produces a set of artifacts. However only a few of these are suitable for consumptions. To wit these projects are the UT2004Environment, EmohawkEnvironment, UT2004Visualizer, UT2004EnvironmentManual, UT2004EnvironmentExamples. These are all bundled into an installer which also adds custom maps.
+
+Project Description
+-------------------
+
+BaseUnrealEnvironment - This project provides the basic functionality of an environment, that is connecting to an Unreal Server and adding agents. Which agents are added exactly depends on the specific environment.
+
+EIS - This project provides EIS in a way maven can understand. As EIS is already provided by GOAL at runtime, the best way to include this depenency is to set it to provided.
+
+EmohawkEnvironment - This project contains a bot that can operate in the Emohawk Environment. 
+
+Examples - This project contains various examples of GOAL agents for the UT2004 Environment
+
+GameBotsUt2004 - This project provides a stable version of Pogamut GameBots for Pogamut 
+2.2.3-SNAPSHOT. Future version of pogamut may require an update to gamebots.
+
+Installer - This project creates an IzPack installer for the whole UT2004Environment. Currently also contains the customized maps. These should get their own project.
+
+UT2004EnvironmentDependencies - This project downloads all dependencies for the UT2004 environment. This project is not used by any other projects. But should a server collapse we'll still have the dependencies. Either way this should be replaced by a proper Artifactory.
+
+UT2004EnvironmentManual - As it says on the tin. Building this project copies the pdfs into the maven repository.
+
+UT2004EnvironmentUtil - Common files usefull when using the UT2004Environment.
+
+
+UT2004ServerConnection - Provides classes that setup a connection to the Unreal Server.
+
+UT2004Visualizer - This project creates the Java interface for the Visualizer.
+
+UT2004VisualizerConnection - This project contains classes needed to setup a connection between the visualizer and the environment.
+
+UT2004VisualizerDependencies -  This project downloads all dependencies for the visualizer. This project is not used by any other projects. But should a server collapse we'll still have the dependencies. Either way this should be replaced by a proper Artifactory.
+
+UT2004VisualizerFrame - This project holds the code that draws the unreal environment. Contains a fair amount of OpenGL.
+
+Website - Contains instalation instructions, various patches and images required to install UT2004, gamebots, ect. The website is accesible throug: https://mmi.tudelft.nl/svn/goal/UnrealEnvironment/v3/Website/index.html
+
+Common Tasks
+------------
+
+### Updating EIS ###
+
+Occasionally EIS will receive updates. As the EIS on sourceforge is not always the version used by GOAL we have our own maven project to manage that version.
+
+Simply replace the EIS-0.3.jar in the EIS project, commit the change and run mvn install. Rebuild the environments for a new release again using mvn install on these respective projects.
+
+### Updating the UT2004 Environment ###
+
+Occasionally changes may need to be made to the bot. Simply make these by changing the relevant bits of code in the UT2004Environment project, commiting these to SVN and running mvn install.
+
+Important to keep in mind is because the Environments are packed as fat jars, they need to be rebuild after any change to their dependencies.
+
+### Creating a new release ###
+
+1. Ensure that there are no outstanding changes.
+2. Ensure that all project with recent changes have either been installed locally or have been build by the build server.
+3. Run mvn install on the installer project. A new installer containing everything will be created.
+
+Deliver the installer together with the contents of the UT2004Patch folder.
+

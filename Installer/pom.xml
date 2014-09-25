@@ -1,0 +1,286 @@
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>nl.tudelft.goal</groupId>
+	<artifactId>goal-ut-environment-installer</artifactId>
+	<version>3.5.4-SNAPSHOT</version>
+
+	<name>Unreal 3/2004 Environment Installer</name>
+
+	<packaging>pom</packaging>
+
+	<!-- Disabled dependencies. When active IzPack looks for Saxon Dom writer. -->
+	<!-- <dependencies> <dependency> <groupId>${visualizer.groupId}</groupId> 
+		<artifactId>${visualizer.artifactId}</artifactId> <version>${visualizer.version}</version> 
+		<type>zip</type> <classifier>${visualizer.classifier}</classifier> </dependency> 
+		<dependency> <groupId>${environment.groupId}</groupId> <artifactId>${environment.artifactId}</artifactId> 
+		<version>${environment.version}</version> <type>jar</type> <classifier>${environment.classifier}</classifier> 
+		</dependency> <dependency> <groupId>${documentation.groupId}</groupId> <artifactId>${documentation.artifactId}</artifactId> 
+		<version>${documentation.version}</version> <type>zip</type> <classifier>${documentation.classifier}</classifier> 
+		</dependency> </dependencies> -->
+
+
+	<build>
+		<plugins>
+
+			<!-- Copy resources (Izpack configuration e.d) from source to staging 
+				area -->
+			<plugin>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>2.5</version>
+				<executions>
+					<execution>
+						<id>copy-install-resources</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<overwrite>true</overwrite>
+							<outputDirectory>${staging.dir}</outputDirectory>
+							<resources>
+								<resource>
+									<directory>src/main/izpack</directory>
+									<filtering>true</filtering>
+									<includes>
+										<include>**/*.xml</include>
+									</includes>
+								</resource>
+								<resource>
+									<directory>src/main/izpack</directory>
+									<filtering>false</filtering>
+									<excludes>
+										<exclude>**/*.xml</exclude>
+									</excludes>
+								</resource>
+								<resource>
+									<directory>src/main/resources</directory>
+								</resource>
+
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+
+			<!-- Download Gamebots from SVN ! -->
+			<plugin>
+				<artifactId>maven-scm-plugin</artifactId>
+				<version>1.5</version>
+				<executions>
+                                        <execution>
+						<id>svn-gamebots-ut3-staging</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>checkout</goal>
+						</goals>
+						<configuration>
+							<skipCheckoutIfExists>false</skipCheckoutIfExists>
+							<connectionUrl>
+								scm:svn:${gamebots.ut3.svn}
+							</connectionUrl>
+							<checkoutDirectory>${staging.dir}/GameBotsUT3</checkoutDirectory>
+						</configuration>
+					</execution>
+					<execution>
+						<id>svn-gamebots-ut2004-staging</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>checkout</goal>
+						</goals>
+						<configuration>
+							<skipCheckoutIfExists>false</skipCheckoutIfExists>
+							<connectionUrl>
+								scm:svn:${gamebots.ut2004.svn}
+							</connectionUrl>
+							<checkoutDirectory>${staging.dir}/GameBotsUT2004</checkoutDirectory>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- Fetch Gamebots from SVN TODO change checkout to export <plugin> <artifactId>maven-scm-plugin</artifactId> 
+				<version>1.5</version> <configuration> <providerImplementations> <svn>javasvn</svn> 
+				</providerImplementations> </configuration> <dependencies> <dependency> <groupId>com.google.code.maven-scm-provider-svnjava</groupId> 
+				<artifactId>maven-scm-provider-svnjava</artifactId> <version>1.9</version> 
+				</dependency> </dependencies> </plugin>! -->
+
+			<!-- Fetch visualizer, environment, documentation and examples -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>2.5.1</version>
+
+				<!-- Unpack environment, documentation and examples -->
+				<executions>
+					<execution>
+						<id>unpack-visualizer-bundle</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>unpack</goal>
+						</goals>
+						<configuration>
+							<artifactItems>
+								<artifactItem>
+									<groupId>${visualizer.groupId}</groupId>
+									<artifactId>${visualizer.artifactId}</artifactId>
+									<version>${visualizer.version}</version>
+									<classifier>${visualizer.classifier}</classifier>
+									<type>zip</type>
+									<overWrite>true</overWrite>
+									<outputDirectory>${staging.dir}/visualizer</outputDirectory>
+								</artifactItem>
+
+								<artifactItem>
+									<groupId>${documentation.groupId}</groupId>
+									<artifactId>${documentation.artifactId}</artifactId>
+									<version>${documentation.version}</version>
+									<type>zip</type>
+									<classifier>${documentation.classifier}</classifier>
+									<overWrite>true</overWrite>
+									<outputDirectory>${staging.dir}/documentation</outputDirectory>
+								</artifactItem>
+
+								<artifactItem>
+									<groupId>${examples.groupId}</groupId>
+									<artifactId>${examples.artifactId}</artifactId>
+									<version>${examples.version}</version>
+									<type>zip</type>
+									<classifier>${examples.classifier}</classifier>
+									<overWrite>true</overWrite>
+									<outputDirectory>${staging.dir}/examples</outputDirectory>
+								</artifactItem>
+							</artifactItems>
+						</configuration>
+					</execution>
+
+					<!-- Fecth and copy the Environment -->
+					<execution>
+						<id>copy-environment</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>copy</goal>
+						</goals>
+						<configuration>
+							<artifactItems>
+								<artifactItem>
+									<groupId>${environment.groupId}</groupId>
+									<artifactId>${environment.artifactId}</artifactId>
+									<version>${environment.version}</version>
+									<type>jar</type>
+									<classifier>${environment.classifier}</classifier>
+									<overWrite>true</overWrite>
+									<outputDirectory>${staging.dir}/ut2004environment</outputDirectory>
+									<destFileName>${environment.artifactId}-${environment.version}.jar</destFileName>
+								</artifactItem>
+                                                                
+                                                                <artifactItem>
+								<groupId>${environment3.groupId}</groupId>
+									<artifactId>${environment3.artifactId}</artifactId>
+									<version>${environment3.version}</version>
+									<type>jar</type>
+									<classifier>${environment3.classifier}</classifier>
+									<overWrite>true</overWrite>
+									<outputDirectory>${staging.dir}/ut3environment</outputDirectory>
+									<destFileName>${environment3.artifactId}-${environment.version}.jar</destFileName>
+								</artifactItem>
+
+
+							</artifactItems>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+
+
+			<!--Configure ezpack -->
+			<plugin>
+				<groupId>org.codehaus.izpack</groupId>
+				<artifactId>izpack-maven-plugin</artifactId>
+				<version>1.0-alpha-5</version>
+
+				<!-- Set staging directory, everything ezpack packs together goes here -->
+				<configuration>
+					<izpackBasedir>${staging.dir}</izpackBasedir>
+				</configuration>
+
+				<executions>
+					<execution>
+						<id>standard-installer</id>
+						<phase>package</phase>
+						<goals>
+							<goal>izpack</goal>
+						</goals>
+					</execution>
+				</executions>
+				<dependencies>
+					<dependency>
+						<groupId>org.codehaus.izpack</groupId>
+						<artifactId>izpack-standalone-compiler</artifactId>
+						<version>4.3.4</version>
+					</dependency>
+
+
+				</dependencies>
+			</plugin>
+
+		</plugins>
+	</build>
+
+	<repositories>
+		<repository>
+			<id>amis-artifactory</id>
+			<name>AMIS Artifactory</name>
+			<url>http://diana.ms.mff.cuni.cz:8081/artifactory/repo</url>
+		</repository>
+	</repositories>
+
+	<properties>
+		<!-- Information for environment to include in installer -->
+		<environment.groupId>${project.groupId}</environment.groupId>
+		<environment.artifactId>goal-ut2004-environment</environment.artifactId>
+		<environment.version>${project.version}</environment.version>
+		<environment.classifier>eis_environment</environment.classifier>
+                
+   		<environment3.groupId>${project.groupId}</environment3.groupId>
+		<environment3.artifactId>goal-ut3-environment</environment3.artifactId>
+		<environment3.version>${project.version}</environment3.version>
+		<environment3.classifier>eis_environment</environment3.classifier>             
+
+		<!-- Information for visualizer to include in installer -->
+		<visualizer.groupId>${project.groupId}</visualizer.groupId>
+		<visualizer.artifactId>goal-unreal-visualizer</visualizer.artifactId>
+		<visualizer.version>${project.version}</visualizer.version>
+		<visualizer.classifier>bin</visualizer.classifier>
+
+		<!-- Information for documentation to include in installer -->
+		<documentation.groupId>${project.groupId}</documentation.groupId>
+		<documentation.artifactId>goal-ut-environment-documentation</documentation.artifactId>
+		<documentation.version>${project.version}</documentation.version>
+		<documentation.classifier>bin</documentation.classifier>
+
+		<!-- Information for examples to include in installer -->
+		<examples.groupId>${project.groupId}</examples.groupId>
+		<examples.artifactId>goal-ut-environment-examples</examples.artifactId>
+		<examples.version>${project.version}</examples.version>
+		<examples.classifier>bin</examples.classifier>
+
+		<!-- Information used by the installer -->
+		<app.group>${project.groupId}</app.group>
+		<app.name>${project.name}</app.name>
+		<app.subpath>${project.artifactId}-${project.version}</app.subpath>
+		<app.version>${project.version}</app.version>
+
+
+		<staging.dir>${project.build.directory}/staging</staging.dir>
+
+		<nl.tudelft.ii.svn>https://ii.tudelft.nl/svn</nl.tudelft.ii.svn>
+		<gamebots.ut2004.svn>${nl.tudelft.ii.svn}/goal/UnrealEnvironment/v3/GameBotsUT2004</gamebots.ut2004.svn>
+                <gamebots.ut3.svn>svn://artemis.ms.mff.cuni.cz/pogamut/trunk/project/Main/Gamebots/GameBotsUT3/src/main/ut3/Release</gamebots.ut3.svn>
+	</properties>
+
+</project>

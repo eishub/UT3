@@ -1,0 +1,51 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	
+	<parent>
+		<groupId>cz.cuni.amis.pogamut.ut2004</groupId>
+		<artifactId>pogamut-ut2004-pom</artifactId>
+		<version>3.5.4-SNAPSHOT</version>
+		<relativePath>../../Poms/PogamutUT2004Pom/pom.xml</relativePath>
+	</parent>
+	
+	<groupId>nl.tudelft.goal</groupId>
+	<artifactId>goal-ut-environment-examples</artifactId>
+	<name>goal-ut-environment-examples</name>
+	<description>Various example GOAL agents for the UT Enviornment</description>
+
+
+
+	<!-- Create zip file -->
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.3</version>
+				<configuration>
+					<descriptors>
+						<descriptor>src/main/assembly/distribution.xml</descriptor>
+					</descriptors>
+				</configuration>
+				<executions>
+					<execution>
+						<id>make-assembly</id> <!-- this is used for inheritance merges -->
+						<phase>package</phase> <!-- bind to the packaging phase -->
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+
+	<repositories>
+		<repository>
+			<id>amis-artifactory</id>
+			<name>AMIS Artifactory</name>
+			<url>http://diana.ms.mff.cuni.cz:8081/artifactory/repo</url>
+		</repository>
+	</repositories>
+</project>

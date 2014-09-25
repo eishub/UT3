@@ -1,0 +1,25 @@
+%%
+% A simple agent that jumps to show everything is working. 
+% @Author M.P. Korstanje
+%%
+init module {
+	knowledge{                            
+
+	}
+
+	actionspec{
+		
+		jump {
+			pre {true}
+			post {true}					
+		}
+	}
+}
+
+main module {
+	
+		program{
+			if bel(true) then jump.
+		}
+}
+

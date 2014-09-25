@@ -1,0 +1,23 @@
+masTest {
+
+	mas = "ut3-simplectf-test.mas2g".
+	%timeout = 30. %seconds
+	
+	bot {
+		test { 
+			do await(server).
+			do awaitSelf.
+			assert bel(game(_,'CTF-FacingWorlds',_,_)).
+
+			do server(spawnItem('PathNode_125',weapon,shock_rifle)).
+
+			do server(respawn('UTTeamPlayerStart_17', rotation(0,0,0))).
+			
+			evaluate {
+				atend bel(atLocation('PathNode_126')).
+				atend bel(weapon(shock_rifle,20,20)). %Fails because ammo is not send when a weapon is spawned. 
+			} in do navigateWithPicksups('PathNode_126').
+		}
+
+	}
+}

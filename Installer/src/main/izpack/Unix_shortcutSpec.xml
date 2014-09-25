@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+
+<shortcuts>
+
+	<programGroup defaultName="UnrealGoal"
+		location="applications" />
+
+
+
+	<shortcut 
+		name="Unreal Visualizer"
+		target="${INSTALL_PATH}\Visualizer\${visualizer.artifactId}-${visualizer.version}\${visualizer.artifactId}-${visualizer.version}.jar" 
+		commandLine=""
+		workingDirectory="${INSTALL_PATH}\Visualizer\${visualizer.artifactId}-${visualizer.version}\" 
+		description="Starts the Visualizer for Unreal"
+     	iconFile=""
+    	iconIndex="0"
+		initialState="normal" 
+		programGroup="yes" 
+		desktop="yes" 
+		applications="yes"
+		startMenu="yes" 
+		startup="no"
+		
+	    KdeSubstUID="false"
+    	terminal="false"
+     	type="Application"
+        encoding="UTF-8">
+		
+		<createForPack name="Visualizer" />
+	</shortcut>
+ 
+	<shortcut 
+		name="Documentation"
+		target="${INSTALL_PATH}\Documentation" 
+		commandLine=""
+		workingDirectory="${INSTALL_PATH}\Documentation" 
+		description="Open Documentation for the UT2004 Environment"
+     	iconFile=""
+    	iconIndex="0"
+		initialState="normal" 
+		programGroup="yes" 
+		desktop="yes" 
+		applications="no"
+		startMenu="yes" 
+		startup="no"
+		
+		KdeSubstUID="false"
+    	terminal="false"
+     	type="Application"
+        encoding="UTF-8">
+
+		<createForPack name="Documentation" />
+	</shortcut>
+
+
+
+	
+	<shortcut 
+		name="CTFServer UG-AbsoluteZero"
+		target="$UT2004_HOME\System\CTFServer UG-AbsoluteZero.sh" 
+		commandLine=""
+		workingDirectory="$UT2004_HOME\System\" 
+		description="Starts CTF Server"
+     	iconFile=""
+    	iconIndex="0"
+		initialState="normal" 
+		programGroup="yes" 
+		desktop="yes" 
+		applications="yes"
+		startMenu="yes" 
+		startup="no"
+
+		KdeSubstUID="false"
+    	terminal="true"
+     	type="Application"
+        encoding="UTF-8">
+
+		<createForPack name="Scripts" />
+	</shortcut>
+	
+	
+	
+	<shortcut 
+		name="CTFServer UG-Chrome"
+		target="$UT2004_HOME\System\CTFServer UG-Chrome.sh" 
+		commandLine=""
+		workingDirectory="$UT2004_HOME\System\" 
+		description="Starts CTF Server"
+     	iconFile=""
+    	iconIndex="0"
+		initialState="normal" 
+		programGroup="yes" 
+		desktop="yes" 
+		applications="yes"
+		startMenu="yes" 
+		startup="no"
+		
+		KdeSubstUID="false"
+    	terminal="true"
+     	type="Application"
+        encoding="UTF-8">
+
+		<createForPack name="Scripts" />
+	</shortcut>
+	
+	<shortcut 
+		name="CTFServer UG-Grendelkeep"
+		target="$UT2004_HOME\System\CTFServer UG-Grendelkeep.sh" 
+		commandLine=""
+		workingDirectory="$UT2004_HOME\System\" 
+		description="Starts CTF Server"
+     	iconFile=""
+    	iconIndex="0"
+		initialState="normal" 
+		programGroup="yes" 
+		desktop="yes" 
+		applications="yes"
+		startMenu="yes" 
+		startup="no"
+		
+		
+		KdeSubstUID="false"
+    	terminal="true"
+     	type="Application"
+        encoding="UTF-8">
+
+		<createForPack name="Scripts" />
+	</shortcut>
+<shortcuts>

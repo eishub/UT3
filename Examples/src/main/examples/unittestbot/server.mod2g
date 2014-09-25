@@ -1,0 +1,40 @@
+%%
+% Requests server agent to execute the action.
+%
+% Requires that myId(Id) :- self(Id,Name,Team) holds.
+% Requires that agent(server) represents the server entity.
+%
+% Actions:
+% * addInventory(Category,ItemType) : Adds the item of the given category to this agent.
+% * respawn(Location, Rotation) : Respawns this bot in the given location.
+% * changeTeam : Changes the team of this bot.
+% * spawnItem(Location, Category, ItemType) : Spawns an item of the given category on the given location.
+% * shutdown : stops the server agent.
+%
+%%
+module server(Action) {
+	
+	knowledge{
+		myId(Id) :- self(Id,Name,Team).
+		
+		%Use pattern matching to unpack the Action argument and initialize optional id parameter with own Id.
+		unpack(addInventory(Id, Item),addInventory(Id, Item)).
+		unpack(addInventory(Item),addInventory(Id, Item)) :- myId(Id).
+		unpack(respawn(Location, Rotation,Id),respawn(Id, Location, Rotation,Id)).
+		unpack(respawn(Location, Rotation),respawn(Id, Location, Rotation)) :- myId(Id).
+		unpack(teleport(Id,Location, Rotation),teleport(Id, Location, Rotation)).
+		unpack(teleport(Location, Rotation),teleport(Id, Location, Rotation)) :- myId(Id).
+		unpack(changeTeam(Id),changeTeam(Id)).
+		unpack(changeTeam,changeTeam(Id)) :- myId(Id).
+		unpack(setGameSpeed(Speed),setGameSpeed(Speed)).		
+		unpack(spawnItem(Location, Category, Item),spawnItem(Location, Category, Item)).		
+		unpack(shutdown,shutdown).		
+	}
+
+	program {
+		if bel(unpack(Action,shutdown)) then server.send(shutdown) + exit-module.
+		if bel(unpack(Action,UnPacked)) then server.send(UnPacked) + delete(sent(server,UnPacked)) + exit-module.
+				
+	}
+	
+}

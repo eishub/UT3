@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<installation version="1.0">
+
+	<packs>
+		<pack id="ut2004pack" name="Unreal Tournament 2004 stuff"
+			required="no" preselected="no">
+			<description>Files specific to Unreal Tournament 2004.</description>
+		</pack>
+
+		<pack name="GameBots2004" id="gb4utpack" parent="ut2004pack"
+			required="no" preselected="no">
+			<description>GameBots2004 network interface for Unreal Tournament
+				2004 used to control bots and export information about the game
+				state. To install GameBots2004 you must have UT2004 installed
+				andpatched first!
+			</description>
+			<fileset dir="GameBotsUT2004" targetdir="$UT2004_HOME" />
+		</pack>
+
+		<pack name="Maps" id="mapspack" parent="ut2004pack" required="no" preselected="no">
+			<description>Customized Unreal Tournament maps for the UnrealGoal
+				bot.</description>
+			<fileset dir="maps/UT2004" targetdir="${UT2004_HOME}${FILE_SEPARATOR}Maps" />
+		</pack>
+
+		<pack name="Scripts" id="scriptspack" parent="ut2004pack"
+			required="no" preselected="no">
+			<description>Easy startup scripts for the UT server.</description>
+
+
+			<fileset dir="scripts/" targetdir="${UT2004_HOME}${FILE_SEPARATOR}System" />
+
+			<!-- Mark .sh files as executable for OSX -->
+			<executable
+				targetfile="${UT2004_HOME}${FILE_SEPARATOR}System${FILE_SEPARATOR}CTFServer UG-AbsoluteZero.sh"
+				keep="true" stage="never">
+				<os family="osx" />
+			</executable>
+			<executable
+				targetfile="${UT2004_HOME}${FILE_SEPARATOR}System${FILE_SEPARATOR}CTFServer UG-Chrome.sh"
+				keep="true" stage="never">
+				<os family="osx" />
+			</executable>
+			<executable
+				targetfile="${UT2004_HOME}${FILE_SEPARATOR}System${FILE_SEPARATOR}CTFServer UG-Grendelkeep.sh"
+				keep="true" stage="never">
+				<os family="osx" />
+			</executable>
+
+			<!-- Mark .sh files as executable for Unix -->
+			<executable
+				targetfile="${UT2004_HOME}${FILE_SEPARATOR}System${FILE_SEPARATOR}CTFServer UG-AbsoluteZero.sh"
+				keep="true" stage="never">
+				<os family="unix" />
+			</executable>
+			<executable
+				targetfile="${UT2004_HOME}${FILE_SEPARATOR}System${FILE_SEPARATOR}CTFServer UG-Chrome.sh"
+				keep="true" stage="never">
+				<os family="unix" />
+			</executable>
+			<executable
+				targetfile="${UT2004_HOME}${FILE_SEPARATOR}System${FILE_SEPARATOR}CTFServer UG-Grendelkeep.sh"
+				keep="true" stage="never">
+				<os family="unix" />
+			</executable>
+		</pack>
+
+
+		<pack name="Unreal 2004 Goal Environment" id="unrealgoalpack"
+			required="no" parent="ut2004pack" preselected="no">
+			<description>Files specific to Unreal GOAL environment.</description>
+			<fileset dir="ut2004environment" targetdir="${GOAL_HOME}${FILE_SEPARATOR}environments" />
+		</pack>
+
+		<pack name="Example Agents" id="examplepack" required="no" preselected="no" parent="ut2004pack">
+			<description>Various examples of GOAL agents for the UT2004
+				Environment.</description>
+			<fileset dir="examples" targetdir="${GOAL_HOME}${FILE_SEPARATOR}GOALagents" />
+		</pack>
+	</packs>
+</installation>

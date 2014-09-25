@@ -1,0 +1,51 @@
+environment {
+	env = "goal-ut3-environment-3.5.4-SNAPSHOT.jar".
+	
+	init = [
+			botServer = "ut://127.0.0.1:3000",
+			controlServer = "ut://127.0.0.1:3001",
+			visualizer = "rmi://127.0.0.1:1099",
+
+			logLevel = "WARNING", 
+			bots = [
+					[
+						["name", "SimpleBlue 1"],
+						["skill", 5],
+						["skin", "BotB"], 
+						["team", "blue"],
+						["logLevel", "OFF"]
+					],
+										[
+						["name", "SimpleBlue 2"],
+						["skill", 5],
+						["skin", "BotB"], 
+						["team", "blue"],
+						["logLevel", "OFF"]
+					],
+										[
+						["name", "SimpleBlue 3"],
+						["skill", 5],
+						["skin", "BotB"], 
+						["team", "blue"],
+						["logLevel", "OFF"]
+					],
+										[
+						["name", "SimpleBlue 4"],
+						["skill", 5],
+						["skin", "BotB"], 
+						["team", "blue"],
+						["logLevel", "OFF"]
+					]
+			]
+		].
+
+}
+
+agentfiles {
+	"simpleCTF.goal" [name=unrealgoalfile] .
+}
+
+launchpolicy {
+    when [type=bot,max=5]@env do launch bot:unrealgoalfile . 
+}
+
