@@ -28,12 +28,10 @@
 			<version>3.5.4-SNAPSHOT</version>
 		</dependency>
 
-
 		<dependency>
-			<groupId>apleis</groupId>
+			<groupId>eishub</groupId>
 			<artifactId>eis</artifactId>
-			<version>0.3</version>
-			<scope>provided</scope>
+			<version>0.5.0</version>
 		</dependency>
 
 
@@ -45,11 +43,16 @@
 
 
 	</dependencies>
+
 	<repositories>
 		<repository>
 			<id>amis-artifactory</id>
 			<name>AMIS Artifactory</name>
 			<url>http://diana.ms.mff.cuni.cz:8081/artifactory/repo</url>
+		</repository>
+		<repository>
+			<id>eishub-mvn-repo</id>
+			<url>https://raw.github.com/eishub/mvn-repo/master</url>
 		</repository>
 	</repositories>
 
