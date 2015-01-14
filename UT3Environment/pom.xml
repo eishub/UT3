@@ -18,52 +18,55 @@
 			<groupId>cz.cuni.amis.pogamut</groupId>
 			<artifactId>pogamut-ut3</artifactId>
 			<version>3.5.4-SNAPSHOT</version>
-		 <exclusions>
-		  <exclusion>
-		   <artifactId>pogamut-ut2004</artifactId>
-		   <groupId>cz.cuni.amis.pogamut</groupId>
-		  </exclusion>
-		 </exclusions>
+			<exclusions>
+				<exclusion>
+					<artifactId>pogamut-ut2004</artifactId>
+					<groupId>cz.cuni.amis.pogamut</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>nl.tudelft.goal</groupId>
 			<artifactId>goal-base-unreal-environment</artifactId>
 			<version>3.5.4-SNAPSHOT</version>
-		 <exclusions>
-		  <exclusion>
-		   <artifactId>pogamut-ut2004</artifactId>
-		   <groupId>cz.cuni.amis.pogamut</groupId>
-		  </exclusion>
-		 </exclusions>
+			<exclusions>
+				<exclusion>
+					<artifactId>pogamut-ut2004</artifactId>
+					<groupId>cz.cuni.amis.pogamut</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>nl.tudelft.goal</groupId>
 			<artifactId>goal-ut2004-environment-util</artifactId>
 			<version>3.5.4-SNAPSHOT</version>
-		 <exclusions>
-		  <exclusion>
-		   <artifactId>pogamut-ut2004</artifactId>
-		   <groupId>cz.cuni.amis.pogamut</groupId>
-		  </exclusion>
-		 </exclusions>
+			<exclusions>
+				<exclusion>
+					<artifactId>pogamut-ut2004</artifactId>
+					<groupId>cz.cuni.amis.pogamut</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>nl.tudelft.pogamut</groupId>
 			<artifactId>pogamut-ut3-weapon-shooting</artifactId>
 			<version>3.5.4-SNAPSHOT</version>
-		 <exclusions>
-		  <exclusion>
-		   <artifactId>pogamut-ut2004</artifactId>
-		   <groupId>cz.cuni.amis.pogamut</groupId>
-		  </exclusion>
-		 </exclusions>
+			<exclusions>
+				<exclusion>
+					<artifactId>pogamut-ut2004</artifactId>
+					<groupId>cz.cuni.amis.pogamut</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
+
+
 		<dependency>
-			<groupId>apleis</groupId>
+			<groupId>eishub</groupId>
 			<artifactId>eis</artifactId>
-			<version>0.3</version>
-			<scope>provided</scope>
+			<version>0.5.0</version>
 		</dependency>
+
+
 
 
 		<dependency>
@@ -72,37 +75,37 @@
 			<version>3.5.4-SNAPSHOT</version>
 			<scope>test</scope>
 			<type>jar</type>
-		 <exclusions>
-		  <exclusion>
-		   <artifactId>pogamut-ut2004</artifactId>
-		   <groupId>cz.cuni.amis.pogamut</groupId>
-		  </exclusion>
-		 </exclusions>
+			<exclusions>
+				<exclusion>
+					<artifactId>pogamut-ut2004</artifactId>
+					<groupId>cz.cuni.amis.pogamut</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>nl.tudelft.goal</groupId>
 			<artifactId>goal-ut2004-visualizer-connection</artifactId>
 			<version>3.5.4-SNAPSHOT</version>
 			<type>jar</type>
-		 <exclusions>
-		  <exclusion>
-		   <artifactId>pogamut-ut2004</artifactId>
-		   <groupId>cz.cuni.amis.pogamut</groupId>
-		  </exclusion>
-		 </exclusions>
+			<exclusions>
+				<exclusion>
+					<artifactId>pogamut-ut2004</artifactId>
+					<groupId>cz.cuni.amis.pogamut</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
-	 <dependency>
-	  <groupId>cz.cuni.amis.pogamut</groupId>
-	  <artifactId>pogamut-unreal</artifactId>
-	  <version>3.5.4-SNAPSHOT</version>
-	  <type>jar</type>
-	 </dependency>
-	 <dependency>
-	  <groupId>cz.cuni.amis.pogamut</groupId>
-	  <artifactId>pogamut-ut2004</artifactId>
-	  <version>3.5.4-ut3-development-SNAPSHOT</version>
-	  <type>jar</type>
-	 </dependency>
+		<dependency>
+			<groupId>cz.cuni.amis.pogamut</groupId>
+			<artifactId>pogamut-unreal</artifactId>
+			<version>3.5.4-SNAPSHOT</version>
+			<type>jar</type>
+		</dependency>
+		<dependency>
+			<groupId>cz.cuni.amis.pogamut</groupId>
+			<artifactId>pogamut-ut2004</artifactId>
+			<version>3.5.4-ut3-development-SNAPSHOT</version>
+			<type>jar</type>
+		</dependency>
 	</dependencies>
 
 	<repositories>
@@ -111,6 +114,11 @@
 			<name>AMIS Artifactory</name>
 			<url>http://diana.ms.mff.cuni.cz:8081/artifactory/repo</url>
 		</repository>
+		<repository>
+			<id>eishub-mvn-repo</id>
+			<url>https://raw.github.com/eishub/mvn-repo/master</url>
+		</repository>
+
 	</repositories>
 
 	<properties>
