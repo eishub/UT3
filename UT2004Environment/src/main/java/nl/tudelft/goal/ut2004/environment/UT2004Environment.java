@@ -353,6 +353,12 @@ public class UT2004Environment extends AbstractUnrealEnvironment {
 
 	}
 
+	@Override
+	public void createServerEntity() throws ManagementException {
+		super.createServerEntity();
+		
+	}
+
 
 
 }

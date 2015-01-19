@@ -205,6 +205,7 @@ public abstract class AbstractUnrealEnvironment extends
 		log.setLevel(configuration.getLogLevel());
 	}
 
+	@Override
 	protected synchronized void connectEnvironment() throws ManagementException {
 		assert configuration != null;
 
@@ -212,6 +213,11 @@ public abstract class AbstractUnrealEnvironment extends
 		if (configuration.getControlServer() != null)
 			startServer();
 
+	}
+	
+	@Override
+	public synchronized void createServerEntity() throws ManagementException {
+		addServerEntity();
 	}
 
 	@Override
@@ -223,8 +229,12 @@ public abstract class AbstractUnrealEnvironment extends
 
 	}
 
+	/**
+	 * Make serverRunner and register entities.
+	 * @throws ManagementException
+	 */
 	protected void startServer() throws ManagementException {
-		// 1. Connect to UT server
+		// 1. Connect to UT server. Called from init().
 		try {
 
 			UT2004ServerRunner<? extends IUT2004Server, ? extends UT2004AgentParameters> serverRunner = createServerRunner();
@@ -236,6 +246,13 @@ public abstract class AbstractUnrealEnvironment extends
 					"Pogmut was unable to start the server. Cause: "
 							+ e.toString());
 		}
+	}
+	
+	/**
+	 * Adds the server entity
+	 * @throws ManagementException
+	 */
+	protected void addServerEntity() throws ManagementException {
 		String simpleID = EnvironmentUtil.simplefyID(utServer.getComponentId());
 
 		try {
@@ -253,6 +270,7 @@ public abstract class AbstractUnrealEnvironment extends
 
 		// 7. Check if server is still alive. Throw out if not.
 		// TODO: How?
+
 	}
 
 	protected ActionHandler createServerActionHandler(IUT2004Server entity)

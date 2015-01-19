@@ -6,7 +6,7 @@
 		<groupId>cz.cuni.amis.pogamut.ut2004</groupId>
 		<artifactId>pogamut-ut2004-pom</artifactId>
 		<version>3.5.4-SNAPSHOT</version>
-		<relativePath>../../Poms/PogamutUT2004Pom/pom.xml</relativePath>
+		<relativePath>/../../Poms/PogamutUT2004Pom/pom.xml</relativePath>
 	</parent>
 
 	<groupId>nl.tudelft.goal</groupId>

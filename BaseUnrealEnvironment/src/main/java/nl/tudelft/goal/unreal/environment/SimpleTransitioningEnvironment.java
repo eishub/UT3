@@ -62,6 +62,8 @@ public abstract class SimpleTransitioningEnvironment extends AbstractEnvironment
 
 		// Transition to paused because the EIS spec requires this.
 		setState(EnvironmentState.PAUSED);
+		
+		createServerEntity();
 
 		// Transition to running because UT can't be started paused.
 		setState(EnvironmentState.RUNNING);
@@ -74,7 +76,17 @@ public abstract class SimpleTransitioningEnvironment extends AbstractEnvironment
 	protected abstract void initializeEnvironment(Map<String, Parameter> parameters) throws ManagementException;
 
 	
+	/**
+	 * Creates connection with environment
+	 * @throws ManagementException
+	 */
 	protected abstract void connectEnvironment() throws ManagementException;
+	
+	/**
+	 * creates the server entity
+	 * @throws ManagementException
+	 */
+	protected abstract void createServerEntity() throws ManagementException;
 
 
 	protected abstract void connectAgents() throws ManagementException;

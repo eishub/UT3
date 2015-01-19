@@ -2,16 +2,12 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<parent>
-		<groupId>cz.cuni.amis.pogamut.ut2004</groupId>
-		<artifactId>pogamut-ut2004-pom</artifactId>
-		<version>3.5.4-SNAPSHOT</version>
-		<relativePath>../../Poms/PogamutUT2004Pom/pom.xml</relativePath>
-	</parent>
-
+	<!-- <parent> <groupId>cz.cuni.amis.pogamut.ut2004</groupId> <artifactId>pogamut-ut2004-pom</artifactId> 
+		<version>3.5.4-SNAPSHOT</version> </parent> -->
 	<groupId>nl.tudelft.goal</groupId>
 	<artifactId>goal-ut2004-environment</artifactId>
 	<name>goal-ut2004-environment</name>
+	<version>3.5.5-SNAPSHOT</version>
 
 	<dependencies>
 
@@ -71,9 +67,26 @@
 	<build>
 		<plugins>
 
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.5</version>
+				<configuration>
+					<archive>
+						<manifest>
+							<addClasspath>true</addClasspath>
+							<mainClass>${environment.main.class}</mainClass>
+						</manifest>
+					</archive>
+				</configuration>
+			</plugin>
+
+
 			<!-- Creates a jar with all its dependencies (the environment) -->
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.5.3</version>
+
 				<configuration>
 					<descriptorRefs>
 						<descriptorRef>jar-with-dependencies</descriptorRef>

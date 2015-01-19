@@ -1,5 +1,5 @@
 environment {
-	env = "goal-ut3-environment-3.5.4-SNAPSHOT.jar".
+	env = "goal-ut2004-environment-3.5.5-SNAPSHOT-jar-with-dependencies.jar".
 	init = [ 	
 		visualizer = "rmi://127.0.0.1:1099",
 		botServer = "ut://127.0.0.1:3000",
