@@ -55,7 +55,6 @@ import cz.cuni.amis.pogamut.base.utils.logging.IAgentLogger;
 import cz.cuni.amis.pogamut.base.utils.logging.LogCategory;
 import cz.cuni.amis.pogamut.base3d.worldview.IVisionWorldView;
 import cz.cuni.amis.pogamut.ut2004.agent.params.UT2004AgentParameters;
-import cz.cuni.amis.pogamut.ut2004.bot.IUT2004Bot;
 import cz.cuni.amis.pogamut.ut2004.bot.IUT2004BotController;
 import cz.cuni.amis.pogamut.ut2004.bot.impl.UT2004Bot;
 import cz.cuni.amis.pogamut.ut2004.bot.impl.UT2004BotController;
@@ -64,7 +63,6 @@ import cz.cuni.amis.pogamut.ut2004.communication.messages.gbcommands.Pause;
 import cz.cuni.amis.pogamut.ut2004.factory.guice.remoteagent.UT2004ServerFactory;
 import cz.cuni.amis.pogamut.ut2004.factory.guice.remoteagent.UT2004ServerModule;
 import cz.cuni.amis.pogamut.ut2004.server.IUT2004Server;
-import cz.cuni.amis.pogamut.ut2004.utils.UT2004BotRunner;
 import cz.cuni.amis.pogamut.ut2004.utils.UT2004ServerRunner;
 import cz.cuni.amis.pogamut.ut2004.utils.UTBotRunner;
 import cz.cuni.amis.utils.exception.PogamutException;
@@ -214,7 +212,7 @@ public abstract class AbstractUnrealEnvironment extends
 			startServer();
 
 	}
-	
+
 	@Override
 	public synchronized void createServerEntity() throws ManagementException {
 		addServerEntity();
@@ -231,6 +229,7 @@ public abstract class AbstractUnrealEnvironment extends
 
 	/**
 	 * Make serverRunner and register entities.
+	 * 
 	 * @throws ManagementException
 	 */
 	protected void startServer() throws ManagementException {
@@ -247,9 +246,10 @@ public abstract class AbstractUnrealEnvironment extends
 							+ e.toString());
 		}
 	}
-	
+
 	/**
 	 * Adds the server entity
+	 * 
 	 * @throws ManagementException
 	 */
 	protected void addServerEntity() throws ManagementException {
@@ -326,17 +326,19 @@ public abstract class AbstractUnrealEnvironment extends
 		}
 
 		// 5. Notify EIS of new entity.
-		String simpleID = EnvironmentUtil.simplefyID(agent.getComponentId());
-		UT2004BotController controller = agent.getController();
-		try {
-			registerEntity(simpleID, "bot", controller,
-					createActionHandler(controller),
-					createPerceptHandler(controller));
-		} catch (EntityException e) {
-			agent.stop();
+		registerNewBotEntity(agent);
 
-			throw new ManagementException("Unable to register entity", e);
-		}
+		String simpleID = EnvironmentUtil.simplefyID(agent.getComponentId());
+		// UT2004BotController controller = agent.getController();
+		// try {
+		// registerEntity(simpleID, "bot", controller,
+		// createActionHandler(controller),
+		// createPerceptHandler(controller));
+		// } catch (EntityException e) {
+		// agent.stop();
+		//
+		// throw new ManagementException("Unable to register entity", e);
+		// }
 
 		// 6. Add bot dead listeners
 		agentDownListeners
@@ -351,6 +353,20 @@ public abstract class AbstractUnrealEnvironment extends
 
 		// 8. Everything aokay
 	}
+
+	/**
+	 * This method should wait for the percepts to become available (using the
+	 * PerceptHandler in the controller) and then register the entity to EIS.
+	 * The entity should get the type "bot", and use
+	 * EnvironmentUtil.simplefyID(agent.getComponentId()) to get the entity
+	 * name.
+	 * 
+	 * @param agent
+	 * @throws ManagementException
+	 */
+	protected abstract void registerNewBotEntity(
+			UT2004Bot<IVisionWorldView, IAct, UT2004BotController> agent)
+			throws ManagementException;
 
 	protected abstract UTBotRunner<UT2004Bot<IVisionWorldView, IAct, UT2004BotController>, UT2004BotParameters> getBotRunner(
 			Configuration configuration);
