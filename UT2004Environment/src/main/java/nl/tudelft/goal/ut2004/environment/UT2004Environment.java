@@ -76,10 +76,8 @@ import cz.cuni.amis.pogamut.ut2004.utils.UT2004BotRunner;
 import cz.cuni.amis.pogamut.ut2004.utils.UT2004ServerRunner;
 import cz.cuni.amis.pogamut.ut2004.utils.UTBotRunner;
 import cz.cuni.amis.utils.flag.FlagListener;
-import eis.eis2java.handlers.ActionHandler;
 import eis.eis2java.handlers.AllPerceptPerceptHandler;
 import eis.eis2java.handlers.DefaultActionHandler;
-import eis.eis2java.handlers.PerceptHandler;
 import eis.eis2java.translation.Translator;
 import eis.eis2java.util.AllPerceptsProvider;
 import eis.exceptions.EntityException;
@@ -246,8 +244,9 @@ public class UT2004Environment extends AbstractUnrealEnvironment {
 						System.out.println("Registering the new entity");
 						try {
 							registerEntity(simpleID, "bot", controller,
-									createActionHandler(controller),
-									createPerceptHandler(controller));
+									new DefaultActionHandler(controller),
+									new AllPerceptPerceptHandler(
+											(AllPerceptsProvider) controller));
 						} catch (EntityException e) {
 							agent.stop();
 							System.out.println("Unable to register entity");
@@ -257,23 +256,6 @@ public class UT2004Environment extends AbstractUnrealEnvironment {
 					}
 				});
 
-	}
-
-	@Override
-	protected PerceptHandler createPerceptHandler(
-			@SuppressWarnings("rawtypes") UT2004BotController controller)
-			throws EntityException {
-		if (!(controller instanceof AllPerceptsProvider))
-			throw new EntityException("Expected a class that implements "
-					+ AllPerceptsProvider.class.getSimpleName());
-		return new AllPerceptPerceptHandler((AllPerceptsProvider) controller);
-	}
-
-	@Override
-	protected ActionHandler createActionHandler(
-			@SuppressWarnings("rawtypes") UT2004BotController controller)
-			throws EntityException {
-		return new DefaultActionHandler(controller);
 	}
 
 	@Override

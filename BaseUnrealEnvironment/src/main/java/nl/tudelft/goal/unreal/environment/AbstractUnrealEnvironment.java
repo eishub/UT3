@@ -373,12 +373,6 @@ public abstract class AbstractUnrealEnvironment extends
 
 	protected abstract Class<? extends IUT2004BotController> getControlerClass();
 
-	protected abstract PerceptHandler createPerceptHandler(
-			UT2004BotController controller) throws EntityException;
-
-	protected abstract ActionHandler createActionHandler(
-			UT2004BotController controller) throws EntityException;
-
 	protected void startEnvironment() throws ManagementException {
 		utServer.getAct().act(new Pause(false, false));
 	}
