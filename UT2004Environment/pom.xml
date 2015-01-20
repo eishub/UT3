@@ -2,8 +2,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<!-- <parent> <groupId>cz.cuni.amis.pogamut.ut2004</groupId> <artifactId>pogamut-ut2004-pom</artifactId> 
-		<version>3.5.4-SNAPSHOT</version> </parent> -->
+
 	<groupId>nl.tudelft.goal</groupId>
 	<artifactId>goal-ut2004-environment</artifactId>
 	<name>goal-ut2004-environment</name>
@@ -14,12 +13,12 @@
 		<dependency>
 			<groupId>nl.tudelft.goal</groupId>
 			<artifactId>goal-base-unreal-environment</artifactId>
-			<version>3.5.4-SNAPSHOT</version>
+			<version>3.5.5-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>nl.tudelft.goal</groupId>
 			<artifactId>goal-ut2004-environment-util</artifactId>
-			<version>3.5.4-SNAPSHOT</version>
+			<version>3.5.5-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>nl.tudelft.pogamut</groupId>
@@ -42,8 +41,7 @@
 		<dependency>
 			<groupId>nl.tudelft.goal</groupId>
 			<artifactId>goal-ut-visualizer-connection</artifactId>
-			<version>3.5.4-SNAPSHOT</version>
-
+			<version>3.5.5-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>

@@ -2,15 +2,9 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<parent>
-		<groupId>cz.cuni.amis.pogamut.ut2004</groupId>
-		<artifactId>pogamut-ut2004-pom</artifactId>
-		<version>3.5.4-SNAPSHOT</version>
-		<relativePath>/../../Poms/PogamutUT2004Pom/pom.xml</relativePath>
-	</parent>
-
 	<groupId>nl.tudelft.goal</groupId>
 	<artifactId>goal-base-unreal-environment</artifactId>
+	<version>3.5.5-SNAPSHOT</version>
 
 	<name>goal-base-unreal-environment</name>
 	<description>Base environment for Unreal Tournament</description>
@@ -24,7 +18,7 @@
 		<dependency>
 			<groupId>nl.tudelft.goal</groupId>
 			<artifactId>goal-ut2004-environment-util</artifactId>
-			<version>3.5.4-SNAPSHOT</version>
+			<version>3.5.5-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>eishub</groupId>
@@ -32,17 +26,22 @@
 			<version>0.5.0</version>
 		</dependency>
 
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.12</version>
+		</dependency>
 
 		<dependency>
 			<groupId>nl.tudelft.pogamut</groupId>
 			<artifactId>goal-unreal-server-connection</artifactId>
-			<version>3.5.4-SNAPSHOT</version>
+			<version>3.5.5-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>
 			<groupId>nl.tudelft.goal</groupId>
 			<artifactId>goal-ut2004-environment-util</artifactId>
-			<version>3.5.4-SNAPSHOT</version>
+			<version>3.5.5-SNAPSHOT</version>
 		</dependency>
 
 	</dependencies>

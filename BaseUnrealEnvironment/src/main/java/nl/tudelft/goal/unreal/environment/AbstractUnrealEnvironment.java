@@ -329,16 +329,6 @@ public abstract class AbstractUnrealEnvironment extends
 		registerNewBotEntity(agent);
 
 		String simpleID = EnvironmentUtil.simplefyID(agent.getComponentId());
-		// UT2004BotController controller = agent.getController();
-		// try {
-		// registerEntity(simpleID, "bot", controller,
-		// createActionHandler(controller),
-		// createPerceptHandler(controller));
-		// } catch (EntityException e) {
-		// agent.stop();
-		//
-		// throw new ManagementException("Unable to register entity", e);
-		// }
 
 		// 6. Add bot dead listeners
 		agentDownListeners
