@@ -2,16 +2,11 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<parent>
-		<groupId>cz.cuni.amis.pogamut.ut3</groupId>
-		<artifactId>pogamut-ut3-pom</artifactId>
-		<version>3.5.4-SNAPSHOT</version>
-		<relativePath>../../Poms/PogamutUT3Pom/pom.xml</relativePath>
-	</parent>
 
 	<groupId>nl.tudelft.goal</groupId>
 	<artifactId>goal-ut3-environment</artifactId>
 	<name>goal-ut3-environment</name>
+	<version>3.5.5-SNAPSHOT</version>
 
 	<dependencies>
 		<dependency>
@@ -28,7 +23,7 @@
 		<dependency>
 			<groupId>nl.tudelft.goal</groupId>
 			<artifactId>goal-base-unreal-environment</artifactId>
-			<version>3.5.4-SNAPSHOT</version>
+			<version>3.5.5-SNAPSHOT</version>
 			<exclusions>
 				<exclusion>
 					<artifactId>pogamut-ut2004</artifactId>
@@ -39,7 +34,7 @@
 		<dependency>
 			<groupId>nl.tudelft.goal</groupId>
 			<artifactId>goal-ut2004-environment-util</artifactId>
-			<version>3.5.4-SNAPSHOT</version>
+			<version>3.5.5-SNAPSHOT</version>
 			<exclusions>
 				<exclusion>
 					<artifactId>pogamut-ut2004</artifactId>
@@ -59,20 +54,16 @@
 			</exclusions>
 		</dependency>
 
-
 		<dependency>
 			<groupId>eishub</groupId>
 			<artifactId>eis</artifactId>
 			<version>0.5.0</version>
 		</dependency>
 
-
-
-
 		<dependency>
 			<groupId>nl.tudelft.goal</groupId>
 			<artifactId>goal-unreal-visualizer</artifactId>
-			<version>3.5.4-SNAPSHOT</version>
+			<version>3.5.5-SNAPSHOT</version>
 			<scope>test</scope>
 			<type>jar</type>
 			<exclusions>
@@ -84,8 +75,8 @@
 		</dependency>
 		<dependency>
 			<groupId>nl.tudelft.goal</groupId>
-			<artifactId>goal-ut2004-visualizer-connection</artifactId>
-			<version>3.5.4-SNAPSHOT</version>
+			<artifactId>goal-ut-visualizer-connection</artifactId>
+			<version>3.5.5-SNAPSHOT</version>
 			<type>jar</type>
 			<exclusions>
 				<exclusion>
@@ -118,27 +109,44 @@
 			<id>eishub-mvn-repo</id>
 			<url>https://raw.github.com/eishub/mvn-repo/master</url>
 		</repository>
-
 	</repositories>
 
 	<properties>
-		<environment.main.class>nl.tudelft.goal.ut3.environment.UT3Environment</environment.main.class>
+		<environment.main.class>nl.tudelft.goal.ut2004.environment.UT2004Environment</environment.main.class>
 	</properties>
 
 	<build>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.16</version>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.0.2</version>
 				<configuration>
-					<argLine>-Xms512m -Xmx1024m</argLine>
+					<source>1.7</source>
+					<target>1.7</target>
 				</configuration>
 			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.5</version>
+				<configuration>
+					<archive>
+						<manifest>
+							<addClasspath>true</addClasspath>
+							<mainClass>${environment.main.class}</mainClass>
+						</manifest>
+					</archive>
+				</configuration>
+			</plugin>
+
 
 			<!-- Creates a jar with all its dependencies (the environment) -->
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.5.3</version>
+
 				<configuration>
 					<descriptorRefs>
 						<descriptorRef>jar-with-dependencies</descriptorRef>
@@ -156,6 +164,11 @@
 						<goals>
 							<goal>attached</goal> <!-- goals == mojos -->
 						</goals>
+					</execution>
+					<execution>
+						<id>default-jar</id>
+						<!-- Default is useless. Put in none phase to skip it from being created -->
+						<phase>none</phase>
 					</execution>
 				</executions>
 			</plugin>

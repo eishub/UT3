@@ -45,10 +45,10 @@ event module {
 
 		% DO NOT REMOVE OR MODIFY any of the percept rules below!
 		% We use these to keep track of weapons picked up and the level of armour.	
-		%forall bel( percept(weapon(Weapon,_,_)) ) do {
-		%	if bel( pickedupWeapons(PUW), not(member(Weapon, PUW)) ) 
-		%		then insert( not(pickedupWeapons(PUW)), pickedupWeapons([Weapon|PUW]) ).
-		%}
+		forall bel( percept(weapon(Weapon,_,_)) ) do {
+			if bel( pickedupWeapons(PUW), not(member(Weapon, PUW)) ) 
+				then insert( not(pickedupWeapons(PUW)), pickedupWeapons([Weapon|PUW]) ).
+		}
 		% Next rule keeps track of the maximum level of armour achieved.
 		forall bel( percept(status(_,Armour,_,_)), maxLevelOfArmour(LastMaxArmour), Armour > LastMaxArmour )
 			do delete( maxLevelOfArmour(LastMaxArmour) ) + insert( maxLevelOfArmour(Armour) ).

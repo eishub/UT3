@@ -2,18 +2,13 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<parent>
-		<groupId>cz.cuni.amis.pogamut.ut2004</groupId>
-		<artifactId>pogamut-ut2004-pom</artifactId>
-		<version>3.5.4-SNAPSHOT</version>
-		<relativePath>../../Poms/PogamutUT2004Pom/pom.xml</relativePath>
-	</parent>
 
 	<groupId>nl.tudelft.goal</groupId>
 	<artifactId>goal-unreal-visualizer-frame</artifactId>
 	<name>UTVisualizerFrame</name>
+	<version>3.5.5-SNAPSHOT</version>
 
-	<description>A OpenGL frame to visualize Unreal Tournament.</description>
+	<description>An OpenGL frame to visualize Unreal Tournament.</description>
 
 	<dependencies>
 		<dependency>
@@ -25,7 +20,7 @@
 		<dependency>
 			<groupId>nl.tudelft.pogamut</groupId>
 			<artifactId>goal-unreal-server-connection</artifactId>
-			<version>3.5.4-SNAPSHOT</version>
+			<version>3.5.5-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>
@@ -45,13 +40,8 @@
 	<repositories>
 		<!-- Eventually, the jogamp artifacts will be pushed to the Central Repository 
 			and this repository will become unnecessary. For more info see: https://jogamp.org/wiki/index.php/Setting_up_a_JogAmp_project_in_your_favorite_IDE#Maven 
-		<repository>
-			<id>jogamp-remote</id>
-			<name>jogamp test mirror</name>
-			<url>http://www.jogamp.org/deployment/maven/</url>
-			<layout>default</layout>
-		</repository>
--->
+			<repository> <id>jogamp-remote</id> <name>jogamp test mirror</name> <url>http://www.jogamp.org/deployment/maven/</url> 
+			<layout>default</layout> </repository> -->
 		<repository>
 			<id>amis-artifactory</id>
 			<name>AMIS Artifactory</name>
