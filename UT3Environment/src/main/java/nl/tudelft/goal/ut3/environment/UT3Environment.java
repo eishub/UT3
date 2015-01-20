@@ -26,6 +26,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import nl.tudelft.goal.unreal.environment.AbstractUnrealEnvironment;
+import nl.tudelft.goal.unreal.environment.MyAllPerceptsProvider;
+import nl.tudelft.goal.unreal.environment.PerceptsReadyListener;
 import nl.tudelft.goal.unreal.messages.BotParameters;
 import nl.tudelft.goal.unreal.messages.Configuration;
 import nl.tudelft.goal.unreal.translators.LocationTranslator;
@@ -33,10 +35,10 @@ import nl.tudelft.goal.unreal.translators.NoneTranslator;
 import nl.tudelft.goal.unreal.translators.PerceptTranslator;
 import nl.tudelft.goal.unreal.translators.RotationTranslator;
 import nl.tudelft.goal.unreal.translators.TeamTranslator;
+import nl.tudelft.goal.unreal.translators.UnrealIdOrLocationTranslator;
 import nl.tudelft.goal.unreal.translators.UnrealIdTranslator;
 import nl.tudelft.goal.unreal.translators.VelocityTranslator;
-import nl.tudelft.goal.ut3.translators.GroupTranslator;
-import nl.tudelft.goal.ut3.translators.ItemTypeTranslator;
+import nl.tudelft.goal.unreal.util.EnvironmentUtil;
 import nl.tudelft.goal.ut2004.visualizer.connection.AddBotCommand;
 import nl.tudelft.goal.ut2004.visualizer.connection.EnvironmentServiceListener;
 import nl.tudelft.goal.ut2004.visualizer.connection.EnvironmentServiceMediator;
@@ -47,12 +49,13 @@ import nl.tudelft.goal.ut3.translators.CategoryTranslator;
 import nl.tudelft.goal.ut3.translators.FireModeTranslator;
 import nl.tudelft.goal.ut3.translators.FlagStateTranslator;
 import nl.tudelft.goal.ut3.translators.GameTypeTranslator;
+import nl.tudelft.goal.ut3.translators.GroupTranslator;
+import nl.tudelft.goal.ut3.translators.ItemTypeTranslator;
 import nl.tudelft.goal.ut3.translators.NavigationStateTranslator;
 import nl.tudelft.goal.ut3.translators.SelectorListTranslator;
 import nl.tudelft.goal.ut3.translators.SelectorTranslator;
 import nl.tudelft.goal.ut3.translators.UT3GroupTranslator;
 import nl.tudelft.goal.ut3.translators.UT3ItemTypeTranslator;
-import nl.tudelft.goal.unreal.translators.UnrealIdOrLocationTranslator;
 import nl.tudelft.goal.ut3.translators.WeaponPrefListTranslator;
 import nl.tudelft.goal.ut3.translators.WeaponPrefTranslator;
 import nl.tudelft.goal.ut3.visualizer.connection.client.RemoteVisualizer;
@@ -67,15 +70,12 @@ import cz.cuni.amis.pogamut.ut2004.bot.params.UT2004BotParameters;
 import cz.cuni.amis.pogamut.ut2004.factory.guice.remoteagent.UT2004ServerFactory;
 import cz.cuni.amis.pogamut.ut2004.factory.guice.remoteagent.UT2004ServerModule;
 import cz.cuni.amis.pogamut.ut2004.server.IUT2004Server;
-import cz.cuni.amis.pogamut.ut2004.utils.UT2004BotRunner;
 import cz.cuni.amis.pogamut.ut2004.utils.UT2004ServerRunner;
 import cz.cuni.amis.pogamut.ut2004.utils.UTBotRunner;
 import cz.cuni.amis.utils.flag.FlagListener;
 import cz.cuniz.amis.pogamut.ut3.utils.UT3BotRunner;
-import eis.eis2java.handlers.ActionHandler;
 import eis.eis2java.handlers.AllPerceptPerceptHandler;
 import eis.eis2java.handlers.DefaultActionHandler;
-import eis.eis2java.handlers.PerceptHandler;
 import eis.eis2java.translation.Translator;
 import eis.eis2java.util.AllPerceptsProvider;
 import eis.exceptions.EntityException;
@@ -132,10 +132,12 @@ public class UT3Environment extends AbstractUnrealEnvironment {
 		UnrealIdTranslator unrealIdTranslator = new UnrealIdTranslator();
 		translator.registerJava2ParameterTranslator(unrealIdTranslator);
 		translator.registerParameter2JavaTranslator(unrealIdTranslator);
-		
+
 		UnrealIdOrLocationTranslator unrealIdOrLocationTranslator = new UnrealIdOrLocationTranslator();
-		translator.registerParameter2JavaTranslator(unrealIdOrLocationTranslator);
-		translator.registerJava2ParameterTranslator(unrealIdOrLocationTranslator);
+		translator
+				.registerParameter2JavaTranslator(unrealIdOrLocationTranslator);
+		translator
+				.registerJava2ParameterTranslator(unrealIdOrLocationTranslator);
 
 		VelocityTranslator velocityTranslator = new VelocityTranslator();
 		translator.registerJava2ParameterTranslator(velocityTranslator);
@@ -163,7 +165,7 @@ public class UT3Environment extends AbstractUnrealEnvironment {
 		GroupTranslator groupTranslator = new GroupTranslator();
 		translator.registerJava2ParameterTranslator(groupTranslator);
 		translator.registerParameter2JavaTranslator(groupTranslator);
-		
+
 		ItemTypeTranslator itemTypeTranslator = new ItemTypeTranslator();
 		translator.registerJava2ParameterTranslator(itemTypeTranslator);
 		translator.registerParameter2JavaTranslator(itemTypeTranslator);
@@ -204,7 +206,7 @@ public class UT3Environment extends AbstractUnrealEnvironment {
 	protected Class<UT3BotBehavior> getControlerClass() {
 		return UT3BotBehavior.class;
 	}
-	
+
 	protected UTBotRunner<UT2004Bot<IVisionWorldView, IAct, UT2004BotController>, UT2004BotParameters> getBotRunner(
 			Configuration configuration) {
 		UT3BotRunner<UT2004Bot<IVisionWorldView, IAct, UT2004BotController>, UT2004BotParameters> runner = new UT3BotRunner<UT2004Bot<IVisionWorldView, IAct, UT2004BotController>, UT2004BotParameters>(
@@ -215,20 +217,37 @@ public class UT3Environment extends AbstractUnrealEnvironment {
 	}
 
 	@Override
-	protected PerceptHandler createPerceptHandler(
-			@SuppressWarnings("rawtypes") UT2004BotController controller)
-			throws EntityException {
-		if (!(controller instanceof AllPerceptsProvider))
-			throw new EntityException("Expected a class that implements "
-					+ AllPerceptsProvider.class.getSimpleName());
-		return new AllPerceptPerceptHandler((AllPerceptsProvider) controller);
-	}
+	protected void registerNewBotEntity(
+			final UT2004Bot<IVisionWorldView, IAct, UT2004BotController> agent)
+			throws ManagementException {
+		final String simpleID = EnvironmentUtil.simplefyID(agent
+				.getComponentId());
+		final UT2004BotController controller = agent.getController();
+		if (!(controller instanceof MyAllPerceptsProvider)) {
+			throw new ManagementException(
+					"Expected a controller that implements "
+							+ MyAllPerceptsProvider.class.getSimpleName());
+		}
 
-	@Override
-	protected ActionHandler createActionHandler(
-			@SuppressWarnings("rawtypes") UT2004BotController controller)
-			throws EntityException {
-		return new DefaultActionHandler(controller);
+		((MyAllPerceptsProvider) controller)
+				.setPerceptsReadyListener(new PerceptsReadyListener() {
+					@Override
+					public void notifyPerceptsReady() {
+						System.out.println("Registering the new entity");
+						try {
+							registerEntity(simpleID, "bot", controller,
+									new DefaultActionHandler(controller),
+									new AllPerceptPerceptHandler(
+											(AllPerceptsProvider) controller));
+						} catch (EntityException e) {
+							agent.stop();
+							System.out.println("Unable to register entity");
+							e.printStackTrace();
+						}
+
+					}
+				});
+
 	}
 
 	@Override

@@ -1,4 +1,4 @@
-package nl.tudelft.goal.ut2004.agent;
+package nl.tudelft.goal.unreal.environment;
 
 /**
  * Callback when percepts of {@link MyAllPerceptsProvider} are ready to be used.

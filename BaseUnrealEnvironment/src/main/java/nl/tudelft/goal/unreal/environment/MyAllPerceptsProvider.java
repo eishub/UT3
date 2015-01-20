@@ -1,4 +1,4 @@
-package nl.tudelft.goal.ut2004.agent;
+package nl.tudelft.goal.unreal.environment;
 
 import eis.eis2java.util.AllPerceptsProvider;
 

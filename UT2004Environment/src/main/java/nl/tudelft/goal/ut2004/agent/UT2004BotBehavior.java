@@ -30,6 +30,8 @@ import java.util.logging.Level;
 
 import nl.tudelft.goal.unreal.actions.Action;
 import nl.tudelft.goal.unreal.actions.ActionQueue;
+import nl.tudelft.goal.unreal.environment.MyAllPerceptsProvider;
+import nl.tudelft.goal.unreal.environment.PerceptsReadyListener;
 import nl.tudelft.goal.unreal.floydwarshall.SharedFloydWarshallMap;
 import nl.tudelft.goal.unreal.messages.BotParameters;
 import nl.tudelft.goal.unreal.messages.None;

@@ -26,6 +26,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import nl.tudelft.goal.unreal.environment.AbstractUnrealEnvironment;
+import nl.tudelft.goal.unreal.environment.MyAllPerceptsProvider;
+import nl.tudelft.goal.unreal.environment.PerceptsReadyListener;
 import nl.tudelft.goal.unreal.messages.BotParameters;
 import nl.tudelft.goal.unreal.messages.Configuration;
 import nl.tudelft.goal.unreal.translators.LocationTranslator;
@@ -37,8 +39,6 @@ import nl.tudelft.goal.unreal.translators.UnrealIdOrLocationTranslator;
 import nl.tudelft.goal.unreal.translators.UnrealIdTranslator;
 import nl.tudelft.goal.unreal.translators.VelocityTranslator;
 import nl.tudelft.goal.unreal.util.EnvironmentUtil;
-import nl.tudelft.goal.ut2004.agent.MyAllPerceptsProvider;
-import nl.tudelft.goal.ut2004.agent.PerceptsReadyListener;
 import nl.tudelft.goal.ut2004.agent.UT2004BotBehavior;
 import nl.tudelft.goal.ut2004.server.EnvironmentControllerServer;
 import nl.tudelft.goal.ut2004.server.EnvironmentControllerServerModule;
