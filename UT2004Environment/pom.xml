@@ -82,7 +82,7 @@
 					<target>1.7</target>
 				</configuration>
 			</plugin>
-			
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
@@ -120,6 +120,11 @@
 						<goals>
 							<goal>attached</goal> <!-- goals == mojos -->
 						</goals>
+					</execution>
+					<execution>
+						<id>default-jar</id>
+						<!-- Default is useless. Put in none phase to skip it from being created -->
+						<phase>none</phase>
 					</execution>
 				</executions>
 			</plugin>

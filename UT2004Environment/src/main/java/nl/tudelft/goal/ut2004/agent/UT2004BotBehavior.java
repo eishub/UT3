@@ -30,6 +30,7 @@ import java.util.logging.Level;
 
 import nl.tudelft.goal.unreal.actions.Action;
 import nl.tudelft.goal.unreal.actions.ActionQueue;
+import nl.tudelft.goal.unreal.floydwarshall.SharedFloydWarshallMap;
 import nl.tudelft.goal.unreal.messages.BotParameters;
 import nl.tudelft.goal.unreal.messages.None;
 import nl.tudelft.goal.unreal.messages.Parameters;
@@ -44,7 +45,6 @@ import nl.tudelft.goal.ut2004.actions.Prefer;
 import nl.tudelft.goal.ut2004.actions.Respawn;
 import nl.tudelft.goal.ut2004.actions.Shoot;
 import nl.tudelft.goal.ut2004.actions.Stop;
-import nl.tudelft.goal.unreal.floydwarshall.SharedFloydWarshallMap;
 import nl.tudelft.goal.ut2004.messages.Combo;
 import nl.tudelft.goal.ut2004.messages.FireMode;
 import nl.tudelft.goal.ut2004.messages.FlagState;
@@ -90,7 +90,6 @@ import cz.cuni.amis.pogamut.ut2004.agent.navigation.stuckdetector.UT2004TimeStuc
 import cz.cuni.amis.pogamut.ut2004.agent.params.UT2004AgentParameters;
 import cz.cuni.amis.pogamut.ut2004.bot.impl.UT2004Bot;
 import cz.cuni.amis.pogamut.ut2004.bot.impl.UT2004BotModuleController;
-import cz.cuni.amis.pogamut.ut2004.communication.messages.ItemType;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.UT2004ItemType;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbcommands.GetPath;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbcommands.Initialize;
@@ -107,13 +106,12 @@ import eis.eis2java.annotation.AsAction;
 import eis.eis2java.annotation.AsPercept;
 import eis.eis2java.translation.Filter.Type;
 import eis.eis2java.util.AllPerceptsModule;
-import eis.eis2java.util.AllPerceptsProvider;
 import eis.exceptions.EntityException;
 import eis.exceptions.PerceiveException;
 
 @SuppressWarnings("rawtypes")
 public class UT2004BotBehavior extends UT2004BotModuleController<UT2004Bot>
-		implements AllPerceptsProvider {
+		implements MyAllPerceptsProvider {
 
 	protected List<ContextSelector> targetSelector = new ArrayList<ContextSelector>();
 	protected List<ContextSelector> lookSelector = new ArrayList<ContextSelector>();
@@ -143,8 +141,15 @@ public class UT2004BotBehavior extends UT2004BotModuleController<UT2004Bot>
 	 */
 	private ActionQueue actions = new ActionQueue(ACTION_QUEUE_SIZE);
 
-	protected long logicIteration;
+	private long logicIteration = 0;
 	protected long actionCount;
+
+	PerceptsReadyListener listener = null;
+
+	@Override
+	public void setPerceptsReadyListener(PerceptsReadyListener l) {
+		listener = l;
+	}
 
 	@Override
 	public void initializeController(UT2004Bot bot) {
@@ -235,10 +240,10 @@ public class UT2004BotBehavior extends UT2004BotModuleController<UT2004Bot>
 	protected void initializePathFinding(UT2004Bot bot) {
 		pathPlanner = new UT2004AStarPathPlanner(bot);
 		sfwMap = new SharedFloydWarshallMap(bot);
-		pathExecutor = new UT2004PathExecutor<ILocated>(
-        		bot, info,move, new LoqueNavigator<ILocated>(bot, info,move,bot.getLog()),
-                        bot.getLog());
-                
+		pathExecutor = new UT2004PathExecutor<ILocated>(bot, info, move,
+				new LoqueNavigator<ILocated>(bot, info, move, bot.getLog()),
+				bot.getLog());
+
 		// add stuck detectors that watch over the path-following, if it
 		// (heuristicly) finds out that the bot has stuck somewhere,
 		// it reports an appropriate path event and the path executor will stop
@@ -409,6 +414,11 @@ public class UT2004BotBehavior extends UT2004BotModuleController<UT2004Bot>
 			percepts.updatePercepts();
 		} catch (PerceiveException e) {
 			throw new PogamutException("Could not update percepts", e);
+		}
+
+		// 6. notify that percepts are ready (if this is first round).
+		if (logicIteration == 1) {
+			listener.notifyPerceptsReady();
 		}
 
 	}
@@ -1715,4 +1725,5 @@ public class UT2004BotBehavior extends UT2004BotModuleController<UT2004Bot>
 		return new Percept(info.hasUDamage() ? info.getRemainingUDamageTime()
 				: 0);
 	}
+
 }

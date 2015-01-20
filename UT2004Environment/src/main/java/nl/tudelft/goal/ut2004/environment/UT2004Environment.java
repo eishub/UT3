@@ -28,8 +28,6 @@ import java.util.Map;
 import nl.tudelft.goal.unreal.environment.AbstractUnrealEnvironment;
 import nl.tudelft.goal.unreal.messages.BotParameters;
 import nl.tudelft.goal.unreal.messages.Configuration;
-import nl.tudelft.goal.ut2004.server.EnvironmentControllerServer;
-import nl.tudelft.goal.ut2004.server.EnvironmentControllerServerModule;
 import nl.tudelft.goal.unreal.translators.LocationTranslator;
 import nl.tudelft.goal.unreal.translators.NoneTranslator;
 import nl.tudelft.goal.unreal.translators.PerceptTranslator;
@@ -38,18 +36,24 @@ import nl.tudelft.goal.unreal.translators.TeamTranslator;
 import nl.tudelft.goal.unreal.translators.UnrealIdOrLocationTranslator;
 import nl.tudelft.goal.unreal.translators.UnrealIdTranslator;
 import nl.tudelft.goal.unreal.translators.VelocityTranslator;
+import nl.tudelft.goal.unreal.util.EnvironmentUtil;
+import nl.tudelft.goal.ut2004.agent.MyAllPerceptsProvider;
+import nl.tudelft.goal.ut2004.agent.PerceptsReadyListener;
 import nl.tudelft.goal.ut2004.agent.UT2004BotBehavior;
+import nl.tudelft.goal.ut2004.server.EnvironmentControllerServer;
+import nl.tudelft.goal.ut2004.server.EnvironmentControllerServerModule;
 import nl.tudelft.goal.ut2004.translators.CategoryTranslator;
 import nl.tudelft.goal.ut2004.translators.ComboTranslator;
 import nl.tudelft.goal.ut2004.translators.FireModeTranslator;
 import nl.tudelft.goal.ut2004.translators.FlagStateTranslator;
 import nl.tudelft.goal.ut2004.translators.GameTypeTranslator;
 import nl.tudelft.goal.ut2004.translators.GroupTranslator;
-import nl.tudelft.goal.ut2004.translators.UT2004GroupTranslator;
 import nl.tudelft.goal.ut2004.translators.ItemTypeTranslator;
 import nl.tudelft.goal.ut2004.translators.NavigationStateTranslator;
+import nl.tudelft.goal.ut2004.translators.ScopeTranslator;
 import nl.tudelft.goal.ut2004.translators.SelectorListTranslator;
 import nl.tudelft.goal.ut2004.translators.SelectorTranslator;
+import nl.tudelft.goal.ut2004.translators.UT2004GroupTranslator;
 import nl.tudelft.goal.ut2004.translators.UT2004ItemTypeTranslator;
 import nl.tudelft.goal.ut2004.translators.WeaponPrefListTranslator;
 import nl.tudelft.goal.ut2004.translators.WeaponPrefTranslator;
@@ -83,7 +87,6 @@ import eis.exceptions.ManagementException;
 import eis.iilang.Identifier;
 import eis.iilang.Parameter;
 import eis.iilang.ParameterList;
-import nl.tudelft.goal.ut2004.translators.ScopeTranslator;
 
 public class UT2004Environment extends AbstractUnrealEnvironment {
 
@@ -97,7 +100,7 @@ public class UT2004Environment extends AbstractUnrealEnvironment {
 
 	@Override
 	protected void registerTranslators() {
-		
+
 		Translator translator = Translator.getInstance();
 		/*
 		 * To translate from Parameter2Java we are given an UnrealId. However we
@@ -105,7 +108,7 @@ public class UT2004Environment extends AbstractUnrealEnvironment {
 		 * this we store everything we have send to any agent. Hence the same
 		 * object has to be used for both directions.
 		 */
-		
+
 		/*
 		 * Translators provided by the BaseUnrealEnvironment.
 		 * 
@@ -115,7 +118,7 @@ public class UT2004Environment extends AbstractUnrealEnvironment {
 		LocationTranslator locationTranslator = new LocationTranslator();
 		translator.registerJava2ParameterTranslator(locationTranslator);
 		translator.registerParameter2JavaTranslator(locationTranslator);
-		
+
 		NoneTranslator noneTranslator = new NoneTranslator();
 		translator.registerJava2ParameterTranslator(noneTranslator);
 
@@ -133,10 +136,12 @@ public class UT2004Environment extends AbstractUnrealEnvironment {
 		UnrealIdTranslator unrealIdTranslator = new UnrealIdTranslator();
 		translator.registerJava2ParameterTranslator(unrealIdTranslator);
 		translator.registerParameter2JavaTranslator(unrealIdTranslator);
-		
+
 		UnrealIdOrLocationTranslator unrealIdOrLocationTranslator = new UnrealIdOrLocationTranslator();
-		translator.registerParameter2JavaTranslator(unrealIdOrLocationTranslator);
-		translator.registerJava2ParameterTranslator(unrealIdOrLocationTranslator);
+		translator
+				.registerParameter2JavaTranslator(unrealIdOrLocationTranslator);
+		translator
+				.registerJava2ParameterTranslator(unrealIdOrLocationTranslator);
 
 		VelocityTranslator velocityTranslator = new VelocityTranslator();
 		translator.registerJava2ParameterTranslator(velocityTranslator);
@@ -163,7 +168,7 @@ public class UT2004Environment extends AbstractUnrealEnvironment {
 
 		GameTypeTranslator gameTypeTranslator = new GameTypeTranslator();
 		translator.registerJava2ParameterTranslator(gameTypeTranslator);
-		
+
 		GroupTranslator groupTranslator = new GroupTranslator();
 		translator.registerJava2ParameterTranslator(groupTranslator);
 		translator.registerParameter2JavaTranslator(groupTranslator);
@@ -184,27 +189,25 @@ public class UT2004Environment extends AbstractUnrealEnvironment {
 		UT2004GroupTranslator ut2004GroupTranslator = new UT2004GroupTranslator();
 		translator.registerJava2ParameterTranslator(ut2004GroupTranslator);
 		translator.registerParameter2JavaTranslator(ut2004GroupTranslator);
-		
+
 		UT2004ItemTypeTranslator ut2004ItemTypeTranslator = new UT2004ItemTypeTranslator();
 		translator.registerJava2ParameterTranslator(ut2004ItemTypeTranslator);
 		translator.registerParameter2JavaTranslator(ut2004ItemTypeTranslator);
-		
+
 		WeaponPrefListTranslator weaponPrefListTranslator = new WeaponPrefListTranslator();
 		translator.registerParameter2JavaTranslator(weaponPrefListTranslator);
 
 		WeaponPrefTranslator weaponPrefTranslator = new WeaponPrefTranslator();
 		translator.registerParameter2JavaTranslator(weaponPrefTranslator);
-                
-        ScopeTranslator scopeTranslator = new ScopeTranslator();
-        translator.registerParameter2JavaTranslator(scopeTranslator);
+
+		ScopeTranslator scopeTranslator = new ScopeTranslator();
+		translator.registerParameter2JavaTranslator(scopeTranslator);
 	}
 
 	public static void main(String[] args) throws ManagementException {
 		HashMap<String, Parameter> map = new HashMap<String, Parameter>();
 		map.put("botNames", new ParameterList(new Identifier("Test")));
 
-		
-		
 		new UT2004Environment().init(map);
 
 	}
@@ -213,7 +216,7 @@ public class UT2004Environment extends AbstractUnrealEnvironment {
 	protected Class<UT2004BotBehavior> getControlerClass() {
 		return UT2004BotBehavior.class;
 	}
-	
+
 	protected UTBotRunner<UT2004Bot<IVisionWorldView, IAct, UT2004BotController>, UT2004BotParameters> getBotRunner(
 			Configuration configuration) {
 		UT2004BotRunner<UT2004Bot<IVisionWorldView, IAct, UT2004BotController>, UT2004BotParameters> runner = new UT2004BotRunner<UT2004Bot<IVisionWorldView, IAct, UT2004BotController>, UT2004BotParameters>(
@@ -224,33 +227,78 @@ public class UT2004Environment extends AbstractUnrealEnvironment {
 	}
 
 	@Override
-	protected PerceptHandler createPerceptHandler(@SuppressWarnings("rawtypes") UT2004BotController controller) throws EntityException {
+	protected void registerNewBotEntity(
+			final UT2004Bot<IVisionWorldView, IAct, UT2004BotController> agent)
+			throws ManagementException {
+		final String simpleID = EnvironmentUtil.simplefyID(agent
+				.getComponentId());
+		final UT2004BotController controller = agent.getController();
+		if (!(controller instanceof MyAllPerceptsProvider)) {
+			throw new ManagementException(
+					"Expected a controller that implements "
+							+ MyAllPerceptsProvider.class.getSimpleName());
+		}
+
+		((MyAllPerceptsProvider) controller)
+				.setPerceptsReadyListener(new PerceptsReadyListener() {
+					@Override
+					public void notifyPerceptsReady() {
+						System.out.println("Registering the new entity");
+						try {
+							registerEntity(simpleID, "bot", controller,
+									createActionHandler(controller),
+									createPerceptHandler(controller));
+						} catch (EntityException e) {
+							agent.stop();
+							System.out.println("Unable to register entity");
+							e.printStackTrace();
+						}
+
+					}
+				});
+
+	}
+
+	@Override
+	protected PerceptHandler createPerceptHandler(
+			@SuppressWarnings("rawtypes") UT2004BotController controller)
+			throws EntityException {
 		if (!(controller instanceof AllPerceptsProvider))
-			throw new EntityException("Expected a class that implements " + AllPerceptsProvider.class.getSimpleName());
+			throw new EntityException("Expected a class that implements "
+					+ AllPerceptsProvider.class.getSimpleName());
 		return new AllPerceptPerceptHandler((AllPerceptsProvider) controller);
 	}
 
 	@Override
-	protected ActionHandler createActionHandler(@SuppressWarnings("rawtypes") UT2004BotController controller) throws EntityException {
+	protected ActionHandler createActionHandler(
+			@SuppressWarnings("rawtypes") UT2004BotController controller)
+			throws EntityException {
 		return new DefaultActionHandler(controller);
 	}
-	
+
 	@Override
 	protected UT2004ServerRunner<? extends IUT2004Server, ? extends UT2004AgentParameters> createServerRunner() {
 		UT2004ServerModule<UT2004AgentParameters> serverModule = new EnvironmentControllerServerModule<UT2004AgentParameters>();
-		UT2004ServerFactory<EnvironmentControllerServer, UT2004AgentParameters> serverFactory = new UT2004ServerFactory<EnvironmentControllerServer, UT2004AgentParameters>(serverModule);
-		UT2004ServerRunner<EnvironmentControllerServer, UT2004AgentParameters> serverRunner = new UT2004ServerRunner<EnvironmentControllerServer, UT2004AgentParameters>(serverFactory, "UTServer", configuration.getControlServerHost(), configuration.getControlServerPort());
+		UT2004ServerFactory<EnvironmentControllerServer, UT2004AgentParameters> serverFactory = new UT2004ServerFactory<EnvironmentControllerServer, UT2004AgentParameters>(
+				serverModule);
+		UT2004ServerRunner<EnvironmentControllerServer, UT2004AgentParameters> serverRunner = new UT2004ServerRunner<EnvironmentControllerServer, UT2004AgentParameters>(
+				serverFactory, "UTServer",
+				configuration.getControlServerHost(),
+				configuration.getControlServerPort());
 		return serverRunner;
 	}
 
 	@Override
-	protected synchronized void initializeEnvironment(Map<String, Parameter> parameters) throws ManagementException {
+	protected synchronized void initializeEnvironment(
+			Map<String, Parameter> parameters) throws ManagementException {
 		super.initializeEnvironment(parameters);
 
 		// Set up (future) connection to visualizer. Connecting is done later.
 		try {
-			visualizerConnection = new ReconnectingServerDefinition<RemoteVisualizer>(new VisualizerServiceDefinition());
-			visualizerConnection.getServerFlag().addListener(new VisualizerServiceListener());
+			visualizerConnection = new ReconnectingServerDefinition<RemoteVisualizer>(
+					new VisualizerServiceDefinition());
+			visualizerConnection.getServerFlag().addListener(
+					new VisualizerServiceListener());
 		} catch (RemoteException e) {
 			log.severe("Could not start connection to Visualizer: " + e);
 		}
@@ -264,7 +312,8 @@ public class UT2004Environment extends AbstractUnrealEnvironment {
 	 * @author M.P. Korstanje
 	 * 
 	 */
-	private class VisualizerServiceListener implements EnvironmentServiceListener, FlagListener<RemoteVisualizer> {
+	private class VisualizerServiceListener implements
+			EnvironmentServiceListener, FlagListener<RemoteVisualizer> {
 
 		private final EnvironmentServiceMediator mediator;
 
@@ -321,8 +370,9 @@ public class UT2004Environment extends AbstractUnrealEnvironment {
 			}
 
 			// Take connection and other settings from init.
-			// FIXME: Should get the defaults or set the connection parameters too.
-			//parameters.assignDefaults(botParameters);
+			// FIXME: Should get the defaults or set the connection parameters
+			// too.
+			// parameters.assignDefaults(botParameters);
 
 			startAgent(parameters);
 
@@ -337,7 +387,8 @@ public class UT2004Environment extends AbstractUnrealEnvironment {
 		// Connect to visualizer
 		URI visualizerUri = configuration.getVisualizer();
 		if (visualizerUri != null) {
-			log.info("Connecting to visualizer server at " + visualizerUri + " .");
+			log.info("Connecting to visualizer server at " + visualizerUri
+					+ " .");
 
 			visualizerConnection.setUri(visualizerUri);
 		} else {
@@ -356,9 +407,7 @@ public class UT2004Environment extends AbstractUnrealEnvironment {
 	@Override
 	public void createServerEntity() throws ManagementException {
 		super.createServerEntity();
-		
+
 	}
-
-
 
 }
