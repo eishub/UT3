@@ -21,21 +21,24 @@ import eis.iilang.ParameterList;
 public class UT2004EnvironmentTest {
 
 	static UCCWrapper uccWrapper;
-	
+
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		
+
 		UCCWrapperConf configuration = new UCCWrapperConf();
 		configuration.setGameType("BotCTFGame");
 		configuration.setMapName("CTF-Chrome");
-		
-		 uccWrapper = new UCCWrapper(configuration);
-		 
+		// HACK, something in pogamut always uses default ports...
+		configuration.setStartOnUnusedPort(false);
+
+		uccWrapper = new UCCWrapper(configuration);
+
 	}
 
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
-		if(uccWrapper != null)uccWrapper.stop();
+		if (uccWrapper != null)
+			uccWrapper.stop();
 		Pogamut.getPlatform().close();
 	}
 
@@ -52,34 +55,46 @@ public class UT2004EnvironmentTest {
 		UT2004Environment environment = new UT2004Environment();
 		HashMap<String, Parameter> map = new HashMap<String, Parameter>();
 		map.put("visualizer", new Identifier("rmi://127.0.0.1:1099"));
-		map.put("botServer", new Identifier("ut://127.0.0.1:" + uccWrapper.getBotPort()));
-		map.put("controlServer", new Identifier("ut://127.0.0.1:" + uccWrapper.getControlPort()));
+		map.put("botServer", new Identifier("ut://127.0.0.1:3000"));// +
+																	// uccWrapper.getBotPort()));
+		map.put("controlServer", new Identifier("ut://127.0.0.1:3001"));// +
+																		// uccWrapper.getControlPort()));
 		map.put("logLevel", new Identifier("WARNING"));
-		map.put("bots", new ParameterList(	
-								new ParameterList(	new ParameterList(new Identifier("name"),new Identifier("RedLeader")),
-													new ParameterList(new Identifier("team"),new Identifier("red")),
-													new ParameterList(new Identifier("skill"),new Numeral(5)),
-													new ParameterList(new Identifier("startLocation"),new Function("location", new Numeral(1),new Numeral(1),new Numeral(1))),
-													new ParameterList(new Identifier("startRotation"),new Function("rotation", new Numeral(1),new Numeral(1),new Numeral(1))),
-													new ParameterList(new Identifier("logLevel"), new Identifier("OFF"))),
-								new ParameterList(	new ParameterList(new Identifier("name"),new Identifier("RedFive")),
-													new ParameterList(new Identifier("team"),new Identifier("red")),
-													new ParameterList(new Identifier("skill"),new Numeral(5)),
-													new ParameterList(new Identifier("startLocation"),new Function("location", new Numeral(1),new Numeral(1),new Numeral(1))),
-													new ParameterList(new Identifier("startRotation"),new Function("rotation", new Numeral(1),new Numeral(1),new Numeral(1))),
-													new ParameterList(new Identifier("logLevel"), new Identifier("OFF")))));
+		map.put("bots", new ParameterList(
+				new ParameterList(new ParameterList(new Identifier("name"),
+						new Identifier("RedLeader")), new ParameterList(
+						new Identifier("team"), new Identifier("red")),
+						new ParameterList(new Identifier("skill"), new Numeral(
+								5)),
+						new ParameterList(new Identifier("startLocation"),
+								new Function("location", new Numeral(1),
+										new Numeral(1), new Numeral(1))),
+						new ParameterList(new Identifier("startRotation"),
+								new Function("rotation", new Numeral(1),
+										new Numeral(1), new Numeral(1))),
+						new ParameterList(new Identifier("logLevel"),
+								new Identifier("OFF"))), new ParameterList(
+						new ParameterList(new Identifier("name"),
+								new Identifier("RedFive")), new ParameterList(
+								new Identifier("team"), new Identifier("red")),
+						new ParameterList(new Identifier("skill"), new Numeral(
+								5)),
+						new ParameterList(new Identifier("startLocation"),
+								new Function("location", new Numeral(1),
+										new Numeral(1), new Numeral(1))),
+						new ParameterList(new Identifier("startRotation"),
+								new Function("rotation", new Numeral(1),
+										new Numeral(1), new Numeral(1))),
+						new ParameterList(new Identifier("logLevel"),
+								new Identifier("OFF")))));
 
-		
 		environment.init(map);
-		
-		
+
 		environment.pause();
-		
-		
+
 		environment.start();
-		
-		
+
 		environment.kill();
-		
+
 	}
 }
