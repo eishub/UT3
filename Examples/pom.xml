@@ -25,6 +25,23 @@
 	</developers>
 
 
+	<organization>
+		<name>eishub</name>
+		<url>http://github.com/eishub</url>
+	</organization>
+
+
+	<issueManagement>
+		<url>https://github.com/eishub/UT3/issues</url>
+		<system>Github Unreal Environment Issues</system>
+	</issueManagement>
+
+	<scm>
+		<connection>scm:git:git@github.com:eishub/UT3.git</connection>
+		<developerConnection>scm:git:git@github.com:eishub/UT3.git</developerConnection>
+		<url>https://github.com:eishub/UT3</url>
+	</scm>
+
 	<!-- Create zip file -->
 	<build>
 		<plugins>
