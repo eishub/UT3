@@ -8,7 +8,14 @@
 	<artifactId>goal-ut-environment-installer</artifactId>
 	<version>3.7.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
-
+	<url>https://github.com/eishub/UT3</url>
+	<licenses>
+		<license>
+			<name>GNU General Public License (GPL)</name>
+			<url>http://www.gnu.org/licenses/gpl.html</url>
+		</license>
+	</licenses>
+	
 	<properties>
 		<!-- Information for UT2004 environment to include in installer -->
 		<environment.groupId>${project.groupId}</environment.groupId>

@@ -1,13 +1,19 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	
+
 	<groupId>nl.tudelft.goal</groupId>
 	<artifactId>goal-ut-environment-examples</artifactId>
 	<name>goal-ut-environment-examples</name>
 	<description>Various example GOAL agents for the UT Enviornment</description>
-		<version>3.5.5-SNAPSHOT</version>
-
+	<version>3.5.5-SNAPSHOT</version>
+	<url>https://github.com/eishub/UT3</url>
+	<licenses>
+		<license>
+			<name>GNU General Public License (GPL)</name>
+			<url>http://www.gnu.org/licenses/gpl.html</url>
+		</license>
+	</licenses>
 
 
 	<!-- Create zip file -->

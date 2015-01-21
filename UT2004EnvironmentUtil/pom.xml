@@ -9,5 +9,12 @@
 	<name>goal-ut2004-environment-util</name>
 	<version>3.5.5-SNAPSHOT</version>
 	<description>Shared utilities for the entire UT2004 Environment project</description>
-
+	<url>https://github.com/eishub/UT3</url>
+	<licenses>
+		<license>
+			<name>GNU General Public License (GPL)</name>
+			<url>http://www.gnu.org/licenses/gpl.html</url>
+		</license>
+	</licenses>
+	
 </project>

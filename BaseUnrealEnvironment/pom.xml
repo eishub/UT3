@@ -5,10 +5,22 @@
 	<groupId>nl.tudelft.goal</groupId>
 	<artifactId>goal-base-unreal-environment</artifactId>
 	<version>3.5.5-SNAPSHOT</version>
-
 	<name>goal-base-unreal-environment</name>
 	<description>Base environment for Unreal Tournament</description>
 
+	<url>https://github.com/eishub/UT3</url>
+	<licenses>
+		<license>
+			<name>GNU General Public License (GPL)</name>
+			<url>http://www.gnu.org/licenses/gpl.html</url>
+		</license>
+	</licenses>
+
+	<organization>
+		<name>eishub</name>
+		<url>http://github.com/eishub</url>
+	</organization>
+	
 	<dependencies>
 		<dependency>
 			<groupId>cz.cuni.amis.pogamut</groupId>

@@ -9,7 +9,13 @@
 	<name>UTVisualizerConnection</name>
 	<description>A connection for the Visualizer to the Unreal Environment.</description>
 	<version>3.5.5-SNAPSHOT</version>
-
+	<url>https://github.com/eishub/UT3</url>
+	<licenses>
+		<license>
+			<name>GNU General Public License (GPL)</name>
+			<url>http://www.gnu.org/licenses/gpl.html</url>
+		</license>
+	</licenses>
 	<dependencies>
 		<dependency>
 			<groupId>nl.tudelft.goal</groupId>

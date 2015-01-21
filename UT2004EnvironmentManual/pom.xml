@@ -6,7 +6,14 @@
 	<artifactId>goal-ut-environment-documentation</artifactId>
 	<name>goal-ut-environment-documentation</name>
 	<version>3.5.5-SNAPSHOT</version>
-
+	<url>https://github.com/eishub/UT3</url>
+	<licenses>
+		<license>
+			<name>GNU General Public License (GPL)</name>
+			<url>http://www.gnu.org/licenses/gpl.html</url>
+		</license>
+	</licenses>
+	
 	<build>
 
 		<plugins>

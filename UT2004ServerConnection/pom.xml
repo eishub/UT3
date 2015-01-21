@@ -8,6 +8,14 @@
 	<description>Provides a connection to the UT server. </description>
 	<version>3.5.5-SNAPSHOT</version>
 
+	<url>https://github.com/eishub/UT3</url>
+	<licenses>
+		<license>
+			<name>GNU General Public License (GPL)</name>
+			<url>http://www.gnu.org/licenses/gpl.html</url>
+		</license>
+	</licenses>
+	
 	<dependencies>
 		<dependency>
 			<groupId>cz.cuni.amis.pogamut</groupId>
