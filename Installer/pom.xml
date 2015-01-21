@@ -3,13 +3,57 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
+	<name>Unreal 3/2004 Environment Installer</name>
 	<groupId>nl.tudelft.goal</groupId>
 	<artifactId>goal-ut-environment-installer</artifactId>
-	<version>3.5.4-SNAPSHOT</version>
-
-	<name>Unreal 3/2004 Environment Installer</name>
-
+	<version>3.7.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
+
+	<properties>
+		<!-- Information for UT2004 environment to include in installer -->
+		<environment.groupId>${project.groupId}</environment.groupId>
+		<environment.artifactId>goal-ut2004-environment</environment.artifactId>
+		<environment.version>3.5.5-SNAPSHOT</environment.version>
+		<environment.classifier>eis_environment</environment.classifier>
+
+		<environment3.groupId>${project.groupId}</environment3.groupId>
+		<environment3.artifactId>goal-ut3-environment</environment3.artifactId>
+		<environment3.version>3.5.5-SNAPSHOT</environment3.version>
+		<environment3.classifier>eis_environment</environment3.classifier>
+
+		<!-- Information for visualizer to include in installer -->
+		<visualizer.groupId>${project.groupId}</visualizer.groupId>
+		<visualizer.artifactId>goal-unreal-visualizer</visualizer.artifactId>
+		<visualizer.version>3.5.5-SNAPSHOT</visualizer.version>
+		<visualizer.classifier>bin</visualizer.classifier>
+
+		<!-- Information for documentation to include in installer -->
+		<documentation.groupId>${project.groupId}</documentation.groupId>
+		<documentation.artifactId>goal-ut-environment-documentation</documentation.artifactId>
+		<documentation.version>3.5.5-SNAPSHOT</documentation.version>
+		<documentation.classifier>bin</documentation.classifier>
+
+		<!-- Information for examples to include in installer -->
+		<examples.groupId>${project.groupId}</examples.groupId>
+		<examples.artifactId>goal-ut-environment-examples</examples.artifactId>
+		<examples.version>3.5.5-SNAPSHOT</examples.version>
+		<examples.classifier>bin</examples.classifier>
+
+		<!-- Information used by the installer -->
+		<app.group>${project.groupId}</app.group>
+		<app.name>${project.name}</app.name>
+		<app.subpath>${project.artifactId}-${project.version}</app.subpath>
+		<app.version>${project.version}</app.version>
+
+
+		<staging.dir>${project.build.directory}/staging</staging.dir>
+
+		<nl.tudelft.ii.svn>https://ii.tudelft.nl/svn</nl.tudelft.ii.svn>
+		<gamebots.ut2004.svn>${nl.tudelft.ii.svn}/goal/UnrealEnvironment/v3/GameBotsUT2004</gamebots.ut2004.svn>
+		<gamebots.ut3.svn>svn://artemis.ms.mff.cuni.cz/pogamut/trunk/project/Main/Gamebots/GameBotsUT3/src/main/ut3/Release</gamebots.ut3.svn>
+	</properties>
+
+
 
 	<!-- Disabled dependencies. When active IzPack looks for Saxon Dom writer. -->
 	<!-- <dependencies> <dependency> <groupId>${visualizer.groupId}</groupId> 
@@ -239,48 +283,5 @@
 		</repository>
 	</repositories>
 
-	<properties>
-		<!-- Information for environment to include in installer -->
-		<environment.groupId>${project.groupId}</environment.groupId>
-		<environment.artifactId>goal-ut2004-environment</environment.artifactId>
-		<environment.version>${project.version}</environment.version>
-		<environment.classifier>eis_environment</environment.classifier>
-
-		<environment3.groupId>${project.groupId}</environment3.groupId>
-		<environment3.artifactId>goal-ut3-environment</environment3.artifactId>
-		<environment3.version>${project.version}</environment3.version>
-		<environment3.classifier>eis_environment</environment3.classifier>
-
-		<!-- Information for visualizer to include in installer -->
-		<visualizer.groupId>${project.groupId}</visualizer.groupId>
-		<visualizer.artifactId>goal-unreal-visualizer</visualizer.artifactId>
-		<visualizer.version>${project.version}</visualizer.version>
-		<visualizer.classifier>bin</visualizer.classifier>
-
-		<!-- Information for documentation to include in installer -->
-		<documentation.groupId>${project.groupId}</documentation.groupId>
-		<documentation.artifactId>goal-ut-environment-documentation</documentation.artifactId>
-		<documentation.version>${project.version}</documentation.version>
-		<documentation.classifier>bin</documentation.classifier>
-
-		<!-- Information for examples to include in installer -->
-		<examples.groupId>${project.groupId}</examples.groupId>
-		<examples.artifactId>goal-ut-environment-examples</examples.artifactId>
-		<examples.version>${project.version}</examples.version>
-		<examples.classifier>bin</examples.classifier>
-
-		<!-- Information used by the installer -->
-		<app.group>${project.groupId}</app.group>
-		<app.name>${project.name}</app.name>
-		<app.subpath>${project.artifactId}-${project.version}</app.subpath>
-		<app.version>${project.version}</app.version>
-
-
-		<staging.dir>${project.build.directory}/staging</staging.dir>
-
-		<nl.tudelft.ii.svn>https://ii.tudelft.nl/svn</nl.tudelft.ii.svn>
-		<gamebots.ut2004.svn>${nl.tudelft.ii.svn}/goal/UnrealEnvironment/v3/GameBotsUT2004</gamebots.ut2004.svn>
-		<gamebots.ut3.svn>svn://artemis.ms.mff.cuni.cz/pogamut/trunk/project/Main/Gamebots/GameBotsUT3/src/main/ut3/Release</gamebots.ut3.svn>
-	</properties>
 
 </project>
