@@ -1,0 +1,71 @@
+environment {
+	env = "goal-ut3-environment-3.5.4-SNAPSHOT.jar".
+	init = [
+			visualizer = "rmi://127.0.0.1:1099",
+			botServer = "ut://127.0.0.1:3000",
+			controlServer = "ut://127.0.0.1:3001",
+
+			logLevel = "OFF", 
+			bots = [
+				[
+				 	["name", "Red 1"],
+					["skill", 1],
+					["skin", "BotA"], 
+					["team", "red"]	,
+					["logLevel", "OFF"]
+				],				[
+				 	["name", "Red 2"],
+					["skill", 1],
+					["skin", "BotA"], 
+					["team", "red"]	,
+					["logLevel", "OFF"]
+				],				[
+				 	["name", "Red 3"],
+					["skill", 1],
+					["skin", "BotA"], 
+					["team", "red"]	,
+					["logLevel", "OFF"]
+				],				[
+				 	["name", "Red 4"],
+					["skill", 1],
+					["skin", "BotA"], 
+					["team", "red"]	,
+					["logLevel", "OFF"]
+				],					[
+				 	["name", "Blue 1"],
+					["skill", 1],
+					["skin", "BotB"], 
+					["team", "blue"]	,
+					["logLevel", "OFF"]
+				],				[
+				 	["name", "Blue 2"],
+					["skill", 1],
+					["skin", "BotB"], 
+					["team", "blue"]	,
+					["logLevel", "OFF"]
+				],				[
+				 	["name", "Blue 3"],
+					["skill", 1],
+					["skin", "BotB"], 
+					["team", "blue"],
+					["logLevel", "OFF"]
+				],				[
+				 	["name", "Blue 4"],
+					["skill", 1],
+					["skin", "BotB"], 
+					["team", "blue"],
+					["logLevel", "OFF"]
+				]
+			]
+		].
+
+}
+
+agentfiles {
+	"simplectf.goal".
+}
+
+launchpolicy {
+    when [type=bot]@env do launch *:simplectf. 
+}
+

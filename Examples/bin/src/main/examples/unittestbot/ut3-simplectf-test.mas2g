@@ -1,0 +1,31 @@
+environment {
+	env = "goal-ut3-environment-3.5.4-SNAPSHOT.jar".
+	init = [
+			visualizer = "rmi://127.0.0.1:1099",
+			botServer = "ut://127.0.0.1:3000",
+			controlServer = "ut://127.0.0.1:3001",
+
+			logLevel = "WARNING", 
+			bots = [
+				[
+				 	["name", "TestBot1"],
+					["skill", 1],
+					["skin", "BotA"], 
+					["team", "red"]	,
+					["logLevel", "WARNING"]
+				]
+			]
+		].
+
+}
+
+agentfiles {
+	"simplectf.goal" [name=bot] .
+	"testserver.goal" [name=server].
+}
+
+launchpolicy {
+    when [type=server,max=1]@env do launch server:server. 
+    when [type=bot,max=2]@env do launch bot:bot. 
+}
+

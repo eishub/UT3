@@ -1,0 +1,28 @@
+environment {
+	env = "goal-ut2004-environment-3.5.5-SNAPSHOT-jar-with-dependencies.jar".
+	init = [ 	
+		visualizer = "rmi://127.0.0.1:1099",
+		botServer = "ut://127.0.0.1:3000",
+		controlServer = "ut://127.0.0.1:3001",
+		logLevel = "WARNING", 
+		bots = [
+				[
+				 	["name", "BetweenFlags 1"],
+					["skill", 5],
+					["skin", "BotA"], 
+					["team", "red"]	,
+					["startLocation", location(696.12,5900.18,-741.0)],
+					["logLevel", "OFF"]
+				]
+			]
+	].
+}
+
+agentfiles {
+	"betweenFlags.goal" [name=agent] .
+}
+
+launchpolicy {
+    when [type=bot,max=1]@env do launch *:agent .
+}
+

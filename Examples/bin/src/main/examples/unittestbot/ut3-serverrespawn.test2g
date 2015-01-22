@@ -1,0 +1,24 @@
+masTest {
+
+	mas = "ut3-simplectf-test.mas2g".
+	timeout = 30. %seconds
+	
+	bot {
+		test { 
+			do await(server).
+			do awaitSelf.
+			assert bel(game(_,'CTF-FacingWorlds',_,_)).
+
+			evaluate {
+				atend bel(weapon(shock_rifle,20,20)). %Fails because add inventory doesnt work.
+			} in do server(addInventory(weapon,shock_rifle)) + wait(1).
+				
+			evaluate {
+				atend atLocation('PathNode_133').
+				atend bel(not(weapon(shock_rifle,20,20))). 
+			} in do server(respawn('PathNode_133', rotation(0,0,0))) + wait(1).
+		}
+
+
+	}
+}

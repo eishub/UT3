@@ -1,0 +1,119 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+
+	<groupId>nl.tudelft.goal</groupId>
+	<artifactId>goal-unreal-visualizer-frame</artifactId>
+	<name>UTVisualizerFrame</name>
+	<version>3.5.5-SNAPSHOT</version>
+
+	<description>An OpenGL frame to visualize Unreal Tournament.</description>
+	<url>https://github.com/eishub/UT3</url>
+	<licenses>
+		<license>
+			<name>The GNU General Public License, Version 3.0</name>
+			<url>http://www.gnu.org/licenses/gpl-3.0.txt</url>
+		</license>
+	</licenses>
+
+	<developers>
+		<developer>
+			<name>Koen Hindriks</name>
+			<email>k.v.hindriks@gmail.com</email>
+			<organization>eishub</organization>
+			<organizationUrl>https://github.com/koenhindriks</organizationUrl>
+		</developer>
+	</developers>
+
+
+	<organization>
+		<name>eishub</name>
+		<url>http://github.com/eishub</url>
+	</organization>
+
+
+	<issueManagement>
+		<url>https://github.com/eishub/UT3/issues</url>
+		<system>Github Unreal Environment Issues</system>
+	</issueManagement>
+
+	<scm>
+		<connection>scm:git:git@github.com:eishub/UT3.git</connection>
+		<developerConnection>scm:git:git@github.com:eishub/UT3.git</developerConnection>
+		<url>https://github.com:eishub/UT3</url>
+	</scm>
+
+	<dependencies>
+		<dependency>
+			<groupId>cz.cuni.amis.pogamut</groupId>
+			<artifactId>pogamut-ut2004</artifactId>
+			<version>3.5.4-SNAPSHOT</version>
+		</dependency>
+
+		<dependency>
+			<groupId>nl.tudelft.pogamut</groupId>
+			<artifactId>goal-unreal-server-connection</artifactId>
+			<version>3.5.5-SNAPSHOT</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jogamp.gluegen</groupId>
+			<artifactId>gluegen-rt-main</artifactId>
+			<version>2.0-rc11</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jogamp.jogl</groupId>
+			<artifactId>jogl-all-main</artifactId>
+			<version>2.0-rc11</version>
+		</dependency>
+
+	</dependencies>
+
+
+	<repositories>
+		<!-- Eventually, the jogamp artifacts will be pushed to the Central Repository 
+			and this repository will become unnecessary. For more info see: https://jogamp.org/wiki/index.php/Setting_up_a_JogAmp_project_in_your_favorite_IDE#Maven 
+			<repository> <id>jogamp-remote</id> <name>jogamp test mirror</name> <url>http://www.jogamp.org/deployment/maven/</url> 
+			<layout>default</layout> </repository> -->
+		<repository>
+			<id>amis-artifactory</id>
+			<name>AMIS Artifactory</name>
+			<url>http://diana.ms.mff.cuni.cz:8081/artifactory/repo</url>
+		</repository>
+	</repositories>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.10.1</version>
+				<executions>
+					<execution>
+						<id>attach-javadocs</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>2.4</version>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<phase>package</phase>
+						<goals>
+							<goal>jar-no-fork</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+		</plugins>
+	</build>
+</project>

@@ -1,0 +1,32 @@
+environment {
+	env = "goal-ut3-environment-3.5.4-SNAPSHOT.jar".
+	init = [
+			botServer = "ut://127.0.0.1:3000",
+			controlServer = "ut://127.0.0.1:3001",
+			visualizer = "rmi://127.0.0.1:1099",
+
+			logLevel = "WARNING", 
+			bots = [
+					[
+						["name", "Hello World 1"],
+						["skill", 3],
+						["skin", "BotB"], 
+						["team", "blue"],
+						["startRotation", rotation(0,0,0)],
+						["startLocation", location(696.12,5900.18,-741.0)],
+						["logLevel", "OFF"]
+					]
+			]
+		].
+
+}
+
+agentfiles {
+	"helloworld.goal" [name=helloworld] .
+}
+
+launchpolicy {
+    when [type=bot,max=5]@env do launch bot:helloworld . 
+
+}
+

@@ -1,0 +1,78 @@
+masTest {
+	mas = "ut3-simplectf-test.mas2g".
+	timeout = 30. %seconds
+	
+	bot {
+		test { 
+			do await(server).
+			do awaitSelf.
+			
+			% Correct map loaded?
+			assert bel(game(_,'CTF-GOAL-Test',_,_)).
+			
+			% Does not have any extra weapons?			
+			assert bel(not(weapon(bio_rifle,_,_))).
+			assert bel(not(weapon(shock_rifle,_,_))).
+			assert bel(not(weapon(stinger_minigun,_,_))).
+			assert bel(not(weapon(link_gun,_,_))).
+			assert bel(not(weapon(flak_cannon,_,_))).						
+			assert bel(not(weapon(rocket_launcher,_,_))).
+			assert bel(not(weapon(avril,_,_))).
+			assert bel(not(weapon(sniper_rifle,_,_))).
+			assert bel(not(weapon(redeemer,_,_))).
+			
+			% Has default weapons?
+			assert bel(weapon(enforcer,_,_)).
+			assert bel(weapon(impact_hammer,_,_)).
+			
+			% A pickup loads?
+			assert bel(pickup(_,_,_,bio_rifle)).
+			assert bel(pickup(_,_,_,shock_rifle)).
+			assert bel(pickup(_,_,_,stinger_minigun)).
+			assert bel(pickup(_,_,_,link_gun)).
+			assert bel(pickup(_,_,_,flak_cannon)).
+			assert bel(pickup(_,_,_,rocket_launcher)).
+			assert bel(pickup(_,_,_,avril)).
+			assert bel(pickup(_,_,_,sniper_rifle)).
+			assert bel(pickup(_,_,_,redeemer)).
+			
+			evaluate {
+				atend bel(weapon(bio_rifle,_,_)).
+			} in do server(teleport('UTWeaponPickupFactory_9',rotation(0,0,0))) + wait(1).
+			
+			evaluate {
+				atend bel(weapon(shock_rifle,_,_)).
+			} in do server(teleport('UTWeaponPickupFactory_0',rotation(0,0,0))) + wait(1).
+			
+			evaluate {
+				atend bel(weapon(stinger_minigun,_,_)).
+			} in do server(teleport('UTWeaponPickupFactory_6',rotation(0,0,0))) + wait(1).
+			
+			evaluate {
+				atend bel(weapon(link_gun,_,_)).
+			} in do server(teleport('UTWeaponPickupFactory_2',rotation(0,0,0))) + wait(1).
+			
+			evaluate {
+				atend bel(weapon(flak_cannon,_,_)).
+			} in do server(teleport('UTWeaponPickupFactory_3',rotation(0,0,0))) + wait(1).
+			
+			evaluate {
+				atend bel(weapon(rocket_launcher,_,_)).
+			} in do server(teleport('UTWeaponPickupFactory_4',rotation(0,0,0))) + wait(1).
+			
+			evaluate {
+				atend bel(weapon(avril,_,_)).
+			} in do server(teleport('UTWeaponPickupFactory_7',rotation(0,0,0))) + wait(1).
+			
+			evaluate {
+				atend bel(weapon(sniper_rifle,_,_)).
+			} in do server(teleport('UTWeaponPickupFactory_1',rotation(0,0,0))) + wait(1).
+			
+			evaluate {
+				atend bel(weapon(redeemer,_,_)).
+			} in do server(teleport('UTWeaponPickupFactory_8',rotation(0,0,0))) + wait(1).
+			
+			do server(shutdown).
+		}
+	}
+}

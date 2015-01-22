@@ -1,0 +1,21 @@
+masTest {
+
+	mas = "ut3-simplectf-test.mas2g".
+	%timeout = 30. %seconds
+	
+	bot {
+		test { 
+			do await(server).
+			do awaitSelf.
+			assert bel(game(_,'CTF-FacingWorlds',_,_)).
+
+			do server(respawn('PathNode_115', rotation(0,0,0))).
+			
+			evaluate {
+				atend bel(atLocation('PathNode_119')).
+				atend bel(weapon(shock_rifle,20,20)). %Fails, unknown why.
+			} in do navigateWithPicksups('PathNode_119').
+		}
+		
+	}
+}

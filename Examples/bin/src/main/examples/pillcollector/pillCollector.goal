@@ -1,0 +1,91 @@
+init module {
+	% very simple bot, collecting pills
+
+	knowledge{
+	}
+	beliefs{
+		%%
+		% Beliefs required for actions
+		%%
+		
+		destination(none). % We are going nowhere.
+		
+		target(none). % We target no one.
+		
+		%%
+		% Beiefs required for percepts
+		%%
+		
+		self(none,none,none).
+
+		orientation(none,none,none).
+		
+		status(none,none,none,none).
+		
+		navigation(none, none).
+		
+		
+	}
+	goals{
+		pickUpPills. % never achieved, there are always more pills
+	}
+
+	actionspec{
+		navigate(Destination) {
+			pre{destination(PrevDestination)}
+			post{not(destination(PrevDestination)), destination(Destination)} 
+		}
+
+	}
+}
+
+main module {
+		program [order=random]{
+		if bel(not(navigation(navigating,_)), pickup(UnrealId,Position,health,Type)) then navigate(UnrealId). % check that health pill
+		if bel(not(navigation(navigating,_)), pickup(UnrealId,Position,adrenaline,Type)) then navigate(UnrealId). % check that adrenaline pill
+		
+	}
+}
+
+event module {
+	program {
+		%%
+		% Information about the bot
+		%%
+		
+		% Add info about self. On change.
+		forall bel(self(OldID,OldName,OldTeam), percept(self(ID,Name,Team))) 
+		do delete( self(OldID,OldName,OldTeam)) + insert(self(ID,Name,Team)).		
+		
+		% Update moving. On change.
+		forall bel(orientation(OldPosition,OldRotation,OldVelocity),   percept(orientation(Position,Rotation,Velocity))) 
+		do delete (orientation(OldPosition,OldRotation,OldVelocity)) +  insert(orientation(Position,Rotation,Velocity)).
+
+		% Update status. On change.
+		forall bel(status(OldHealth,OldArmor,OldAdrenaline,OldCombo),  percept(status(Health,Armor,Adrenaline,Combo))) 
+		do delete( status(OldHealth,OldArmor,OldAdrenaline,OldCombo)) + insert(status(Health,Armor,Adrenaline,Combo)).
+		
+		
+		%%
+		% Action percepts
+		%%
+
+		% Update navigation state. On Change
+		forall bel(navigation(OldStatus,OldDest),  percept(navigation(Status,Dest)))
+		do delete( navigation(OldStatus,OldDest)) + insert(navigation(Status,Dest)).
+		
+		
+		%%
+		% Game info
+		%%
+		
+		% The pickup spots on the map. Once. Add position so we can do distance base heuristics.
+		forall bel(percept(pickup(UnrealID, Label, ItemType)), percept(navPoint(UnrealID,Position,_))) 
+		do insert(pickup(UnrealID, Position,Label, ItemType)).
+		
+		
+	
+
+	}
+
+}

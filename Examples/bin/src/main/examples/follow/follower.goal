@@ -1,0 +1,157 @@
+%%
+% A Simple bot demonstrating how to follow another bot or player on the 
+% same team. If that player has the link gun, the bot will assist him.
+%
+% 1. Join on same team as the bot.
+% 2. Grab a link gun and walk to your flag.
+% 3. Bot will show up and follow you, if you have the link gun equipped 
+%    you will get assists.
+%
+% @Author M.P. Korstanje
+%%
+init module {
+	knowledge{
+		% The team this bot is on.
+		myTeam(Team) :- self(_,_,Team).
+		
+		hasLinkGun :- weapon(link_gun,Ammo,_).
+		izLinkGunLoaded :- weapon(link_gun,Ammo,_), Ammo > 0.
+
+		
+	}
+	
+	beliefs{
+		% We are going nowhere.
+		destination(none). 
+		navigation(waiting,none).
+		
+		% We have no weapons.
+		currentWeapon(none,none).
+		
+		% We look at nothing.
+		lookingAt(none). 
+		
+		% We start with no ID, name or team.
+		self(none,none,none).
+		
+		% We are not shooting anybody
+		target(none).
+
+	}
+	goals{
+		beNot. % never achieved, slightly philosophical.
+	}
+	
+	program {
+		
+		% Look at the closestFriendlyWithLinkGun or when no such player around, the closestFriendly.
+		if true then look([nearestFriendlyWithLinkGun, nearestFriendly]).
+		
+	}
+
+	actionspec{
+		
+		navigate(Destination) {
+			pre{destination(PrevDestination)}
+			post{not(destination(PrevDestination)), destination(Destination)} 
+		}
+		
+		skip {
+			pre{true}
+			post{true}			
+		}
+		
+			
+		look(Targets){
+			pre{lookingAt(PrevTargets)}
+			post{not(lookingAt(PrevTargets)),lookingAt(Targets)}	
+			
+		}
+		
+		shoot(Targets){
+			pre{target(PrevTargets)}
+			post{not(target(PrevTargets)), target(Targets)}
+		}
+		
+		stopShooting{
+			pre{target(PrevTargets)}
+			post{not(target(PrevTargets)), target(none)}
+		}
+	}
+}
+
+main module {
+	
+	program{
+
+		% Shoot friendlies with link gun with link gun.
+		if bel(hasLinkGun, izLinkGunLoaded, not(target(nearestFriendlyWithLinkGun))) then shoot(nearestFriendlyWithLinkGun).
+		% Dont shoot if we don't have link gun or ammo.
+		if bel(not(hasLinkGun), target(nearestFriendlyWithLinkGun)) then stopShooting.
+		if bel(not(izLinkGunLoaded), target(nearestFriendlyWithLinkGun)) then stopShooting.
+
+		
+		% If we are navigating, keep going
+		if bel(navigation(navigating,_)) then skip.
+
+		% Grab a weapon
+		if bel(not(hasLinkGun), pickup(UnrealID, _,weapon, link_gun)) then navigate(UnrealID).
+		
+		% Grab ammo
+		if bel(not(izLinkGunLoaded), pickup(UnrealID, _,ammo, link_gun)) then navigate(UnrealID).
+		
+		%If we see a player, run there.
+		if bel(myTeam(Team), bot(UnrealID,_,Team,_,_,_)) then navigate(UnrealID).	
+
+		%(Implied: we are standing still and don't see a bot) return to our base. 
+		if bel(myTeam(Team), base(Team, UnrealID)) then navigate(UnrealID).
+
+	}
+}
+
+
+event module{
+	
+	
+	program {
+		%%
+		% Information about the bot
+		%%
+		
+		% Update navigation state. On Change
+		forall bel(navigation(OldStatus,OldDest),  percept(navigation(Status,Destination)))
+		do delete( navigation(OldStatus,OldDest)) + insert(navigation(Status,OldDest)).
+		
+		% Add info about self. On change.
+		forall bel(self(OldID,OldName,OldTeam), percept(self(ID,Name,Team))) 
+		do delete( self(OldID,OldName,OldTeam)) + insert(self(ID,Name,Team)).
+		
+		% Update currentweapon. On Change.
+		forall bel(percept(currentWeapon(Weapon,FireMode)), currentWeapon(OldWeapon,OldFireMode)) 
+		do delete(currentWeapon(OldWeapon,OldFireMode)) + insert(currentWeapon(Weapon,FireMode)) .
+		
+		% Update weapons in inventory. On change with negation.
+		forall bel(percept(weapon(Name,PriAmmo,SecAmmo))) do insert(weapon(Name,PriAmmo,SecAmmo)).
+		forall bel(percept(not(weapon(Name,PriAmmo,SecAmmo)))) do delete(weapon(Name,PriAmmo,SecAmmo)).
+		
+		
+		%%
+		% Game info
+		%%
+		
+		% The pickup spots on the map. Once.
+		forall bel(percept(pickup(UnrealID, Label, ItemType)), percept(navPoint(UnrealID,Position,_))) do insert(pickup(UnrealID, Position,Label, ItemType)).
+		
+		% The base. Has flag. Once
+		forall bel(percept(base(Team, UnrealID))) do insert(base(Team, UnrealID)).
+		
+		%%
+		% See percepts
+		%%
+		
+		% See a bot. On change with negation.
+		forall bel(percept(	   bot(ID,Name,Team,Postion,Weapon,FireMode)))  do insert(bot(ID,Name,Team,Postion,Weapon,FireMode)).
+		forall bel(percept(not(bot(ID,Name,Team,Postion,Weapon,FireMode)))) do delete(bot(ID,Name,Team,Postion,Weapon,FireMode)).
+		
+	}
+}

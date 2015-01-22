@@ -1,0 +1,41 @@
+environment {
+	env = "goal-ut2004-environment-3.5.4-SNAPSHOT.jar".
+	init = [
+			botServer = "ut://127.0.0.1:3000",
+			controlServer = "ut://127.0.0.1:3001",
+			visualizer = "rmi://127.0.0.1:1099",
+			
+			bots = [
+					[
+						["name", "BotA1"],
+						["skill", 5],
+						["skin", "BotA"], 
+						["team", "red"],
+						["logLevel", "OFF"]
+					],
+					[
+						["name", "BotB2"],
+						["skill", 5],
+						["skin", "BotB"], 
+						["team", "red"],
+						["logLevel", "OFF"]
+					],
+					[
+						["name", "BotC3"],
+						["skill", 5],
+						["skin", "BotC"], 
+						["team", "red"],
+						["logLevel", "OFF"]
+					]
+			]
+	 ].
+}
+
+agentfiles {
+	"pillCollector.goal" [name=unrealgoalfile] .
+}
+
+launchpolicy {
+    when [type=bot,max=8]@env do launch *:unrealgoalfile . 
+}
+

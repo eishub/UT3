@@ -1,0 +1,387 @@
+%%
+% A Simple bot demonstrating the use of all percepts and actions. 
+% @Author M.P. Korstanje
+%%
+init module {
+	knowledge{
+		
+	}
+	beliefs{
+		
+		%%
+		% Beliefs required for actions
+		%%
+		
+		destination(none). % We are going nowhere.
+		
+		target(none). % We target no one.
+
+		lookingAt([]). % We look at nothing.
+
+		
+		
+		%%
+		% Beiefs required for percepts
+		%%
+		startEventModule(0).
+		endEventModule(0).
+		
+		eventModuleTime(0).
+		mainModuleTime(0).
+		
+		
+		self(none,none,none).
+
+		orientation(none,none,none).
+		
+		navigation(none, none).
+		
+		status(none,none,none,none).
+		
+		score(none,none,none).
+		
+		currentWeapon(none,none).
+		
+		game(none, none, none, none).
+		
+		teamScore(none, none).
+		
+
+	}
+	goals{
+		beNot. % never achieved, slightly philosophical.
+	}
+	
+	program {
+		
+		
+	}
+
+	actionspec{
+		
+		navigate(Destination) {
+			pre{destination(PrevDestination)}
+			post{not(destination(PrevDestination)), destination(Destination)} 
+		}
+		
+		stop {
+			pre{true}
+			post{true}
+		}
+		
+		shoot(Targets){
+			pre{target(PrevTargets)}
+			post{not(target(PrevTargets)), target(Targets)}
+		}
+		
+		stopShooting{
+			pre{target(PrevTargets)}
+			post{not(target(PrevTargets)), target([])}
+		}
+
+		prefer(WeaponPref){
+			pre{true}
+			post{true}
+		}
+				
+		look(Targets){
+			pre{lookingAt(PrevTargets)}
+			post{not(lookingAt(PrevTargets)),lookingAt(Targets)}	
+			
+		}
+		
+		respawn {
+			pre{true}
+			post{true}
+		}
+		
+		combo(Combo) {
+			pre{status(_,_,Adrenaline,_), Adrenaline >= 100}
+			post{true}
+		}
+		
+		dropWeapon {                                      
+			pre{ currentWeapon(Weapon,_), Weapon \== shield_gun, Weapon \== translocator}
+			post{true}
+		}
+		
+		path(From,To) {
+			pre{true}
+			post{true}
+		}
+		
+				
+		skip {
+			pre{true}
+			post{true}
+		}
+		
+	}
+}
+
+main module {
+	
+	program{		
+		%if bel(true) then testNavigate.
+		%if bel(true) then testStop.
+		%if bel(true) then testShoot.
+		%if bel(true) then testCombo.
+		if bel(true) then testPath.
+		
+		%if bel(true) then testAnonModules.
+		
+		%if bel(true) then testServer.
+
+	}	
+	
+}
+
+module testServer {
+	
+	program{
+		
+		if bel(self(Id,_,_)) then send(server, addInventory(Id,bio_rifle)).
+
+	}
+	
+}
+
+
+module testAnonModules{
+	
+	program{
+		
+		if bel(pickup(UnrealID, Position,Label, ItemType)) then {
+			if true then insert(test(UnrealID)).
+		} 
+
+	}
+	
+}
+
+
+module testPath {
+	
+	
+	program{
+		
+		% Path between navpoint ID's. Large query.
+		%if bel(pickup(ID1,_,_,_), pickup(ID2,_,_,_)) then path(ID1,ID2).		
+		
+		% Path between two navpoint position. Large query.
+		%if bel(pickup(ID1,POS1,_,_), pickup(ID2,POS2,_,_)) then path(POS1,POS2).		
+
+		% Path from self to pickup.
+		if bel(self(ID1,_,_), pickup(ID2,_,_,_)) then path(ID1,ID2).		
+
+		% Path from own location to pickup.
+		%if bel(orientation(POS,_,_), pickup(ID2,_,_,_)) then path(POS,ID2).
+
+		% Path from own location to visible item using UnrealID
+		%if bel(orientation(POS,_,_), item(UnrealID, Label, ItemType, NavPointId)) then path(POS,UnrealID).
+
+		% Path from self to visible player.
+		%if bel(self(ID1,_,_),  bot(ID2,_,_,_,_,_)) then path(ID1,ID2).
+	}
+}
+
+module testCombo{
+
+	program{		
+		if bel(true) then combo(booster).
+		
+		if bel(navigation(navigating,_)) then skip.
+		if bel(pickup(UnrealID, _,adrenaline, _)) then navigate(UnrealID).
+	}		
+	
+	
+}
+
+module testLook{
+
+	program{		
+		if bel(true) then look([nearestEnemy, friendlyFlagCarrier]).
+		%if bel(true) then look([nearestFriendly, enemyFlagCarrier]).
+	}		
+	
+	
+}
+
+module testShoot{
+
+	program{		
+		%if bel(true) then shoot([nearestEnemy, friendlyFlagCarrier]).
+		%if bel(true) then shoot([nearestFriendly, enemyFlagCarrier]).
+		if bel(true) then shoot(location(1,1,1)).
+	}		
+	
+	
+}
+
+
+module testStop {
+	
+	
+	program{
+		
+		if bel(navigation(navigating,_),get_time(Now),startedNavigation(Started), Started + 10 < Now   ) then stop + delete(startedNavigation(Started)).
+		
+		if bel(navigation(navigating,_)) then skip.
+		% Navigate to a navpoint ID 
+		if bel(navPoint(ID,Position,Neighbours), get_time(Now)) then navigate(ID) + insert(startedNavigation(Now)).
+		
+	}
+	
+}
+
+module testNavigate {
+	
+	
+	program{
+		
+		%Exit if already navigating
+		if bel(navigation(navigating,_)) then skip.
+		
+		% Navigate to a navpoint ID 
+		if bel(navPoint(ID,Position,Neighbours)) then navigate(ID).
+		
+		% Navigate to a navpoint position
+		%if bel(navPoint(ID,Position,Neighbours)) then navigate(Position).
+		
+		% Navigate to a player (follow)
+		%if bel(bot(ID,Name,Team,Postion,Weapon,FireMode)) then navigate(ID).
+		
+		% Navigate to self.
+		%if bel(self(ID,Name,Team)) then navigate(ID).
+
+		
+		
+	}
+}
+event module{
+	program {
+		%Set start time.
+		forall bel(startEventModule(LastRound), get_time(Now)) 
+		do delete(startEventModule(LastRound)) + insert(startEventModule(Now)).
+		
+		%Compute time main module took.
+		forall bel(mainModuleTime(OldDelta), startEventModule(Start), endEventModule(End), Delta is Start - End ) 
+		do delete(mainModuleTime(OldDelta)) + insert(mainModuleTime(Delta)).
+
+		
+		%%
+		% Information about the bot
+		%%
+		
+		% Add info about self. On change.
+		forall bel(self(OldID,OldName,OldTeam), percept(self(ID,Name,Team))) 
+		do delete( self(OldID,OldName,OldTeam)) + insert(self(ID,Name,Team)).		
+		
+		% Update moving. On change.
+		forall bel(orientation(OldPosition,OldRotation,OldVelocity),   percept(orientation(Position,Rotation,Velocity))) 
+		do delete (orientation(OldPosition,OldRotation,OldVelocity)) +  insert(orientation(Position,Rotation,Velocity)).
+
+		% Update status. On change.
+		forall bel(status(OldHealth,OldArmor,OldAdrenaline,OldCombo),  percept(status(Health,Armor,Adrenaline,Combo))) 
+		do delete( status(OldHealth,OldArmor,OldAdrenaline,OldCombo)) + insert(status(Health,Armor,Adrenaline,Combo)).
+		
+		% Update track reckord. On change.
+		forall bel(score(OldKills,OldDeaths,OldSuicides),  percept(score(Kills,Deaths,Suicides))) 
+		do delete( score(OldKills,OldDeaths,OldSuicides)) + insert(score(Kills,Deaths,Suicides)).
+	
+			
+		% Update currentweapon. On Change.
+		forall bel(percept(currentWeapon(Weapon,FireMode)), currentWeapon(OldWeapon,OldFireMode)) 
+		do delete(currentWeapon(OldWeapon,OldFireMode)) + insert(currentWeapon(Weapon,FireMode)) .
+		
+		% Update weapons in inventory. On change with negation.
+		forall bel(percept(weapon(Name,PriAmmo,SecAmmo))) do insert(weapon(Name,PriAmmo,SecAmmo)).
+		forall bel(percept(not(weapon(Name,PriAmmo,SecAmmo)))) do delete(weapon(Name,PriAmmo,SecAmmo)).
+		
+		
+		%%
+		% Action percepts
+		%%
+		
+		% Fragged percept. Always.
+		forall bel(percept(fragged(Time,KillerId,VictemId, Weapon))) 
+		do insert(fragged(Time,KillerId,VictemId, Weapon)).
+
+		% Update navigation state. On Change
+		forall bel(navigation(OldStatus, OldDest),  percept(navigation(Status,Dest)))
+		do delete( navigation(OldStatus, OldDest)) + insert(navigation(Status,Dest)).
+		
+		%Requested path. Always.
+		forall bel(percept(path(Origin,Dest,Lenght,Path))) do insert(path(Origin,Dest,Lenght,Path)). 
+
+
+		%Add logic iteration. On change.
+		forall bel(logic(OldIterations), percept(logic(Iterations))) 
+		do delete( logic(OldIterations)) + insert(logic(Iterations)).
+		
+		%Add count of actions executed. On change
+		forall bel(actionCount(OldIterations), percept(actionCount(Iterations))) 
+		do delete( actionCount(OldIterations)) + insert(actionCount(Iterations)).
+
+		% Add fragged percept. Always.
+		
+		%%
+		% Game info
+		%%
+		
+		% The navPoints, some 500 of them. Once.
+		forall bel(percept(navPoint(ID,Position,Neighbours))) do insert(navPoint(ID,Position,Neighbours)).
+
+		% The pickup spots on the map. Once. Add position so we can do distance base heuristics.
+		forall bel(percept(pickup(UnrealID, Label, ItemType)), percept(navPoint(UnrealID,Position,_))) 
+		do insert(pickup(UnrealID, Position,Label, ItemType)).
+		
+		% The base. Has flag. Once
+		forall bel(percept(	base(Team, UnrealID))) 
+		do insert(		 	base(Team, UnrealID)).
+
+		% Information about the game. On Change.
+		forall bel(game(OldGametype, OldMap, OldTeamScoreLimit, OldRemainingTime),  percept(game(Gametype, Map, TeamScoreLimit, RemainingTime))) 
+		do delete( game(OldGametype, OldMap, OldTeamScoreLimit, OldRemainingTime)) + insert(game(Gametype, Map, TeamScoreLimit, RemainingTime)).
+
+		% Team score. On change
+		forall bel(teamScore(OldTeamScore, OldOpponentTeamScore),  percept(teamScore(TeamScore, OpponentTeamScore))) 
+		do delete( teamScore(OldTeamScore, OldOpponentTeamScore)) + insert(teamScore(TeamScore, OpponentTeamScore)).
+
+		% Flag state. On change with negation.		
+		forall bel(percept(flagState(Team,FlagState))) do insert(flagState(Team,FlagState)).
+		forall bel(percept(not(flagState(Team,FlagState)))) do delete(flagState(Team,FlagState)).
+		
+		%%
+		% See percepts
+		%%
+		
+		% See an item. On change with negation.
+		forall bel(percept(item(UnrealID, Label, ItemType, NavPointId)))  do insert(item(UnrealID, Label, ItemType, NavPointId)).
+		forall bel(percept(not(item(UnrealID, Label, ItemType, NavPointId)))) do delete(item(UnrealID, Label, ItemType, NavPointId)).
+				
+		% See a flag. On change with negation.
+		forall bel(percept(flag(Team, HolderId, Location))) do insert(flag(Team, HolderId, Location)).
+		forall bel(percept(not(flag(Team, HolderId, Location)))) do delete(flag(Team, HolderId, Location)).
+		
+		% See a bot. On change with negation.
+		forall bel(percept(	   bot(ID,Name,Team,Postion,Weapon,FireMode)))  do insert(bot(ID,Name,Team,Postion,Weapon,FireMode)).
+		forall bel(percept(not(bot(ID,Name,Team,Postion,Weapon,FireMode)))) do delete(bot(ID,Name,Team,Postion,Weapon,FireMode)).
+		
+		% The navPoints we can see, ignore first batch.
+		forall bel(not(percept(self(OldID,OldName,OldTeam))), percept(navPoint(ID,Position,Neighbours))) do insert(navPoint(ID,Position,Neighbours)).
+		forall bel(percept(not(navPoint(ID,Position,Neighbours)))) do delete(navPoint(ID,Position,Neighbours)).
+		
+		%%
+		% Time Keeping
+		%%
+		
+		%Set end time
+		forall bel(endEventModule(OldTime), get_time(Now)) do delete(endEventModule(OldTime)) + insert(endEventModule(Now)).
+		
+		% Compute time percept processing took.
+		forall bel(eventModuleTime(OldDelta), startEventModule(Start), endEventModule(End), Delta is  End - Start ) 
+		do delete(eventModuleTime(OldDelta)) + insert(eventModuleTime(Delta)).
+
+	}
+}

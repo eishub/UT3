@@ -1,0 +1,46 @@
+
+<assembly
+	xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0 http://maven.apache.org/xsd/assembly-1.1.0.xsd">
+	<id>bin</id>
+	<formats>
+		<format>zip</format>
+	</formats>
+	<fileSets>
+		<fileSet>
+			<directory>${project.basedir}</directory>
+			<outputDirectory>/</outputDirectory>
+			<includes>
+				<include>README*</include>
+				<include>LICENSE*</include>
+				<include>NOTICE*</include>
+				<include>AUTHORS*</include>
+				<include>COPYING*</include>
+			</includes>
+		</fileSet>
+
+		<!-- Workaround for broken transient dependency set -->
+		<fileSet>
+			<directory>${project.build.directory}/dependency</directory>
+			<outputDirectory>/lib</outputDirectory>
+			<includes>
+				<include>*.jar</include>
+			</includes>
+		</fileSet>
+	</fileSets>
+
+	<dependencySets>
+
+		<!-- Disable for now, copies the wrong transcient dependencies. <dependencySet> 
+			<outputDirectory>/dependency</outputDirectory> <useProjectArtifact>false</useProjectArtifact> 
+			<useTransitiveDependencies>true</useTransitiveDependencies> </dependencySet> -->
+		<dependencySet>
+			<includes>
+				<include>${project.groupId}:${project.artifactId}:jar:${project.version}</include>
+			</includes>
+			<outputDirectory>/</outputDirectory>
+
+		</dependencySet>
+	</dependencySets>
+</assembly>
