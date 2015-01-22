@@ -146,7 +146,7 @@
 	</repositories>
 
 	<properties>
-		<environment.main.class>nl.tudelft.goal.ut2004.environment.UT2004Environment</environment.main.class>
+		<environment.main.class>nl.tudelft.goal.ut3.environment.UT3Environment</environment.main.class>
 	</properties>
 
 	<build>

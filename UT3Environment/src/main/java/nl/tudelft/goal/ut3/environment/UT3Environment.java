@@ -226,7 +226,8 @@ public class UT3Environment extends AbstractUnrealEnvironment {
 		if (!(controller instanceof MyAllPerceptsProvider)) {
 			throw new ManagementException(
 					"Expected a controller that implements "
-							+ MyAllPerceptsProvider.class.getSimpleName());
+							+ MyAllPerceptsProvider.class.getSimpleName()
+							+ " but got " + controller.getClass().getName());
 		}
 
 		((MyAllPerceptsProvider) controller)
