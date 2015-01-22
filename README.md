@@ -1,9 +1,21 @@
 UT3
 ===
 
-NOT YET READY FOR USE - IN PROGRESS - DO NOT USE 
-
 EIS interface that enables GOAL to connect with Unreal Tournament (both UT3 and UT 2004).
+
+
+How to use
+============
+To use this environment, you must have Unreal Tournament 2004 (UT2004) or Unreal Tournament 3 (UT3) installed on your machine.
+ * UT2004 is available for Linux, Mac OSX and Windows.
+ * UT3 is available only for Windows.
+ 
+Follow the UT Environment manual to install and use this environment.
+
+This manual also details the actions and percepts that are available to the entities.
+
+A Visualizer is also available. It shows an overview map with the locations of all the bots. 
+
 
 BUILDING
 =======
@@ -21,4 +33,4 @@ SendStats=False
 ServerBehindNAT=False
 ```
 
-
+With that you can just use ```mvn install``` in the root of the project to build all. 
