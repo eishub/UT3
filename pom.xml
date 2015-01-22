@@ -1,0 +1,64 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	
+	<!-- Just a wrapper POM to build all submodules with one run. -->
+	
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>nl.tudelft.goal</groupId>
+	<artifactId>ut-goal-environment</artifactId>
+	<name>goal-ut3-environment</name>
+	<version>3.5.5-SNAPSHOT</version>
+	<url>https://github.com/eishub/UT3</url>
+	<packaging>pom</packaging>
+	<licenses>
+		<license>
+			<name>The GNU General Public License, Version 3.0</name>
+			<url>http://www.gnu.org/licenses/gpl-3.0.txt</url>
+		</license>
+	</licenses>
+
+	<developers>
+		<developer>
+			<name>Koen Hindriks</name>
+			<email>k.v.hindriks@gmail.com</email>
+			<organization>eishub</organization>
+			<organizationUrl>https://github.com/koenhindriks</organizationUrl>
+		</developer>
+	</developers>
+
+
+	<organization>
+		<name>eishub</name>
+		<url>http://github.com/eishub</url>
+	</organization>
+
+
+	<issueManagement>
+		<url>https://github.com/eishub/UT3/issues</url>
+		<system>Github Unreal Environment Issues</system>
+	</issueManagement>
+
+	<scm>
+		<connection>scm:git:git@github.com:eishub/UT3.git</connection>
+		<developerConnection>scm:git:git@github.com:eishub/UT3.git</developerConnection>
+		<url>https://github.com:eishub/UT3</url>
+	</scm>
+
+	<modules>
+		<module>BaseUnrealEnvironment</module>
+
+		<module>UT2004ServerConnection</module>
+		<module>UT2004EnvironmentUtil</module>
+		<module>UT2004EnvironmentManual</module>
+		<module>UT2004EnvironmentDependencies</module>
+		
+		<module>UTVisualizerConnection</module>
+		<!--  <module>UTVisualizerDependencies</module> this is useless?? -->
+		<module>UTVisualizerFrame</module>
+		<module>UTVisualizer</module>
+		
+		<module>UT2004Environment</module>
+		<module>UT3Environment</module>
+	</modules>
+
+</project>

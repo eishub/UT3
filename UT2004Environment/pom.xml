@@ -23,8 +23,8 @@
 			<organizationUrl>https://github.com/koenhindriks</organizationUrl>
 		</developer>
 	</developers>
-	
-	
+
+
 	<organization>
 		<name>eishub</name>
 		<url>http://github.com/eishub</url>
@@ -41,7 +41,7 @@
 		<developerConnection>scm:git:git@github.com:eishub/UT3.git</developerConnection>
 		<url>https://github.com:eishub/UT3</url>
 	</scm>
-	
+
 	<dependencies>
 
 		<dependency>
@@ -105,6 +105,37 @@
 
 	<build>
 		<plugins>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.10.1</version>
+				<executions>
+					<execution>
+						<id>attach-javadocs</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>2.4</version>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<phase>package</phase>
+						<goals>
+							<goal>jar-no-fork</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>

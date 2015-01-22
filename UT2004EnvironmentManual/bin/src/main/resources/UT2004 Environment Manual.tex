@@ -1,0 +1,1216 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage{graphicx}
+%authors, for use of affil
+\usepackage{authblk}
+\usepackage{url}
+%For windows paths
+\usepackage{examplep}
+\usepackage{a4wide}
+
+
+%
+\newcommand{\Goal}{\textsc{Goal}}
+
+
+%
+%
+%
+\begin{document}
+
+%
+% front matter
+\title{UT-{\Goal} Manual}
+
+%
+% authors
+\author{Koen Hindriks}
+\author{Rien Korstanje}
+\author{Wouter Pasman}
+\author{Birna van Riemsdijk}
+\author{Lennard de Rijk}
+
+\affil{Delft University of Technology, The Netherlands}
+%
+\maketitle
+
+\newpage
+
+%
+%
+%
+\section{Introduction}
+%
+
+This manual describes the interface between {\Goal} and \textsc{Unreal Tournament 2004} (UT).
+
+The manual is organized as follows. Section \ref{sec:setup} discusses how to install the environment and how to run it. In Section \ref{sec:masspec} the initialization parameters that can be set in a \texttt{.mas2g} file are discussed. Section \ref{sec:vis} introduces the \emph{visualizer} that provides (i) a 3D map which displays all bots as well as the flags, (ii) options for managing the UT server, and (iii) options for managing bots. In Section \ref{sec:unrealgoalbot} the UnrealGoal bot is described, a software layer between {\Goal} agents and UT bots that implements low-level behaviour (including e.g. a path planner). Section \ref{sec:actions} documents the actions that the interface provides and can be performed by a {\Goal} agent. Finally, Section \ref{sec:percepts} documents the percepts that a {\Goal} agent receives when connected to the UT environment.
+
+
+%
+%
+%
+\section{Setting up the Environment}\label{sec:setup}
+
+This section explains how to startup a dedicated server to which the bots of the UnrealGoal  will connect. 
+
+\subsection{Installation}
+
+To install the unreal environment, you can run the installer.  Please ensure that GOAL, Unreal Tournament and Patch 3369 have been installed. 
+
+%Wouter: CHECK this is also in the Unreal installation manual. 
+% Rien: Yes, but that is ok.
+\subsection{Dedicated Server}
+
+There are two ways to start a server for Unreal Tournament. The first a is a listen server. The server then runs inside UT and stops when UT is stopped. The second is a dedicated server. In this case the server has it's own process. For the UnrealGoal environment a dedicated server is recommended. 
+
+A dedicated server can be started using the UnrealOS execution environment (\textsc{ucc}) from the command prompt. The ucc is located in the \PVerb{Unreal Tournament 2004\System} directory. 
+
+The following command starts a game of capture the flag on the map CTF-UG-Chrome that ends after 999999 minutes. 
+
+\begin{verbatim}
+Windows: ucc server CTF-UG-Chrome?game=GameBots2004.BotCTFGame?timelimit=999999
+\end{verbatim}	
+\begin{verbatim}
+Unix, OSX: ucc-bin server CTF-UG-Chrome?game=GameBots2004.BotCTFGame?timelimit=999999
+\end{verbatim}	
+
+
+\subsection{Web Admin}
+
+A dedicated server can be managed using the web admin. To enable it, locate \texttt{[UWeb.WebServer]} in the \texttt{UT2004.ini} and set \texttt{bEnabled=False} to \texttt{bEnabled=True}. To set a password and user name append \verb|?AdminName=Bot?AdminPassword=Goal| to the command that starts the dedicated server. When enabled the web admin can be found at \url{http://localhost/ServerAdmin/}. 
+
+For more information on managing a dedicated server please consult the UnrealAdmin wiki \url{http://wiki.unrealadmin.org/Server_Setup_(UT2004)}.
+
+\subsection{Disabling Translocators}
+
+The translocator is a device that players and bots in UT can use to move across the map quickly. The UnrealGoal bot is unable to use this device. To keep things fair you can disable the translocator by appending \verb|\?Translocator=False| to the command that starts the dedicated server.
+
+\subsection{Startup Scripts}
+
+For your convenience a number of scripts have been provided (e.g.\verb|CTFServer UG-Chrome|). These starts the UT server with a specific map, web admin enabled and translocators disabled and can be found in the /System folder of UT2004.
+
+You can adopt these script to suit your own needs. For more command line parameters you can consult \url{http://wiki.unrealadmin.org/Commandline_Parameters_(UT2004)}.
+
+%
+%
+%
+\section{Connecting GOAL to Unreal Tournament}\label{sec:masspec}
+%
+
+This section explains how to connect a {\Goal} multi-agent systems to UT by starting the UnrealGoal environment from {\Goal}. The UnrealGoal environment is a special \texttt{.jar} file that facilitates connecting {\Goal} to UT. In order to connect to UT, a dedicated UT server needs to be running and Pogamut Gamebots must have been installed. (See the installation instructions for this.) % TODO: ref.
+
+The UnrealGoal environment can be launched by means of a MAS file from {\Goal}. The general structure and set-up of such files is discussed in more detail in the {\Goal} Programming Guide. Here we only discuss the initialization parameters that are specific for the UT environment.
+
+%Rien: Fixed. Geen zijn verplicht. Default waardes ook beschreven.
+
+Several parameters for initializing the UT environment can be set when connecting {\Goal} to UT. This is done by means of the \texttt{init} command that should be included in the \texttt{environment} section of the MAS file. For the UT environment eight parameters are available that can be set using the \texttt{init} command. All of these parameters are optional and do not have to be set using the \texttt{init} command. If a parameter is not provided, the environment will use a default value for the parameter. The following is an example of an \texttt{init} command for UT which sets all eight parameters:
+
+\begin{verbatim}
+init = [
+    botServer = "ut://127.0.0.1:3000",
+    controlServer = "ut://127.0.0.1:3001",
+    visualizer = "rmi://127.0.0.1:1099",
+    logLevel = "ALL", 
+    bots = [
+            [
+                ["name", "BotA1"],
+                ["skill", 1],
+                ["skin", "BotA"], 
+                ["team", "red"],
+                ["logLevel", "OFF"]
+            ],
+            [
+                ["name", "BotB2"],
+                ["skill", 1],
+                ["skin", "BotB"], 
+                ["team", "red"],
+                ["logLevel", "OFF"]
+            ],
+            [
+                ["name", "BotC3"],
+                ["skill", 7],
+                ["skin", "BotC"], 
+                ["team", "blue"],
+                ["logLevel", "OFF"],
+                ["startRotation", rotation(0,0,0)],
+                ["startLocation", location(696.12,5900.18,-741.0)]
+            ]
+    ]
+ ].
+\end{verbatim}
+
+\noindent The meaning of each of the parameters is explained as follows:
+\begin{itemize}
+
+
+	\item \texttt{botServer}: IP address of host running the UT server with the GameBots modifications. The bots will be created on this server. \textit{Default value:} local host port 3000, meaning that if no address is provided the environment will connect to a server on the the local host port 3000.
+	\item \texttt{controlServer}: IP address of host running the UT server with the GameBots modifications. This is used for the control connection to server to allow adding bots. \textit{Default value:} local host port 3001, meaning that if no address is provided the environment will connect to a server on the the local host port 3001.
+	\item \texttt{visualizer}: IP address of the host that is running the visualizer. If the visualizer is running on the same host as {\Goal} the IP address of the local host can be used. The port should always be 1099. By connecting to the Visualizer, the Visualizer can add bots to the environment. \textit{Default value:} none, meaning that if no address for the Visualizer is provided, the environment will not connect to the Visualizer.
+
+	\item \texttt{logLevel}: Dicates the level of detail of the log information that the environment bot will output to the console in the {\Goal} IDE.  Accepted values are \textsc{OFF}(none), \textsc{SEVERE} (least), \textsc{WARNING}, \textsc{INFO}, \textsc{CONFIG}, \textsc{FINE}, \textsc{FINER}, \textsc{FINEST} and \textsc{ALL} (most). \textit{Default value:} \textsc{WARNING}.
+	\item \texttt{bots}: Parameters for the bots. For each bot a list containing tuples of a key and a value. \textit{Default value}: the empty list, meaning that no bots will be launched; bots may however also be launched by means of the Visualizer (see Section \ref{sec:vis}). The keys and values follow:
+\begin{itemize}
+	\item \texttt{name}: The name of a bot. \textit{Default value}: UnrealGOALBot.
+	\item \texttt{skill}: The accuracy of the bot. Any value between 1 (worst) and 7 (best). The default is 5.
+	\item \texttt{skin}: The skin used by all bots launched from this mas. \textit{Default value:} \texttt{BotB} but can be any one of:
+\begin{verbatim}
+NightMaleA, NightMaleB, NightFemaleA, NightFemaleB, MercMaleA, MercMaleB,
+MercMaleC, MercMaleD, MercFemaleA, MercFemaleB, MercFemaleC, EgyptMaleA,
+EgyptMaleB, EgyptFemaleA, EgyptFemaleB, AlienMaleA, AlienMaleB,
+AlienFemaleA, AlienFemaleB, BotA, BotB, BotC, BotD, Hellion_Kane,
+Hellion_Garrett, Hellion_Gitty, JuggMaleA, JuggMaleB, JuggFemaleA,
+JuggFemaleB, AbaddonM, Ophelia, JakobM, Skaarj2, Skaarj3, Skaarj4,
+XanM03, XanM02, XanF02, EnigmaM
+\end{verbatim}
+	\item \texttt{team}: either \texttt{red} or \texttt{blue}. \textit{Default value:} \texttt{red}.
+	\item \texttt{logLevel}: Dictates the level of detail of the log information that each bot will output to the console in the {\Goal} IDE.  Accepted values are \textsc{OFF}(none), \textsc{SEVERE} (least), \textsc{WARNING}, \textsc{INFO}, \textsc{CONFIG}, \textsc{FINE}, \textsc{FINER}, \textsc{FINEST} and \textsc{ALL} (most). \textit{Default value:} \textsc{WARNING}.
+	\item \texttt{startLocation}: The starting location of the bot provided as a location(x,y,z). When this parameter is not provided bots will spawn using the UT spawn points.
+	\item \texttt{startRotation}: The starting rotation of the bot provided as a rotation(pitch,yaw,roll). The values of of pitch yaw and roll range from -32768 to 32767. Only the yaw value will be used by the bot.  When this parameter is not provided the starting rotation is not defined.
+\end{itemize}
+	
+\end{itemize}
+
+%
+%
+%
+\section{Visualizer}\label{sec:vis}
+%
+
+%Birna: Visualizer  graag nog korte inleiding toevoegen met het algemene idee van wat de visualizer is. Daarna details bespreken in de subsecties. 
+%Rien: Done!
+
+The visualizer is a tool that can be used to visualize and manipulate the UnrealGoal environment. It can be started independently from the Environment and provides a 3D visualization of navpoints,  players, bots and flags currently present in the UT server. Bots can be placed, added and removed to the UnrealGoal environment. The visualizer can also be used to place items or add them to a bots inventory.
+
+\subsection{Installation}
+
+%Unzip the contents of \texttt{UnrealGoalVisualizer.zip} and start it via the \texttt{Unreal Visualizer} script.
+Use the Unreal Environment installer to install the visualizer and start it via the Unreal Visualizer short cut.
+
+\subsection{Map Screen}
+
+In figure \ref{fig:map} you can see a simple map. The players are denoted by spheres, which are colored according to their team. Their names are also drawn above. A red arrow indicates in which direction they are looking. The blue disk and grey lines represent navigational points present in the map, these are used by automated players such as bots to move around the area. If you are playing a Capture the Flag gametype you will be able to see the flags, denoted by a sphere on a stick and once again colored according to their team. 
+
+The camera can be moved using the standard UnrealEd camera controls. To move forward/backwards hold the left mouse button and move up/down. To pan the camera hold the right mouse button down. To elevate the camera up/down  hold both buttons down and move up/down, move left/right to strafe the camera. Pressing the middle mouse button will reset the camera view.
+
+%mouse button 	up/down                left/right 	Note
+%left 		move forwards/backwards 	pan 		keeps the camera at a constant height
+%right 		pan 				pan 	
+%both 		elevator move up/down 	strafe/dolly 	viewing angle does not affect elevator mode
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=1.0\textwidth]{images/map.png}
+\caption{An example of a map screen}\label{fig:map}
+\end{figure}
+
+
+\subsection{Server}
+The server menu can be found on the top of the visualizer by clicking \texttt{Server}. This section deals with the server administrative functionality.
+
+\subsubsection*{Connection}
+\texttt{Server->Connection} will open a dialog showing the current state of the connection. When the visualizer is disconnected an address to the UT server can be provided. Pressing connect will then start the connection to the server.  Should at anytime the connection to the server be lost, such as when changing a map, the Visualizer will automatically try to reconnect.
+
+\subsubsection*{Pause / Resume}
+\texttt{Server->Pause} pauses the Unreal Server. Pausing the server means that nothing in UT will move anymore. To resume just press this same option again. Note that this will not pause individual bots that are running in \Goal. %TODO: Ticket.
+
+\subsubsection*{Game Speed}
+\texttt{Server->Game Speed} allows you to change the gamespeed. A lower number means that all movement in the game will be slower, a higher number means faster movement. Although UT2004 allows for a higher gamespeed then the dialog might suggest, we have capped it to 10 to ensure that any secondary systems driving the game do not get synchronization problems on most modern pc's. Note however that it is best to leave this set to 1 to ensure normal gameplay.
+
+\subsubsection*{Change Map}
+\texttt{Server->Change Map} will open a dialog showing a list of maps from which you can choose. Pick the one you want to switch to and press \texttt{Ok} to change the map. The server will restart and load the new map. It may take a few seconds before the visualizer notices the disconnect after which it will try to reconnect. Note that all native bots will be removed and all other bots will be disconnected. 
+
+\subsubsection*{Add Native Bot}
+
+%Birna : Zijn dat Epic bots?
+%Rien: Ja, Epic is de naam van het bedrijf dat UT heeft gemaakt. Native is een betere beschrijving.
+
+The \texttt{Server->Add Native Bot} item will show the dialog to add an native Bot to the game as illustrated in figure \ref{fig:add_native_bot} . All fields except level are optional. The name field allows you to set a custom name for your bot, the level field determines how accurate bot is, 1 for a total nuub and 7 for a warzone hero. Select one of the teams to assign this bot to. And finally a location where to spawn this bot, if none is selected a proper spawn location for the team the bot plays in will be used.
+
+\begin{figure}[h!]
+\centering
+\includegraphics{images/add_native_bot.png}
+\caption{Dialog to add an native bot.}\label{fig:add_native_bot}
+\end{figure}
+
+
+\subsubsection*{Add UnrealGoal Bot}
+
+The \texttt{Server->Add UnrealGoal bot} will be disabled until the Visualizer has been connected to an UT server and an environment has connected to the visualizer. As seen in figure \ref{fig:add_unrealgoal_bot} this menu is very similar to that of \texttt{Add Native Bot}. All fields except level and environment are optional. Unlike the native bots, level here only indicates how accurate the bot is. In case there are multiple environments, you can select one. When \texttt{Add Bot} is pressed, the visualizer will connect to the chosen environment and instruct it to launch another bot with the given settings.
+
+\begin{figure}[h!]
+\centering
+\includegraphics{images/add_unrealgoal_bot.png}
+\caption{Dialog to add UnrealGoal bot.}\label{fig:add_unrealgoal_bot}
+\end{figure}
+
+\subsubsection*{List Players}
+
+%TODO: Needs picture.
+
+The \texttt{Server->List players} item will show a list of players currently in the server. The buttons kick and respawn will respectively kick or respawn the player. Please note that actual human players can not be kicked from the server. Also humans and native bots can only respawn on random navpoints.
+
+
+\subsection{Context Menus}
+ The context menu is accessible by left clicking on a player or way point. Depending on which is selected different options are available.
+
+%
+\subsubsection*{Respawn}
+%
+When a bot is selected the respawn menu item is available (see Figure \ref{fig:respawn_actor}). Selecting it will respawn the bot at a random \texttt{PlayerStart} way point associated with their team. When a way point was selected, the menu item offers a list of bots and players to respawn on that way point. Note that native bots and players can only be spawned randomly and will only spawn at \texttt{PlayerStart} way point.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=1.0\textwidth]{images/respawn_bot.png}
+\caption{The context menu for a bot.}\label{fig:respawn_actor}
+\end{figure}
+
+\subsubsection*{Change team of a Bot}
+
+When a bot is selected, using the change team menu item will change the team of the bot. Note that again this does not work for players and native bots.
+
+%Birna:  native bots and players.  wat bedoel je met native bots en players? native bots en native players? Wat zijn dan die laatste?
+%Rien:  Players en native bots om gedraaid. Zou duidelijker moeten zijn.
+
+%
+\subsubsection*{Spawn Item}
+%
+Spawn item is available whenever a way point is selected. This menu item offers a list of items that can be spawned. This will allow you to put extra weapons, health, shields or adrenaline into a level. Pickups have a respawn timer just like any other object in the world, so a newly added large shield pickup will spawn a shield every 55 seconds after it has been picked up. An example of this dialogue can be found in Figure \ref{fig:spawn_actor}.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=1.0\textwidth]{images/spawn_actor.png}
+\caption{The context menu to spawn a new actor/item into the world.}\label{fig:spawn_actor}
+\end{figure}
+
+
+\subsubsection*{Add Inventory}
+%Birna: manually.  wat bedoel je met manually? kan dat ook via de GUI? hoe dan?
+%Rien: Moet ook via de GUI. Op zelfde manier als dat je wapens toevoegt. Is duidelijk gemaakt.
+Add Inventory is available when ever a bot is selected. This menu item offers a list of items that can be added to the bots inventory such as weapons, ammunition, shields, adrenaline and health. This allows you to setup a bot without needing the bot to collect everything. Note that all weapons added in this way will not have any ammo. Ammunition has to be added in the same way as the weapon.
+
+\subsubsection*{Kick}
+This menu item allows you to kick the selected bot or player from the game.
+
+
+%
+%
+%
+\section{Server Bot}\label{sec:unrealgoalbot}
+%
+
+\section{Actions}
+
+\subsubsection*{Add inventory action}
+
+\begin{small}
+\begin{tabular}{p{2cm}p{9cm}}
+Description & Adds an item to the inventory of the player. \\
+Syntax & \verb|addInventory(<UnrealId>,<Category>,<ItemType>)|\\
+Parameters 	& \verb|<UnrealId>| : the UnrealId of a player. \\
+		& \verb|<Category>| : the category of the item to add. \\
+		& \verb|<ItemType>| : the itemtype of the item to add. \\
+Effects &	Adds the item to the bots inventory.\\
+\end{tabular}
+\end{small}
+
+\subsubsection*{Respawn player  action}
+
+\begin{small}
+\begin{tabular}{p{2cm}p{9cm}}
+Description & Respawns a player. \\
+Syntax & \verb|respawn(<UnrealId>,<Location>,<Rotation>)|\\
+Parameters 	& \verb|<UnrealId>| : the UnrealId of a player. \\
+		& \verb|<Location>| : A location presented either as a location(x,y,z) or as the UnrealId of a player, navpoint, or item. \\
+		& \verb|<Rotation>|: the rotation of the bot as rotation(pitch,yaw,roll).\\
+Effects &	The selected players is respawned on the given location with the given rotation. \\
+\end{tabular}
+\end{small}
+
+\subsubsection*{Change team action}
+
+\begin{small}
+\begin{tabular}{p{2cm}p{9cm}}
+Description & Changes the team of a player. \\
+Syntax & \verb|changeTeam(<UnrealId>)|\\
+Parameters 	& \verb|<UnrealId>| : the UnrealId of a player. \\
+Effects &	The selected players changes teams and respawns in a random location. \\
+\end{tabular}
+\end{small}
+
+\subsubsection*{Set game speed action}
+
+\begin{small}
+\begin{tabular}{p{2cm}p{9cm}}
+Description & Changes the speed of the game. \\
+Syntax & \verb|setGameSpeed(<Number>)|\\
+Parameters 	& \verb|<Number>| : A number between 0.1 and 50. \\
+Effects &	Slows down or speeds up the game. 1 is normal, beyond 10 the engine will have trouble catching up. \\
+\end{tabular}
+\end{small}
+
+\subsubsection*{Spawn item action}
+
+\begin{small}
+\begin{tabular}{p{2cm}p{9cm}}
+Description & Adds an item to the inventory of the player. \\
+Syntax & \verb|spawnItem(<Location>,<Category>,<ItemType>)|\\
+Parameters 	& \verb|<Location>| : A location presented either as a location(x,y,z) or as the UnrealId of a player, navpoint, or item. \\
+		& \verb|<Category>| : the category of the item to add. \\
+		& \verb|<ItemType>| : the itemtype of the item to add. \\
+Effects &	Spawns the item at the given location in the world.\\
+\end{tabular}
+\end{small}
+
+\section{Percepts}
+
+\subsubsection*{Navpoint percept}
+\begin{small}
+\begin{tabular}{p{2cm}p{9cm}}
+Description & Information about point in the map. Together these form a directed graph that spans the entire map.\\
+Type & Send once.\\
+Syntax & \verb|navPoint(<UnrealID>,  <Position>, [<NeigsUnrealID>])|\\
+Parameters & \verb|<UnrealID>|: The the unique ID for this navpoint.\\
+& \verb|<Position>|: The location of this navpoint on the map as a location(x,y,z).\\
+& \verb|[<NeigsUnrealID>]|: A list of ID's for the neighbouring navpoints that are reachable from this navpoint.
+\end{tabular}
+\end{small}
+
+\subsubsection*{Bot percept}
+\begin{small}
+\begin{tabular}{p{2cm}p{9cm}}
+Description & Percept for all bots in the server.\\
+Type & On change with negation.\\
+Syntax & \verb|bot(<UnrealID>, <Name>, <Team>, <Position>, <Weapon>, <FireMode>)|\\
+Parameters &
+	\verb|<UnrealID>|: Unique identifier string for this bot assigned by Unreal.\\
+&	\verb|<Name>|: The name of this bot.\\
+&	\verb|<Team>|: The team of this bot.\\
+&	\verb|<Position>|: The x,y,z coordinates of the bots position in UT units, described as location(x,y,z)\\
+%TODO: Update with UT3 item types
+&	\verb|<Weapon>|: The weapon the bot is holding. none or any of the following: \verb|shield_gun|, \verb|assault_rifle|, \verb|bio_rifle|, \verb|shock_rifle|, \verb|minigun|, \verb|link_gun|, \verb|flak_cannon|, \verb|rocket_launcher|, \verb|lightning_gun|, \verb|sniper_rifle|, \verb|redeemer|.\\
+&	\verb|<Shooting>|: Either primary, secondary or none to indicate if the bot is shooting and in which firemode.
+\end{tabular}
+\end{small}
+
+
+%
+%
+%
+\section{UnrealGoal Bot}\label{sec:unrealgoalbot}
+%
+The UnrealGoal environment is a layer in between the {\Goal} agents and the UT bots that are visible in the UT environment. UnrealGoal bots implement the low-level behavior of the bots such as shooting weapons and navigating the world. This section describes how the UnrealGoal bots internally work. The aim is to create a greater understanding of the workings that can't be gained from merely reading the percepts and action specifications.
+
+%\subsection{Origin} 
+
+%The MKT2 assignment required a bot that could be controlled at a fairly high level of abstraction, and this required some self sufficiency on the part of the bot. Rather then creating a bot from scratch an existing bot was used and modified to accept input from {\Goal}. The choice fell on the AMIS botprize winner Loquebot for it's excellent documentation and modular behavioral drives. Loquebot it self was build on the Pogamut framework. As such the original UnrealGoalBot was a modification of Loquebot 
+
+%Loquebot is based on the Pogamut Platform which provides a Java interface for communication with Unreal.  At the start of 2010 the Pogamut platform reached version 3 and received a major overhaul, incorporating much of Loquebots original functionality. As latest Pogamut platform greatly improved the stability,  life-cycle management and many other knick-knacks of the bots the UnrealGoalBot was ported to Pogamut 3. This resulted in a smaller, more maintainable code base and a somewhat improved UnrealGoalBot2. 
+
+%Overtime more functionality commonly used to created bots has become standardized and integrated into Pogamut.  This allowed for some complicated behavior of the bot to be simplified and be used more versatile. These changes allow the bot to follow any player and use all weapons properly. (I expect to see good use of the link gun now!)
+
+
+
+\subsection{Limitations}
+The UnrealGoal bot has many limitations over a human player, the major limitations are:
+
+\begin{itemize}
+
+	\item \textbf{Maps} Currently UnrealGoal bot is unable to do several types of movement that the native bots and human players can do. 
+	\begin{itemize}
+		\item Elevator Jumping. This means that the bot won't be able to time his jumps such that when he reaches the top of the elevator he gets an extra boost. 
+		\item Precise Double Jumping. By correctly timing a second jump while mid air, bots and players can give themselves a boost and jump extra far. the UnrealGoal bot is unable to do such exact timing. This means that certain areas will be out of reach.
+		\item To remedy this the map needs to be modified using the Unreal Editor and  all LiftExit nodes that aren't roughly at the same level as the lifts maximum have to be removed.
+	\end{itemize}
+		 \textbf{Translocators} The translocator is a device that can teleport a player some distance and generally allow rapid movement across large maps. The bot is unable to unable to use this weapon which provides an advantage to players and native bots that can.
+		\item Disabling the translocator removes the advantage from other bots and players.
+%	\end{itemize}
+\end{itemize}
+
+%Birna: CTF-UG-Grendelkeep  we hebben toch nog een derde map?
+%Rien: Toegevoegd.
+
+Currently three maps have been fixed to allow full navigation. CTF-UG-Chrome, CTF-UG-Grendelkeep and CTF-UG-AbsoluteZero. For more information about bot pathing refer to: \url{http://wiki.beyondunreal.com/Legacy:Topics_On_Mapping}.
+
+
+\subsection{The behavior}
+% Rien: No longer relevant. Bot behaviour has been simplified to a single goto routine.
+
+%To abstract the low level details the Unreal Bot provides a behaviour with three routines. Goto, Pursue and Halt. Goto deals with navigating the map. Pursue attempts to attack an opponent and follow him through the map. Halt makes the bot stand on the spot. This section aims to describe how these routines work.
+
+%The three routines are linked in a simple state machine, see Figure \ref{fig:behav}. Each node represents a  routine, the edges are possible state transitions. The labels on each edge describe a  possible causes for a transition.
+
+%\begin{figure}[h!]
+%\centering
+%\includegraphics[width=1.0\textwidth]{images/behaviourstatemachine.jpg}
+%\caption{UnrealGoal Bot Behaviour State Machine}\label{fig:behav}
+%\end{figure}
+
+%There are two basic ways the bot can change the state. Either voluntary by performing the Goto, Pursue or Halt action. Or forced, by reaching a location, being unable to reach a location or death. The latter transitions can all be inferred from percepts so it is possible to keep track of the bot's state in the agent.
+ 
+%All routines are created with the bot's self preservation in mind and will make a best effort attempt to stay alive and achieve its primary goal without the need for external guidance. This should alleviate most low level concerns and allow the agent to deal with high level objectives. Eg. `Where do I go?' rather than `How do I get there?'
+
+%Each routine itself consists of several drives that deal with combat, travel, and looking. The drives do most of the work, the routines just bring them together. 
+
+%For the exact behaviour of the routines, please view the action specifications of the UnrealGoal bot.
+
+To abstract the low level details the Unreal Bot provides a behavior. This behavior takes input on who to shoot, where to look and where to go. This input is provided in the form of actions from GOAL. These are described below. The behavior is encoded as logic routine that evaluates approximately every 100 milliseconds. In each evaluation the following steps are taken:
+
+\begin{itemize}
+	\item Execute all outstanding actions.
+	\item Determine a target to shoot at based on the input from the last shoot action.
+	\item Determine a weapon to shoot with based on the input from the prefer action.
+	\item Determine a target to look at based on the input from the last look action.
+	\item Determine a location to go to based on the input from the last navigate action.
+	\item If we have a target to shoot at,  shoot it with the preferred weapon.
+	\item If we have location to go to, run to this location, look at the first applicable of the target we are shooting, the target we should look at or the path ahead.
+ 	\item If we are standing still, look at the first applicable of the target we are shooting, the target we should look at or turn in circles.
+	\item Prepare a new batch of percepts for the Environment.
+\end{itemize}
+
+
+Because the bot has its own thread actions are queued up and executed when the bot is ready. As a result there may be a 0-100ms delay between the execution of an action in GOAL and the bot executing the action. Likewise all percepts will be from 0-100ms in the past. This delay is small and should not adversely affect the performance of a GOAL program. However this delay should be taken into account in some cases. For example executing dropWeapon until a weapon is perceived to have been dropped may leave the bot with a big pile of weapons in front of him.
+
+\section{Actions}
+\label{sec:actions}
+In this section, the design and specification of the actions that a {\Goal} agent can perform while controlling an Unreal bot in UT2004 is described. The actions described here are provided by an UT-{\Goal} interface. An overview of the actions can be found in Section \ref{sec:actionsoverview}.
+
+\subsection{Behavior Actions}
+The behavior actions are actions that govern how the bot looks, moves and shoots. The actions all take place over an extended duration of time.
+
+\subsubsection*{Navigate action}
+
+\begin{small}
+\begin{tabular}{p{2cm}p{9cm}}
+Description & This action makes a best effort attempt to navigate the map. \\
+Syntax & \verb|navigate(<Destination>)|\\
+Parameters & \verb|<Destination>| : A location presented either as a location(x,y,z) or as the UnrealId of a player, navpoint, or item. \\
+Effects &	0. Sets the destination the bot will run to.\\
+	 & 	1. The bot switches to the navigation state  \verb|navigation(navigating,Destination)| ,\\ 
+	&	2. Plans a path to this destination. If there is not path the navigation state becomes \verb|navigation(noPath,none)|\\
+	&	3. Then it starts moving along this path. If the bot gets stuck on the way the navigation state becomes \verb|navigation(stuck,none)| \\
+	&	4. While traveling, opponents will be shot at according to the last shoot action.\\
+	&	5. Once the destination has been reached, the navigation state changes to \verb|navigation(reached,none)|.\\
+Notes & 	1. A player is considered reached when the bot comes with in 100 units of the player or when the player is no longer visible; his last known location.  \\
+	&	2. If the bot gets stuck this doesn't mean a destination is actually unreachable. It is for example possible to miss a jump twice.\\
+	& 	3. The UnrealId's used must have been received in a percept. Id's received from other bots might not be known by this bot. \\
+
+\end{tabular}
+\end{small}
+
+\subsubsection*{Stop action}
+\begin{small}
+\begin{tabular}{p{2cm}p{9cm}}
+Description & Halts the bot on the spot.\\ 
+Syntax & \verb|stop|\\
+Effects 
+	&	0.	Clears the destination the bot will run to. \\
+	&	1.	The bot switches the navigation state to \verb|navigation(waiting,none)|. \\
+	&	2.	The bot looks around as ordered by the last look action.\\
+	&	3.	If an opponent becomes visible that matches the last shoot action the bot will shoot at it.
+\end{tabular}
+\end{small}
+
+\subsubsection*{Shoot action}
+\begin{small}
+\begin{tabular}{p{2cm}p{9cm}}
+Description & Sets the priority of each opponent.\\
+Syntax & \verb|shoot(<TargetLabel>)|\\
+	& \verb|shoot([<TargetLabel>])|\\
+
+Parameters 	& \verb|<TargetLabel>|: A single target label. \\
+		& \verb|[<TargetLabel>]|: A list of target labels in order of priority.\\
+		&  A target label can be: \verb|none|, \verb|nearestEnemy|, \verb|nearestFriendly|, \verb|nearestFriendlyWithLinkGun|, \verb|enemyFlagCarrier|, \verb|friendlyFlagCarrier|, \verb|PlayerID| or \verb|location(X,Y,Z)|. The bot takes the first target label and checks if the target is visible. If the target is visible, it will be shot at. Otherwise the bot will try the next target label. When all target labels have been tried and none matched any visible players the bot will not target any opponent.\\
+
+Effects & 
+	1.	Sets target labels that decide which visible opponent the bot shoots at.\\
+Notes &
+		1.	A full overview of who is targeted by which target label can be found below. \\
+
+
+\end{tabular}
+	\\\\\\
+
+\begin{tabular}{|p{4cm}|p{7cm}|}	
+	\hline
+Target label & Targets\\
+\hline
+none & No one. \\
+nearestEnemy & The nearest enemy player the bot can see. \\
+nearestFriendly &  The nearest friendly player the bot can see. \\
+nearestFriendlyWithLinkGun & The nearest friendly player the bot can see that is holding a link gun. \\
+enemyFlagCarrier & The bot from the opponent team that is currently holding the flag. \\
+friendlyFlagCarrier & The bot from the team that is currently holding the flag.\\
+PlayerID & The bot identified by the UnrealID. Valid Id's can be extracted from the See other bot and Flag percept. \\
+location(X,Y,Z) & A location in the world.\\
+\hline
+\end{tabular}
+\end{small}
+
+\subsubsection*{Stop shooting action}
+\begin{small}
+\begin{tabular}{p{2cm}p{9cm}}
+Description & Stops the bot from shooting anyone.\\
+Syntax & \verb|stopShooting| \\
+
+Effects & 
+	1.	The bot stops shooting at once. Identical to calling shoot([]).\\
+\end{tabular}
+\end{small}
+
+
+\subsubsection*{Prefer weapon action}
+\begin{small}
+\begin{tabular}{p{2cm}p{9cm}}
+Description & Sets the priority for the use of each weapon.\\
+Syntax & \verb|prefer(<Weapon>)|\\
+	& \verb|prefer([<Weapon>])|\\
+
+Parameters 
+	& \verb|<Weapon>|: A single weapon(WeaponLabel, Firemode). \\
+	& \verb|[<Weapon>]|: A list of weapon(WeaponLabel, Firemode) in the order of priority. \\
+	& A WeaponLabel can be: any, sniper or any of the following: \verb|shield_gun|, \verb|assault_rifle|, \verb|bio_rifle|, \verb|shock_rifle|, \verb|minigun|, \verb|link_gun|, \verb|flak_cannon|, \verb|rocket_launcher|, \verb|lightning_gun|, \verb|sniper_rifle|, \verb|redeemer|. The FireMode is either primary or secondary. \\
+
+Effects & 
+	1.	Set the preference used to select a weapon.\\
+&	2.	Select the first weapon from the list that can be used (e.g. the bot has the weapon and it is loaded).\\
+&	3.	Once the bot changes weapons it won't be able to shoot for about half a second.\\
+Notes 
+&	1.	Using \verb|prefer([])| will cause the bot to use its default weapon preferences. \\
+&	2. 	When the bot has none of its preferred weapons, it will use its default weapon preference. \\
+&	3.	The default preference is: \\
+&	 \verb|weapon(shock_rifle, secondary)|, \verb|weapon(rocket_launcher, primary)|, \verb|weapon(flack_cannon, primary)|, \verb|weapon(sniper_rifle, primary)|, \verb|weapon(lightning_gun, primary)|, \verb|weapon(minigun, primary)|, \verb|weapon(link_gun, primary)|, \verb|weapon(bio_rifle, secondary)|, \verb|weapon(assault_rifle, primary)|, \verb|weapon(assault_rifle, secondary)|, \verb|weapon(shield_gun, secondary)|, \verb|weapon(shield_gun, primary)|.\\
+&	4. 	When shooting the bot will use the weapon it is holding in an intelligent fashion. This includes the use of shock combos and assisting with the link gun. A skill level of 6 or 7 is required to set up shock combos reliably.\\
+& 	5. When using a weapon that causes splash damage the bot will hold fire when the splash damage would kill it. Ensure your bot is not using a weapon with splash damage when the target is nearby!\\
+
+\end{tabular}
+\end{small}
+
+\subsubsection*{Look action}
+\begin{small}
+\begin{tabular}{p{2cm}p{9cm}}
+Description & Sets the priority of bots and locations to look at. Use this action to keep an eye on the flag or snipe down an alley. \\
+Syntax & \verb|look(<TargetLabel>)|\\
+	& \verb|look([<TargetLabel>])|\\
+
+Parameters 	& \verb|<TargetLabel>|: A single target label. \\
+		& \verb|[<TargetLabel>]|: A list of target labels in order of priority.\\
+		&  A target label can be:  \verb|none|, \verb|nearestEnemy|, \verb|nearestFriendly|, \verb|nearestFriendlyWithLinkGun|, \verb|enemyFlagCarrier|, \verb|friendlyFlagCarrier|, \verb|PlayerID| or \verb|location(X,Y,Z)|. The bot takes the first target label and checks if the target is visible. If the target is visible, it will be looked at. Otherwise the bot will try the next target label. When all target labels have been tried and none matched any visible players the bot will either look in the direction it is traveling or turn around on the spot.\\
+Effects & 1.	If the bot is not actively shooting some one and the target is visible the bot will look at the given target. 
+\end{tabular}
+
+\begin{tabular}{|p{4cm}|p{7cm}|}	
+	\hline
+Target label & Targets\\
+\hline
+none & No one. \\
+nearestEnemy & The nearest enemy player the bot can see. \\
+nearestFriendly &  The nearest friendly player the bot can see. \\
+nearestFriendlyWithLinkGun & The nearest friendly player the bot can see that is holding a link gun. \\
+enemyFlagCarrier & The bot from the opponent team that is currently holding the flag. \\
+friendlyFlagCarrier & The bot from the team that is currently holding the flag.\\
+PlayerID & The bot identified by the UnrealID. Valid ID's can be extracted from the See other bot and Flag percept. \\
+location(X,Y,Z) & A location in the world.\\
+
+\hline
+\end{tabular}
+\end{small}
+
+%
+\subsection{Instant actions}
+%
+The instant actions are actions that can be carried out in a single instant - and with the exception of respawn - do not disrupt any ongoing behavior.
+
+%
+\subsubsection*{Respawn action}
+%
+\begin{small}
+\begin{tabular}{p{2cm}p{9cm}}
+Description & Respawns the bot.\\ 
+Syntax & \verb|respawn|\\
+Effect &	1.	The bot dies and is returned to a random starting position.\\ 
+&	2.	The navigation state is switched to navigation(waiting,none), i.e. the bot stands still.\\
+Notes
+&	1.	The respawn action does not need to be performed if a bot is fragged. In that case, the bot is automatically respawned by UT.\\
+&	2.	The respawn action was originally thought up as a way out for the hopelessly stuck bot, but can also be used tactically in a CTF game.\\
+&	3.	The bot starts again with 100 health, 0 armour, no active combo, a Shield Gun and Assault Rifle (including 100 rounds of ammo). Adrenaline is not lost.
+\end{tabular}
+\end{small}
+
+%
+\subsubsection*{Combo action}
+%
+\begin{small}
+\begin{tabular}{p{2cm}p{9cm}}
+Description & The bot slowly consumes 100 adrenaline pills and gets a power up.\\
+Precondition & The bot has 100 pills.\\
+Syntax & \verb|combo(<Combo>)|\\
+Parameters & \verb|<Combo>|: Any of the following: berserk, booster, invisibility, speed.  Effects: speed - Makes the bot run super fast; booster - Bot gains health at a rate of 5 points per second up to 199, then it gives the bot shield at a rate of 5 per second up to 150; invisible - Bot becomes nearly invisible. Other bots only have small chance at spotting an invisible bot; berserk - Makes you fire at a twice the rate. \\
+Effect & 
+	1.	The bot activates the power up.\\
+&	2.	The adrenaline slowly drains.\\
+&	3.	Once the adrenaline reaches 0, the effect no longer applies.\\
+Notes &
+	1.	When invisible with the flag, the flag is still visible. This means you can still be shot at.\\
+&	2.	Be careful when using speed, the navigation can have trouble keeping up.\\
+& 3. One adrenaline pill gives 2 adrenaline. Adrenaline stays if the bot gets killed.
+\end{tabular}
+\end{small}
+
+
+\subsubsection*{Drop weapon action}
+\begin{small}
+\begin{tabular}{p{2cm}p{9cm}}
+Description & Drops the weapon it is currently holding, possibly for another bot to use.\\
+Precondition & Bot is holding a weapon other than the shield gun.\\
+Syntax & \verb|dropWeapon|\\
+Effect & 
+	1.	The weapon the bot is currently holding is dropped and lands a few feet away in the direction the bot is looking.
+\end{tabular}
+\end{small}
+
+\subsubsection*{Path action} 	
+\begin{small}
+\begin{tabular}{p{2cm}p{9cm}}
+Description & The bot computes a path from a to b.\\
+Syntax & \verb|path(<From>,<To>)|\\
+Parameters 	& \verb|<From>| : A location presented either as a location(x,y,z) or as the UnrealId of a navpoint, player, or item.\\
+	 	& \verb|<To>| :  A location presented either as a location(x,y,z) or as the UnrealId of a player, navpoint, or item.\\
+Effect & 
+		1.	The bot computs the path.\\
+	&	2.	The bot emits a Path percept.\\
+Notes& 
+		1.	The UnrealId's used must have been received in a percept. Id's received from other bots might not be known by this bot. \\\\
+	&	2.	When a player is not visible, the path will lead to the last location this bot remembers.\\
+\end{tabular}
+\end{small}
+
+\subsubsection*{Chat action} 	
+\begin{small}
+    \begin{tabular}{p{2cm}p{9cm}}
+        Description & The bot chats on the specified channel (useful for debugging).\\
+        Syntax & \verb|chat(<Scope>,<Message>)|\\
+        Parameters & \verb|<Scope>| : Scope to chat on, can be global or team.\\
+            & \verb|<Message>| : Message to send, use GOAL string. Example: 'Hello world!'\\
+        Effect &
+            1. Bot chats on specified channel.\\
+        Notes & 
+            1. Useful if you want to read what the bot is doing while you are in game.\\
+    \end{tabular}
+\end{small}
+
+\subsubsection*{Skip action} 	
+\begin{small}
+\begin{tabular}{p{2cm}p{9cm}}
+Description & The bot does nothing.\\
+Syntax & \verb|skip|\\
+Notes & 
+		Useful when you want the bot to continue what it was doing.\\
+\end{tabular}
+\end{small}
+
+\subsection{Overview}
+\label{sec:actionsoverview}
+
+\begin{small}
+\begin{tabular}{|p{4cm}|p{7cm}|}	
+	\hline
+Action Name			 & Syntax\\
+\hline\hline
+Navigate action 		& \verb|navigate(<Destination>)|\\
+%Continue action 		& \verb|continue(<Destination>)|\\
+Stop action			& \verb|stop| \\
+Shoot action 			& \verb|shoot(<TargetLabel>)| \\
+				& \verb|shoot([<TargetLabel>])| \\
+Stop shooting action 	& \verb|stopShooting| \\
+Prefer weapon action 	& \verb|prefer(<Weapon>)|\\
+				& \verb|prefer([<Weapon>])|\\
+Look at action		& \verb|look(<TargetLabel>)|\\
+				& \verb|look([<TargetLabel>])|\\
+Respawn action		& \verb|respawn|\\
+Use power up action	& \verb|combo(<Combo>)| \\
+Drop weapon action 	& \verb|dropWeapon| \\
+Path action			& \verb|path(<From>,<To>)|\\
+Skip action			& \verb|skip|\\
+\hline
+\end{tabular}
+\end{small}
+
+\section{Percepts}
+\label{sec:percepts}
+This section describes the percept design that provides a specification for the implementation of the UT-{\Goal} interface component that handles the transfer of percepts to {\Goal}. 
+
+% Rien: This does not seem to be that important. It should be self evident.
+%A particularly important design choice that impacts overall design and discussed here briefly first has been to include both navigation points as well as location or position coordinates. The main reason is that it is not sufficient to only provide navigation points to an agent as a bot can be travelling from navigation point A to B, and the position of the bot would need to be changed somewhere to B (but when, and how accurate would the agent’s understanding of its position be?). This, we believe, would be confusing when writing an agent program or even make certain things almost impossible. As an example, consider a bot R in team red that hears from a team mate that there is an enemy B from team blue at navigation point A. Bot R travels to navigation point N and once R gets there decides to look around. Now the geometry of the level can be such that N is located on a corner and obstructs the line of sight between R and B while both are at the same position!
+
+
+To limit the percept load, not all percepts are provided at each iteration of the cycle. 
+\begin{itemize}
+\item \textbf{Send once}: ``Send once'' percepts are provided only once when an agent is connected for the first time to the UT environment. Handle these percepts in the \textbf{init} module of the agent.
+\item \textbf{On change}: ``On change'' percepts provide new, up-to-date information that overrides previously perceived information. These percepts are received whenever some change is perceived that invalidates old perceptual information. The new percept provides the most current and up-to-date information.
+\item \textbf{On change with negation}: ``On change with negation'' percepts negate previously observed information and, if available, provide an update. For example, if the agent perceived \texttt{flag(blue,...,location(581.0,4936.31,-742.1)))} but now sees the blue flag's position has changed it will get two percepts:
+\begin{itemize}
+	\item \texttt{percept(not(flag(blue,...,location(581.0,4936.31,-742.1))))}, and
+	\item \texttt{percept(flag(blue,...,location(590.37,4816.16,-742.1)))}
+\end{itemize} where the last percept provides the new, up-to-date information. These percepts thus are provided when a change occurs. In all cases of these percepts, the old percept \texttt{percept(old)} is negated and the agent perceives \texttt{percept(not(old))} which indicates the \texttt{old} fact is no longer true. In case a new relevant observation is available, another percept will be available that provides this information.
+\end{itemize}
+
+%
+\subsection{Self Percepts}
+%
+All the following percepts relate to the bot's state in the game. Its name, physical state and inventory.
+
+\subsubsection*{Self percept}
+\begin{small}
+\begin{tabular}{p{2cm}p{9cm}}
+Description & Information about the bot's identity and team.\\
+Type & Send once\\
+Syntax & \verb|self(<UnrealID>, <NickName>, <Team>)|\\ 
+Parameters &
+\verb|<UnrealID>|: Unique identifier string for this bot assigned by Unreal.\\
+& \verb|<NickName>|: Name of the bot as it appears in the game.\\
+& \verb|<Team>|: Either one of the following strings ‘red’, ‘blue’, or ‘none’.
+\end{tabular}
+\end{small}
+
+\subsubsection*{Orientation percept}
+\begin{small}
+\begin{tabular}{p{2cm}p{9cm}}
+Description & Information about the bot's orientation in the world.\\
+Type & Send on change\\
+Syntax & \verb|orientation(<Location>, <Rotation>, <Velocity>)|\\ 
+Parameters &
+\verb|<Location>|: the position in the world as location(x,y,z).\\
+& \verb|<Rotation>|: the rotation of the bot as rotation(pitch,yaw,roll).\\
+& \verb|<Velocity>|: the velocity of the bot as velocity(vx,vy,vz) in ut units per second.
+\end{tabular}
+\end{small}
+
+\subsubsection*{Status Percept}
+\begin{small}
+\begin{tabular}{p{2cm}p{9cm}}
+Description & Information about the bot's current physical state.\\
+Type & Send on change\\
+Syntax & \verb|status(<Health>, <Armour>, <Adrenaline>, <Combo>)|\\
+Parameters & 
+ \verb|<Health>|: An integer between 0 and 199, indicating the health left in this bot.\\
+& \verb|<Armour>|: An integer between 0 and 150, indicating the amount of armour this bot has.\\
+& \verb|<Adrenaline>|: An integer between 0 and 100 indicating how much adrenaline this bot has.\\
+& \verb|<Combo>|: Either booster, berserk, invisibility, speed or none, indicating the active combo.	\\
+Notes 
+&	1.	A bot initially starts with 100 health, 0 armour, 0 adrenaline and no active combo.\\
+&	2. 	When a bot dies or respawns he starts with 100 health, 0 armor and no active combo. Adrenaline is not lost.\\
+\end{tabular}
+\end{small}
+
+
+\subsubsection*{Score percept}
+\begin{small}
+\begin{tabular}{p{2cm}p{9cm}}
+Description & Information about the number of kills, deaths, and suicides this bot accumulated.\\
+Type & Send on change\\
+Syntax & \verb|score(<TotalKills>, <TotalDeaths>, <TotalSuicides>)|\\
+Parameters & 
+\verb|<TotalKills>|: Number of people the bot fragged during this game.\\
+& \verb|<TotalDeaths>|: Number of times the bot died during this game.\\
+& \verb|<TotalSuicides>|: Number of times the bot got himself killed.\\
+Notes &
+	1.	Using respawn and being fragged by an opponent both count as a death. Being killed by the your own weapon counts as a suicide.
+\end{tabular}
+\end{small}
+
+\subsubsection*{Current Weapon percept}
+\begin{small}
+\begin{tabular}{p{2cm}p{9cm}}
+Description & Information on which weapon the bot is currently holding.\\
+Type & Send on change \\
+Syntax & \verb| currentWeapon(<WeaponType>,<FireMode>)|\\
+Parameters &
+\verb|<WeaponType>|: none or any of the following: \verb|shield_gun|, \verb|assault_rifle|, \verb|bio_rifle|, \verb|shock_rifle|, \verb|minigun|, \verb|link_gun|, \verb|flak_cannon|, \verb|rocket_launcher|, \verb|lightning_gun|, \verb|sniper_rifle|, \verb|redeemer|.\\
+& \verb|<FireMode>|: either none, primary or secondary, indicating if the weapon is used and in which fire mode.\\
+Notes & 
+	1.	Not all weapons may be present on each map. 
+\end{tabular}
+\end{small}
+	
+\subsubsection*{Inventory Weapon percept}
+\begin{small}
+\begin{tabular}{p{2cm}p{9cm}}
+Description & Information on which weapons the bot currently has in its inventory and their status.\\
+Type & Send on change, with negation.\\
+Syntax & \verb|weapon(<WeaponType>, <Ammo>, <AltAmmo>)|\\
+Parameters & 
+\verb|<WeaponType>|: none or any of the following: \verb|shield_gun|, \verb|assault_rifle|, \verb|bio_rifle|, \verb|shock_rifle|, \verb|minigun|, \verb|link_gun|, \verb|flak_cannon|, \verb|rocket_launcher|, \verb|lightning_gun|, \verb|sniper_rifle|, \verb|redeemer|.\\
+ & \verb|<Ammo>|: An integer between 0 and specific maximum for the WeaponType.\\
+ & \verb|<AltAmmo>|: An integer between 0 and specific maximum for the WeaponType.\\
+Notes & 
+	1.	Not all weapons may be present on each map. \\
+&	2.	Depending on the WeaponType, Ammo and AltAmmo may refer to the same reservoir of ammunition. For more information please consult the Unreal Documentation.\\
+&	3.	The \verb|shield_gun| primary has infinite ammo which is always 1. \\
+& 	4.  	The \verb|shield_gun| secondary will recharge when not used.
+\end{tabular}
+\end{small}
+
+\subsubsection*{UDamage percept}
+\begin{small}
+\begin{tabular}{p{2cm}p{9cm}}
+Description & Information about the duration of the udamage effect.\\
+Type & Send on change\\
+Syntax & \verb|udamage(<Ttime>)|\\
+Parameters & 
+\verb|<Time>|: Time in seconds rounded to 2 decimals.\\
+\end{tabular}
+\end{small}
+	
+\subsection{Action Percepts}
+
+\subsubsection*{Fragged percept}
+\begin{small}
+\begin{tabular}{p{2cm}p{9cm}}
+Description & This percept is provided when one bot is violently fragmented by another. \\
+Type & Always\\
+Syntax & \verb|fragged(<Time>,<KillerID>,<VictimID>,<WeaponType>)|\\
+Parameters 
+
+& \verb|<Time>|: The UT time of the Frag, in milliseconds.\\
+& \verb|<KillerID>|: The UnrealID of killer or none.\\
+& \verb|<VictimID>|: The UnrealID of the victim.\\
+& \verb|<WeaponType>|: Weapon type used for the killing shot.\\
+Notes &
+	1.	When the killer and victim id are equal, the bot committed suicide. \\
+&	2.	When the killer id is none, the bot used respawn.\\
+\end{tabular}
+\end{small}
+
+
+
+\subsubsection*{Navigation state percept}
+\begin{small}
+\begin{tabular}{p{2cm}p{9cm}}
+Description & This percept is provided when the navigation state of the bot changes. \\
+Type & On change\\
+Syntax & \verb|navigation(<State>,<Destination>)|\\
+Parameters &
+\verb|<State>|: Either navigating, stuck, noPath, reached or waiting, indicating the state of the navigation. \\
+& \verb|<Destination>|: The current destination of the bot or none when the bot is not navigating.\\
+Notes &
+	1.	For more information see the navigate action. \\
+\end{tabular}
+\end{small}
+
+
+\subsubsection*{Path percept}
+\begin{small}
+\begin{tabular}{p{2cm}p{9cm}}
+Description & This percept is provided when a \verb|path(<Location>,<Location>)| action successfully completes. \\
+Type & On change\\
+Syntax & \verb|path(<StartId>, <EndId>, <Length>, [<Location>])|\\
+Parameters 
+	& \verb|<Start>| : Start location of the path used in the path action. \\
+	& \verb|<End>| : End of location of the path used in the path. \\
+	&  \verb|<Length>| : The Length of the path in UT units. \\
+	& \verb|[<Location>]| : A list of UnrealIDs that represent a path from the starting location to the end. \\
+Notes & 1.	The first and last node in the path equal the \verb|<From>| and \verb|<To>| arguments of the Path action only iff both were navpoints. Otherwise it will be the closest navpoint. \\
+Notes & 2.	Likewise the distance of the path is the distance between the starting navpoint and the destination navpoint.
+\end{tabular}
+\end{small}
+
+\subsubsection*{Logic Iteration percept}
+\begin{small}
+\begin{tabular}{p{2cm}p{9cm}}
+Description & This percept indicates the number of logic evaluations of the bot. \\
+Type & On change\\
+Syntax & \verb|logic(<Iterations>)|\\
+Parameters 
+	&  \verb|<Iterations>| : Numbers of logic iterations since the start. \\
+Notes & 1.	This percept is deprecated. For time measurement use get\_time. \\
+\end{tabular}
+\end{small}
+
+\subsection{Map percepts}
+The following percepts provide information about what the bot knows about the map and the game. Navigations points, pick up points, etc. but also the map name, game played, current score and victory conditions.
+
+\subsubsection*{Navpoint percept}
+\begin{small}
+\begin{tabular}{p{2cm}p{9cm}}
+Description & Information about point in the map. Together these form a directed graph that spans the entire map.\\
+Type & Send once.\\
+Syntax & \verb|navPoint(<UnrealID>,  <Position>, [<NeigsUnrealID>])|\\
+Parameters & \verb|<UnrealID>|: The the unique ID for this navpoint.\\
+& \verb|<Position>|: The location of this navpoint on the map as a location(x,y,z).\\
+& \verb|[<NeigsUnrealID>]|: A list of ID's for the neighbouring navpoints that are reachable from this navpoint.
+\end{tabular}
+\end{small}
+
+\subsubsection*{Item Pickup percept}
+\begin{small}
+\begin{tabular}{p{2cm}p{9cm}}
+Description & Information indicating at which navpoint weapons can be found.\\
+Type & Send once.\\
+Syntax & \verb|pickup(<UnrealID>, <Label>, <ItemType> )|\\
+Parameters &
+	\verb|<UnrealID>|: The UnrealID of the navigation point this pickup spot is placed on.\\
+&	\verb|<Label>|: The category of the pick up, useful for prioritizing.\\
+&	\verb|<ItemType>|: The actual item type of the item located on the pickup. \\
+Notes & 
+	1.	Depending on the game setting ``weapon stay'', there may not always be a weapon present on a pick up point. \\
+&	2.	If ``weapon stay'' is enabled, a weapon can only be picked up if one of the same type is not present in the bots inventory yet.\\
+&	3.	A full overview of which category Label belongs to which item type.
+\end{tabular}
+\end{small}
+\\\\
+\begin{small}
+\begin{tabular}{|p{2cm}|p{9cm}|}	
+	\hline
+\verb|<Label>| & \verb|<ItemType>|\\
+\hline
+weapon &
+\verb|shield_gun|, \verb|assault_rifle|, \verb|bio_rifle|, \verb|shock_rifle|, \verb|minigun|, \verb|link_gun|, \verb|flak_cannon|, \verb|rocket_launcher|, \verb|lightning_gun|, \verb|sniper_rifle|, \verb|redeemer|\\
+ammo &
+\verb|shield_gun|, \verb|assault_rifle|, \verb|bio_rifle|, \verb|shock_rifle|, \verb|minigun|, \verb|link_gun|, \verb|flak_cannon|, \verb|rocket_launcher|, \verb|lightning_gun|, \verb|sniper_rifle|, \verb|redeemer|\\
+health & \verb|health|, \verb|mini_health|, \verb|super_health|\\
+armor & \verb|small_armor|, \verb|super_armor|\\
+adrenaline & \verb|adrenaline|\\
+other & \verb|udamage|\\
+ \hline
+\end{tabular}
+\end{small}
+
+\subsubsection*{Flag base percept}
+\begin{small}
+\begin{tabular}{p{2cm}p{9cm}}
+Description & Information about the location of the flag base. This will be the place to be for all bots.\\
+Type & Send once.\\
+Syntax & \verb|base(<Team>, <UnrealID>)|\\ 
+Parameters &
+	\verb|<Team>|: The team this flagbase belongs to.\\
+&	\verb|<UnrealID>|: The UnrealID of the navpoint this flagbase is placed upon.\\
+Notes & 
+	1.	Defend well.\\
+&	2.	The flag may not always be present.
+\end{tabular}
+\end{small}
+
+\subsubsection*{Game info percept}
+\begin{small}
+\begin{tabular}{p{2cm}p{9cm}}
+Description & Information about the type of game being played, the map and the score required for winning the game.\\
+Type & Send on change.\\
+Syntax & \verb|game(<Gametype>, <Map>, <GoalScore>,<TimeLimit>)|\\
+Parameters &
+	\verb|<Gametype>|: A String representing the game. For CTF typically `BotCTFGame'.\\
+&	\verb|<Map>|: A string with the name of the map being played on. \\
+&	\verb|<GoalScore>|: The first team to reach the GoalScore wins the game. For CTF this is the number of times the flag must be captured.  If the goal score is zero, the game can't be won by reaching the goalscore first. If there is a time limit, the team with the highest score at the end of the game wins.\\
+&	\verb|<TimeLimit>|: The remaining duration of the game from the moment this percept is received. When the time is up and the GoalScore is in a tie, the game will go into overtime. If the time limit is zero, the game won't end until the goal score is reached.\\
+Note & If both the GoalScore and TimeLimit are zero, the game can't be won.
+\end{tabular}
+\end{small}
+
+
+\subsubsection*{Team score percept}
+\begin{small}
+\begin{tabular}{p{2cm}p{9cm}}
+Description & Percept that provides information about the current state of the game.\\
+Type & On change\\
+Syntax & \verb|teamScore(<TeamScore>, <OpponentTeamScore>)|\\
+Parameters &
+\verb|<TeamScore>| score of the team this bot is on.\\
+& \verb|<OpponentTeamScore>| score of the opponent team.\\
+Notes &
+	1.	For CTF the score is the number of times the flag has been captured.\\
+&	2.	Once either team reaches the goal score from the Gameinfo percept, the game is over. 
+\end{tabular}
+\end{small}
+
+\subsubsection*{Flag status percept}
+\begin{small}
+\begin{tabular}{p{2cm}p{9cm}}
+Description & Percept that provides information about the current state of the flag.\\
+Type & On change with negation.\\
+Syntax & \verb|flagState(<Team>, <FlagState>)|\\
+& \verb|<Team>|: Colour of the flag, matches the colour of the team that has to protect this flag.\\ 
+& \verb|<FlagState>|: State of the flag. Either home, held or dropped.\\
+Notes & 
+	1.	See also the See flag percept.
+\end{tabular}
+\end{small}
+
+\subsection{See Percepts}
+The following percepts cover what the bot can see. 
+
+\subsubsection*{See item percept}
+\begin{small}
+\begin{tabular}{p{2cm}p{9cm}}
+Description & Provides information about an item the bot sees in the world.\\
+Type & On change, with negation.\\
+Syntax & \verb|item(<UnrealID>, <Label>,<ItemType>, <Position>)|\\ 
+Parameters &
+\verb|<UnrealID>|: The UnrealID of this item.\\
+& \verb|<Label>|: The category of the pick up, useful for prioritizing.\\
+& \verb|<ItemType>|: The actual item type of the item located on the pickup. \\
+& \verb|<Position>|: The x,y,z coordinates of the item as a location(x,y,z) or the UnrealID of a navpoint if the item is spawned on one.\\
+Notes &
+	1.	A full over view of which category Label belongs to which item type.
+\end{tabular}
+\end{small}
+\\\\
+\begin{small}
+\begin{tabular}{|p{2cm}|p{9cm}|}	
+	\hline
+\verb|<Label>| & \verb|<ItemType>|\\
+\hline
+weapon &
+\verb|shield_gun|, \verb|assault_rifle|, \verb|bio_rifle|, \verb|shock_rifle|, \verb|minigun|, \verb|link_gun|, \verb|flak_cannon|, \verb|rocket_launcher|, \verb|lightning_gun|, \verb|sniper_rifle|, \verb|redeemer|\\
+ammo &
+\verb|shield_gun|, \verb|assault_rifle|, \verb|bio_rifle|, \verb|shock_rifle|, \verb|minigun|, \verb|link_gun|, \verb|flak_cannon|, \verb|rocket_launcher|, \verb|lightning_gun|, \verb|sniper_rifle|, \verb|redeemer|\\
+health & \verb|health|, \verb|mini_health|, \verb|super_health|\\
+armor & \verb|small_armor|, \verb|super_armor|\\
+adrenaline & \verb|adrenaline|\\
+other & \verb|udamage|\\
+ \hline
+\end{tabular}
+\end{small}
+
+
+\subsubsection*{See flag percept}
+\begin{small}
+\begin{tabular}{p{2cm}p{9cm}}
+Description & Percept provided when the flag becomes visible to the bot. \\
+Type & On change, with negation.\\
+Syntax & \verb|flag(<Team>,<HolderUnrealID>, <Position>)|\\
+Parameters & 
+	\verb|<Team>|: Colour of the flag, matches the colour of the team that has to protect this flag.\\
+& \verb|<HolderUnrealID>|: The Unreal ID of the bot that holds flag, none when the flag is not held.\\
+& \verb|<Position>|: The x,y,z coordinates of the flag as a location(x,y,z).\\
+
+Notes &
+	1.	See also the flagStatus percept.
+\end{tabular}
+\end{small}
+
+\subsubsection*{See other bot percept}
+\begin{small}
+\begin{tabular}{p{2cm}p{9cm}}
+Description & Percept provided when another bot becomes visible to this bot.\\
+Type & On change with negation.\\
+Syntax & \verb|bot(<UnrealID>, <Name>, <Team>, <Position>, <Weapon>, <FireMode>)|\\
+Parameters &
+	\verb|<UnrealID>|: Unique identifier string for this bot assigned by Unreal.\\
+&	\verb|<Name>|: The name of this bot.\\
+&	\verb|<Team>|: The team of this bot.\\
+&	\verb|<Position>|: The x,y,z coordinates of the bots position in UT units, described as location(x,y,z)\\
+&	\verb|<Weapon>|: The weapon the bot is holding. none or any of the following: \verb|shield_gun|, \verb|assault_rifle|, \verb|bio_rifle|, \verb|shock_rifle|, \verb|minigun|, \verb|link_gun|, \verb|flak_cannon|, \verb|rocket_launcher|, \verb|lightning_gun|, \verb|sniper_rifle|, \verb|redeemer|.\\
+&	\verb|<Shooting>|: Either primary, secondary or none to indicate if the bot is shooting and in which firemode.
+\end{tabular}
+\end{small}
+
+\subsubsection*{See Pickup percept}
+\begin{small}
+\begin{tabular}{p{2cm}p{9cm}}
+Description & Information about point in the map the bot can see.\\
+Type & On change with negation.\\
+Syntax & \verb|pickup(<UnrealID>)|\\
+Parameters & \verb|<UnrealID>|: The the unique ID for the navpoint this pickup is located on.\\
+
+Notes &
+	1.	The See Navpoint percept is provided when ever the bot can see a navpoint that has a pickup on it. This allows you to confirm if an item has been picked up or not. If you see the navpoint, but not the item, the item has been picked up. \\
+\end{tabular}
+\end{small}
+
+\section{Changes} 
+
+
+\subsection{Since version 3.5.4}
+
+The changes from version 3.5.2 to 3.5.4.
+
+\begin{itemize}
+	\item \textbf{Improved init structure.} The init structure now allows the attributes of individual bots to be specified.
+	\item \textbf{See Navpoint/3 is now Pickup/1} The See Navpoint percept has been changed to reflect that only pickup spots are communicated tot he bot. The syntax has been simplified by only including the UnrealId of the pickup.
+	\item \textbf{Path percept includes origin and destination.} The path percept now includes the arguments it was called with.
+	\item \textbf{Server Agent} An agent representing the server has been added. It can manipulate bots and see bits of the world.
+\end{itemize}
+
+
+\subsection{Since version 3.5.2} 
+
+
+The changes from version 2 to version 3.5.2.
+
+\begin{itemize}
+	\item \textbf{Bots can now use all weapons properly.}
+	This is done using a Pogamut Addon. Each weapon of the standard weapons have been given their own shooting that handles charging up and shooting in an intelligent fashion. Some examples: 
+	\begin{itemize}
+
+
+	\item In Secondary mode the shield gun will selectively use its shield when threatened and bounce back incoming shock cores. 
+	\item Using the shock rifle the bot is able to to pull shock combos and won't shoot a shielded player. (Aims above instead).  Beware the bot will even blow up your orbs!
+	\item In Secondary mode the BioRifle will charge up till full, then when a target becomes visible, unload the full charge. After this it will pelt its target with primary mode. 
+	\item When charging the rocket launcher and a  player disappears the bot will unload its loaded rockets on his last seen position. Player might be caught in splash damage. 
+	\item For any weapon that causes splash damage, the bot will hold its fire if it means it could be killed by the splash.
+	\end{itemize}
+
+For more detailed information check out the UT2004WeaponryShooting project at svn://artemis.ms.mff.cuni.cz/pogamut/trunk/project/Addons/UT2004WeaponryShooting.
+
+	\item \textbf{Bots can now shoot any player.} To make use of the newly learned weapon skills the bot can now shoot any player using the shoot action. This means that link gun combos are possible now.
+	\item \textbf{Improved navigation.} The pursue and goto action have been combined into a navigate action. This action will try to navigate to any navpoint or location on the map. When provided with a player, the navigation will follow this player. Individual percepts for lost and reached have been removed and replaced with a navigation state containing the current state of the navigation and its current destination.
+	\item \textbf{Repeatedly calling navigation no longer blocks the bot.} Repeatedly calling the navigation (previously goto) with the same destination will no longer cause the bot the freeze in place unable to finish his path execution. Repeatedly calling the navigation with different locations will still cause the bot to freeze in place. 
+	\item \textbf{Three actions have been renamed.} 
+		\begin{itemize}
+			\item  usePowerup(Powerup) to combo(Combo) to better reflect the terminology used by unreal
+			\item  selectWeapon([Weapon]) to prefer([Weapon]), to indicate that the bot will merely prefer the weapon when available rather select it no matter what.
+			\item   lookAt(Target)to look(Target), to simplify the syntax.
+		\end{itemize}
+
+	\item \textbf{Four percepts have been renamed.} 
+		\begin{itemize}
+			\item  status(IsShooting, Health, Armour, Adrenaline, Combo) to status (Health, Armour, Adrenaline, Combo), IsShooting has been moved to the current weapon percept, the Combo has been added to show the currently active powerup.
+			\item  trackRecord(TotalKills, TotalDeaths, TotalSuicides ) to score(TotalKills, TotalDeaths, TotalSuicides ) to reflect the terminology used by unreal.
+			\item   flagBase(Team, UnrealID) to base(Team, UnrealID),  to simplify the syntax.
+			\item  gameInfo(Gametype, Map, GoalScore,TimeLimit) to game(Gametype, Map, GoalScore, TimeLimit),  to simplify the syntax.
+		\end{itemize}
+
+	\item \textbf{Specific navpoints are now visible.} To allow bots to predict when an item will respawn, the See Navpoint percept has been added. The percept is only provided for navpoints that have a pickup spot. When the navpoint is visible, but the item is not, the item has been taken and will respawn after some time.
+
+	\item \textbf{Memory consumption has been reduced.}  Previous versions of the environment created a FloydWarshallMap for each agent. The current version implements a shared map and cache. This significantly reduces the amount of memory consumed by path planning.
+	
+	\item \textbf{Visualizer Improvements.}  The visualizer remembers the last position and size of all windows. A menu has been added to change the color settings.
+
+\end{itemize}
+
+
+\section{Know Issues \& Workarounds}
+
+A list of known issues and their workaround.
+
+\subsection{Window Focus in Windows 7}
+
+A known issue exists where when using Alt-Tab to switch to the UT2004 window it is possible that the window does not grab the mouse clicks. This can be resolved by holding down Alt-Tab and clicking on the UT2004 preview window with the mouse.
+
+\subsection{GOAL becomes non responsive on CTF-Colossus (and other huge maps)}
+
+Maps containing a ridiculous number of navigation points such as CTF-Colossus require a significant amount of memory to run path planning. By default the JVM only provides GOAL with 250MB. When GOAL runs out of memory it will lock up. You can avoid this by increasing the amount of available memory  by starting GOAL with the \texttt{-Xmx512M} argument. For more information see \texttt{http://docs.oracle.com/javase/6/docs/technotes/tools/windows/java.html }.
+
+\subsection{Non standard characters in Windows computer names prevent environment startup}
+
+Windows allows non-standard characters in computer names. This prevents Pogamut from starting agents which in turn prevents environment startup. To solve this you can change your computer name to one that uses only standard characters. Standard character include the letters(A-Z, a-z), digits(0-9), and hypens(-).
+
+\subsection{Environment will fail to launch bots when not enough spawn points are available}
+
+The current implementation of Pogamut waits until all bots are spawned. When bots are unable to spawn due to a lack of space, the whole launch of the environment fails. This typically occurs in CTF-Joust which has 2 spawn points per team. If you want to play on this map, use fewer players.
+
+\subsection{Max 15 player and bots in a 16 slot server}
+
+By default an UT server starts with 16 player slots. Only 15 of these can actually be used. You can change the maximum number of available slots by changing \verb|MaxPlayers=16| under \verb|[Engine.GameInfo]| in \verb|UT2004.ini|.
+
+\subsection{Non-English UT crashes Pogmut parser}
+
+When a bot dies in a non-English version of UT the GOAL bot crashes. You can change the language to english by setting \verb|Language=int| under \verb|[Engine.Engine]| in \verb|UT2004.ini|. On OSX \verb|UT2004.ini| is located Library/Application/Support/Unreal Tournament 2004/System/.
+
+\subsection{Master server connection failed}
+
+The UT server may occasionally complain that it could not connect to the master server. This can be fixed by either fixing your firewall settings or by disabling the connection to the master server. This can be done by setting \verb|DoUplink=False| and  \verb|UplinkToGamespy=False| under \verb|[IpDrv.MasterServerUplink]| in \verb|UT2004.ini|
+
+\bibliographystyle{abbrv}
+
+\end{document}
