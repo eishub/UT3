@@ -8,7 +8,7 @@
 	<artifactId>goal-ut-visualizer-connection</artifactId>
 	<name>UTVisualizerConnection</name>
 	<description>A connection for the Visualizer to the Unreal Environment.</description>
-	<version>3.5.5-SNAPSHOT</version>
+	<version>3.5.5</version>
 	<url>https://github.com/eishub/UT3</url>
 	<licenses>
 		<license>
@@ -48,7 +48,7 @@
 		<dependency>
 			<groupId>nl.tudelft.goal</groupId>
 			<artifactId>goal-ut2004-environment-util</artifactId>
-			<version>3.5.5-SNAPSHOT</version>
+			<version>3.5.5</version>
 		</dependency>
 		<dependency>
 			<groupId>cz.cuni.amis.pogamut</groupId>
@@ -107,6 +107,47 @@
 				</executions>
 			</plugin>
 
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-deploy-plugin</artifactId>
+				<version>2.8.2</version>
+				<configuration>
+					<altDeploymentRepository>internal.repo::default::file://${project.build.directory}/mvn-repo</altDeploymentRepository>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>com.github.github</groupId>
+				<artifactId>site-maven-plugin</artifactId>
+				<version>0.10</version>
+				<configuration>
+					<server>github</server>
+					<!-- git commit message -->
+					<message>Maven artifacts for ${project.name} version
+						${project.version}</message>
+					<!-- matches distribution management repository url above -->
+					<outputDirectory>${project.build.directory}/mvn-repo</outputDirectory>
+					<!-- remote branch name -->
+					<branch>refs/heads/master</branch>
+					<merge>true</merge>
+					<includes>
+						<include>**/*</include>
+					</includes>
+					<!-- github repo name -->
+					<repositoryName>mvn-repo</repositoryName>
+					<!-- github organization -->
+					<repositoryOwner>eishub</repositoryOwner>
+				</configuration>
+				<executions>
+					<!-- run site-maven-plugin as part of the build's 'deploy' phase -->
+					<execution>
+						<goals>
+							<goal>site</goal>
+						</goals>
+						<phase>deploy</phase>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 </project>
