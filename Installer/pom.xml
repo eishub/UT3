@@ -6,7 +6,7 @@
 	<name>Unreal 3/2004 Environment Installer</name>
 	<groupId>nl.tudelft.goal</groupId>
 	<artifactId>goal-ut-environment-installer</artifactId>
-	<version>3.7.0-SNAPSHOT</version>
+	<version>3.7.0</version>
 	<packaging>pom</packaging>
 	<url>https://github.com/eishub/UT3</url>
 	<licenses>
@@ -24,8 +24,15 @@
 			<organizationUrl>https://github.com/koenhindriks</organizationUrl>
 		</developer>
 	</developers>
-	
-	
+
+	<repositories>
+		
+		<repository>
+			<id>eishub-mvn-repo</id>
+			<url>https://raw.github.com/eishub/mvn-repo/master</url>
+		</repository>
+	</repositories>
+
 	<organization>
 		<name>eishub</name>
 		<url>http://github.com/eishub</url>
@@ -42,35 +49,35 @@
 		<developerConnection>scm:git:git@github.com:eishub/UT3.git</developerConnection>
 		<url>https://github.com:eishub/UT3</url>
 	</scm>
-	
+
 	<properties>
 		<!-- Information for UT2004 environment to include in installer -->
 		<environment.groupId>${project.groupId}</environment.groupId>
 		<environment.artifactId>goal-ut2004-environment</environment.artifactId>
-		<environment.version>3.5.5-SNAPSHOT</environment.version>
+		<environment.version>3.5.5</environment.version>
 		<environment.classifier>eis_environment</environment.classifier>
 
 		<environment3.groupId>${project.groupId}</environment3.groupId>
 		<environment3.artifactId>goal-ut3-environment</environment3.artifactId>
-		<environment3.version>3.5.5-SNAPSHOT</environment3.version>
+		<environment3.version>3.5.5</environment3.version>
 		<environment3.classifier>eis_environment</environment3.classifier>
 
 		<!-- Information for visualizer to include in installer -->
 		<visualizer.groupId>${project.groupId}</visualizer.groupId>
 		<visualizer.artifactId>goal-unreal-visualizer</visualizer.artifactId>
-		<visualizer.version>3.5.5-SNAPSHOT</visualizer.version>
+		<visualizer.version>3.5.5</visualizer.version>
 		<visualizer.classifier>bin</visualizer.classifier>
 
 		<!-- Information for documentation to include in installer -->
 		<documentation.groupId>${project.groupId}</documentation.groupId>
 		<documentation.artifactId>goal-ut-environment-documentation</documentation.artifactId>
-		<documentation.version>3.5.5-SNAPSHOT</documentation.version>
+		<documentation.version>3.5.5</documentation.version>
 		<documentation.classifier>bin</documentation.classifier>
 
 		<!-- Information for examples to include in installer -->
 		<examples.groupId>${project.groupId}</examples.groupId>
 		<examples.artifactId>goal-ut-environment-examples</examples.artifactId>
-		<examples.version>3.5.5-SNAPSHOT</examples.version>
+		<examples.version>3.5.5</examples.version>
 		<examples.classifier>bin</examples.classifier>
 
 		<!-- Information used by the installer -->
@@ -306,16 +313,53 @@
 				</dependencies>
 			</plugin>
 
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-deploy-plugin</artifactId>
+				<version>2.8.2</version>
+				<configuration>
+					<altDeploymentRepository>internal.repo::default::file://${project.build.directory}/mvn-repo</altDeploymentRepository>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>com.github.github</groupId>
+				<artifactId>site-maven-plugin</artifactId>
+				<version>0.10</version>
+				<configuration>
+					<server>github</server>
+					<!-- git commit message -->
+					<message>Maven artifacts for ${project.name} version
+						${project.version}</message>
+					<!-- matches distribution management repository url above -->
+					<outputDirectory>${project.build.directory}/mvn-repo</outputDirectory>
+					<!-- remote branch name -->
+					<branch>refs/heads/master</branch>
+					<merge>true</merge>
+					<includes>
+						<include>**/*</include>
+					</includes>
+					<!-- github repo name -->
+					<repositoryName>mvn-repo</repositoryName>
+					<!-- github organization -->
+					<repositoryOwner>eishub</repositoryOwner>
+				</configuration>
+				<executions>
+					<!-- run site-maven-plugin as part of the build's 'deploy' phase -->
+					<execution>
+						<goals>
+							<goal>site</goal>
+						</goals>
+						<phase>deploy</phase>
+					</execution>
+				</executions>
+			</plugin>
+			
 		</plugins>
 	</build>
 
-	<repositories>
-		<repository>
-			<id>amis-artifactory</id>
-			<name>AMIS Artifactory</name>
-			<url>http://diana.ms.mff.cuni.cz:8081/artifactory/repo</url>
-		</repository>
-	</repositories>
+
 
 
 </project>

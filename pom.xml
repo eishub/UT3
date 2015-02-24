@@ -59,6 +59,9 @@
 
 		<module>UT2004Environment</module>
 		<module>UT3Environment</module>
+		
+		<module>Examples</module>
+		<!--  <module>Installer</module> not automatic, this will be big (210MB) and can't be deployed to github. -->
 	</modules>
 
 	<build>
