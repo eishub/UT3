@@ -95,6 +95,14 @@ public class SettingsDialog extends JDialog {
 				WaypointRenderer.setColor(selected);
 			}
 		});
+		
+		new ActionListener() {
+			
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+		};
 		add(selectNavpointColor);
 
 		JButton selectRedTeamColor = new JButton("Change Red Team Color");
