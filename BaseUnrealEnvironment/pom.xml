@@ -4,7 +4,7 @@
 
 	<groupId>nl.tudelft.goal</groupId>
 	<artifactId>goal-base-unreal-environment</artifactId>
-	<version>3.5.5-SNAPSHOT</version>
+	<version>3.5.5</version>
 	<name>goal-base-unreal-environment</name>
 	<description>Base environment for Unreal Tournament</description>
 	<url>https://github.com/eishub/UT3</url>
@@ -76,7 +76,7 @@
 		<dependency>
 			<groupId>nl.tudelft.goal</groupId>
 			<artifactId>goal-ut2004-environment-util</artifactId>
-			<version>3.5.5-SNAPSHOT</version>
+			<version>3.5.5</version>
 		</dependency>
 
 	</dependencies>
