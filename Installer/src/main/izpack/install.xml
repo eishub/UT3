@@ -9,43 +9,49 @@
 		<appversion>${app.version}</appversion>
 		<authors>
 			<author name="AMIS Group, Charles University in Prague" email="amis@artemis.ms.mff.cuni.cz" />
-			<author name="Rien Korstanje, Delft University of Technology" email="rien.korstanje@gmail.com" />
-			<author name="Lennard de Rijk, Delft University of Technology" email="lennie@4lennie.nl" />
-			<author name="Wouter Pasman, Delft University of Technology" email="w.pasman@tudelft.nl" />
-			<author name="Koen Hindriks, Delft University of Technology" email="k.v.hindriks@tudelft.nl" />
-                        <author name="Peter Evers, Delft University of Technology" email="p.h.evers@student.tudelft.nl" />
-                        <author name="Michiel Hegemans, Delft University of Technology" email="M.Hegemans@student.tudelft.nl" />
+			<author name="Rien Korstanje, Delft University of Technology"
+				email="rien.korstanje@gmail.com" />
+			<author name="Lennard de Rijk, Delft University of Technology"
+				email="lennie@4lennie.nl" />
+			<author name="Wouter Pasman, Delft University of Technology"
+				email="w.pasman@tudelft.nl" />
+			<author name="Koen Hindriks, Delft University of Technology"
+				email="k.v.hindriks@tudelft.nl" />
+			<author name="Peter Evers, Delft University of Technology"
+				email="p.h.evers@student.tudelft.nl" />
+			<author name="Michiel Hegemans, Delft University of Technology"
+				email="M.Hegemans@student.tudelft.nl" />
 
 		</authors>
 		<javaversion>1.6</javaversion>
 
-		<!-- We can not use run priveleged for serveral reasons. 
-		 	On OSX: All installed files are set to be owned by root which does not permit editing by user
-		 	On Win: Install on DW can not use priveledged account.  -->
-		<!-- <run-privileged />  -->
+		<!-- We can not use run priveleged for serveral reasons. On OSX: All installed 
+			files are set to be owned by root which does not permit editing by user On 
+			Win: Install on DW can not use priveledged account. -->
+		<!-- <run-privileged /> -->
 	</info>
 
 	<conditions>
-                <condition type="packselection" id="ut3cnd">
-                        <packid>ut3pack</packid>
-                </condition>
+		<condition type="packselection" id="ut3cnd">
+			<packid>ut3pack</packid>
+		</condition>
 		<condition type="packselection" id="ut2004cnd">
 			<packid>ut2004pack</packid>
 		</condition>
 		<condition type="packselection" id="environmentcnd">
 			<packid>unrealgoalpack</packid>
 		</condition>
-                <condition type="packselection" id="environment3cnd">
-                        <packid>unreal3goalpack</packid>
-                </condition>
+		<condition type="packselection" id="environment3cnd">
+			<packid>unreal3goalpack</packid>
+		</condition>
 		<condition type="packselection" id="examplecnd">
 			<packid>examplepack</packid>
 		</condition>
-                <condition type="packselection" id="examplecnd3">
-                        <packid>examplepackut3</packid>
-                </condition>
+		<condition type="packselection" id="examplecnd3">
+			<packid>examplepackut3</packid>
+		</condition>
 		<condition type="or" id="unrealgoalcnd">
-                        <condition type="ref" refid="environment" />
+			<condition type="ref" refid="environment" />
 			<condition type="ref" refid="examplecnd" />
 		</condition>
 	</conditions>
@@ -69,7 +75,7 @@
 		<res id="HTMLInfoPanel.prereqs" src="InstallerPrereqs.html" />
 		<res id="HTMLLicencePanel.licence" src="PogamutInstallerLicense.html" />
 		<res id="userInputSpec.xml" src="userInputSpec.xml" />
-		<res id="shortcutSpec.xml" src="Win_shortcutSpec.xml"/>
+		<res id="shortcutSpec.xml" src="Win_shortcutSpec.xml" />
 		<res id="TargetPanel.dir" src="TargetPanel.dir" />
 	</resources>
 
@@ -83,9 +89,10 @@
 
 		<panel classname="TargetPanel" />
 		<panel classname="UserInputPanel" id="ut2004panel" condition="ut2004cnd" />
-                <panel classname="UserInputPanel" id="ut3panel" condition="ut3cnd" />
-                <panel classname="UserInputPanel" id="unrealgoalpanel" condition="unrealgoalcnd" />
-                
+		<panel classname="UserInputPanel" id="ut3panel" condition="ut3cnd" />
+		<panel classname="UserInputPanel" id="unrealgoalpanel"
+			condition="unrealgoalcnd" />
+
 
 		<panel classname="ShortcutPanel" />
 
@@ -95,7 +102,7 @@
 
 	<!-- The packs section. -->
 	<packs>
-                <refpack file="packs/UT3Packs.xml" />
+		<refpack file="packs/UT3Packs.xml" />
 		<refpack file="packs/UT2004Packs.xml" />
 	</packs>
 
