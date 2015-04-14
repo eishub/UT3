@@ -77,6 +77,7 @@
 			<description>Various examples of GOAL agents for the UT2004
 				Environment.</description>
 			<fileset dir="examples" targetdir="${GOAL_HOME}${FILE_SEPARATOR}GOALagents" />
+			<singlefile src="ut2004environment/goal-ut2004-environment.jar" target="${GOAL_HOME}${FILE_SEPARATOR}GOALagents${FILE_SEPARATOR}ut-environment.jar" />
 		</pack>
 	</packs>
 </installation>

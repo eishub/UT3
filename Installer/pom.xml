@@ -6,7 +6,7 @@
 	<name>Unreal 3/2004 Environment Installer</name>
 	<groupId>nl.tudelft.goal</groupId>
 	<artifactId>goal-ut-environment-installer</artifactId>
-	<version>3.7.0</version>
+	<version>3.7.1</version>
 	<packaging>pom</packaging>
 	<url>https://github.com/eishub/UT3</url>
 	<licenses>
@@ -26,7 +26,7 @@
 	</developers>
 
 	<repositories>
-		
+
 		<repository>
 			<id>eishub-mvn-repo</id>
 			<url>https://raw.github.com/eishub/mvn-repo/master</url>
@@ -251,6 +251,14 @@
 						</goals>
 						<configuration>
 							<artifactItems>
+								<!-- <artifactItem> <groupId>${environment.groupId}</groupId> <artifactId>${environment.artifactId}</artifactId> 
+									<version>${environment.version}</version> <type>jar</type> <classifier>${environment.classifier}</classifier> 
+									<overWrite>true</overWrite> <outputDirectory>${staging.dir}/ut2004environment</outputDirectory> 
+									<destFileName>${environment.artifactId}-${environment.version}.jar</destFileName> 
+									</artifactItem> -->
+
+								<!-- ut2004env but without the version, for inclusion with the example 
+									#3497 -->
 								<artifactItem>
 									<groupId>${environment.groupId}</groupId>
 									<artifactId>${environment.artifactId}</artifactId>
@@ -259,8 +267,17 @@
 									<classifier>${environment.classifier}</classifier>
 									<overWrite>true</overWrite>
 									<outputDirectory>${staging.dir}/ut2004environment</outputDirectory>
-									<destFileName>${environment.artifactId}-${environment.version}.jar</destFileName>
+									<destFileName>${environment.artifactId}.jar</destFileName>
 								</artifactItem>
+
+								<!-- <artifactItem> <groupId>${environment3.groupId}</groupId> <artifactId>${environment3.artifactId}</artifactId> 
+									<version>${environment3.version}</version> <type>jar</type> <classifier>${environment3.classifier}</classifier> 
+									<overWrite>true</overWrite> <outputDirectory>${staging.dir}/ut3environment</outputDirectory> 
+									<destFileName>${environment3.artifactId}-${environment.version}.jar</destFileName> 
+									</artifactItem> -->
+									
+								<!-- ut3env but without the version, for inclusion with the example 
+									#3497 -->
 
 								<artifactItem>
 									<groupId>${environment3.groupId}</groupId>
@@ -270,9 +287,8 @@
 									<classifier>${environment3.classifier}</classifier>
 									<overWrite>true</overWrite>
 									<outputDirectory>${staging.dir}/ut3environment</outputDirectory>
-									<destFileName>${environment3.artifactId}-${environment.version}.jar</destFileName>
+									<destFileName>${environment3.artifactId}.jar</destFileName>
 								</artifactItem>
-
 
 							</artifactItems>
 						</configuration>
@@ -355,7 +371,7 @@
 					</execution>
 				</executions>
 			</plugin>
-			
+
 		</plugins>
 	</build>
 

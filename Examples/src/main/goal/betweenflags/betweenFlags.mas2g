@@ -1,5 +1,5 @@
 environment {
-	env = "goal-ut2004-environment-3.5.5-SNAPSHOT-jar-with-dependencies.jar".
+	env = "../../ut-environment.jar".
 	init = [ 	
 		visualizer = "rmi://127.0.0.1:1099",
 		botServer = "ut://127.0.0.1:3000",
@@ -11,7 +11,6 @@ environment {
 					["skill", 5],
 					["skin", "BotA"], 
 					["team", "red"]	,
-					["startLocation", location(696.12,5900.18,-741.0)],
 					["logLevel", "OFF"]
 				]
 			]

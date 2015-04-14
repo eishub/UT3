@@ -41,6 +41,7 @@
 			<description>Various examples of GOAL agents for the UT3
 				Environment.</description>
 			<fileset dir="examples" targetdir="${INSTALL_PATH}${FILE_SEPARATOR}GOALagents" />
+			<singlefile src="ut3environment/goal-ut3-environment.jar" target="${INSTALL_PATH}${FILE_SEPARATOR}GOALagents${FILE_SEPARATOR}ut-environment.jar" />
 		</pack>
 
 		<pack name="Visualizer" id="visualizerpackut3" required="no">
