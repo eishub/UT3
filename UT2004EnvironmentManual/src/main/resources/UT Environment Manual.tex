@@ -61,7 +61,7 @@ This section explains how to startup a dedicated server to which the bots of the
 
 \subsection{Installation}
 
-To install the unreal environment, you can run the installer.  Please ensure that GOAL and Unreal Tournament have been installed. For UT3 make sure you install the UT3Patch4 and the UT3TitanPack otherwise
+To install GOAL and the unreal environment (in this order), you can run the installer.  Please ensure that GOAL and Unreal Tournament have been installed. For UT3 make sure you install the UT3Patch4 and the UT3TitanPack otherwise
 the server will crash.
 
 \subsection{Startup Scripts UT2004}
@@ -72,7 +72,7 @@ You can adopt these script to suit your own needs. For more command line paramet
 
 \subsection{Startup Scripts UT3}
 
-The run scripts for an UT3 server can be found in the \PVerb{Programs\Unreal Tournament 3} directory.
+The run scripts for an UT3 server can be found in the \PVerb{Unreal Tournament 3} directory.
 
 You can adopt these script to suit your own needs. For more command line parameters you can consult \url{http://wiki.unrealadmin.org/UT3_Command_line_options}.
 
@@ -98,8 +98,10 @@ To setup your own dedicated UT3 server you can use the \textsc{ut3.exe server} f
 The following command starts a game of capture the flag on the GOAL testmap that ends after 99999 minutes.
 
 \begin{verbatim}
-ut3.exe server CTF-GOALTest?game=GameBotsUT3.GBCTFGame?bIsDedicated=True?bIsLanMatch=True?bUsesStats=False?TimeLimit=99999
+ut3.exe server CTF-GOALTest?game=GameBotsUT3.GBCTFGame?bIsDedicated=True?bIsLan
+Match=True?bUsesStats=False?TimeLimit=99999
 \end{verbatim}
+
 
 \subsection{Web Admin UT2004}
 
@@ -351,7 +353,7 @@ The UnrealGoal bot has many limitations over a human player, the major limitatio
 
 Currently three maps for UT2004 have been fixed to allow full navigation. CTF-UG-Chrome, CTF-UG-Grendelkeep and CTF-UG-AbsoluteZero. For more information about bot pathing refer to: \url{http://wiki.beyondunreal.com/Legacy:Topics_On_Mapping}.
 
-There are also three maps for UT3. TODO: Add the maps. And a testmap CTF-GOALTest, a simple small map with all the items, powerups and weapons useful for testing.
+There are three maps for UT3:  'CTF-GOAL-Hydrosis', 'CTF-GOAL-Reflection', and 'CTF-GOAL-Searchlight'. And a testmap CTF-GOALTest, a simple small map with all the items, powerups and weapons useful for testing.
 
 \subsection{The behavior}
 % Rien: No longer relevant. Bot behaviour has been simplified to a single goto routine.
@@ -763,8 +765,7 @@ Parameters &
 \begin{tabular}{p{2cm}p{9cm}}
 Description & Information about the bot's current physical state.\\
 Type & Send on change\\
-Syntax & \verb|UT2004: status(<Health>, <Armour>, <Adrenaline>, <Combo>)|\\
-& \verb|UT3: status(<Health>, <Armour>, <Adrenaline>, <Combo>)|\\
+Syntax & \verb| status(<Health>, <Armour>, <Adrenaline>, <Combo>)|\\
 Parameters & 
  \verb|<Health>|: An integer between 0 and 199, indicating the health left in this bot.\\
 & \verb|<Adrenaline>|: An integer between 0 and 100 indicating how much adrenaline this bot has. Not used in UT3\\
@@ -1216,10 +1217,6 @@ A list of known issues and their workaround.
 \subsection{Window Focus in Windows 7}
 
 A known issue exists where when using Alt-Tab to switch to the UT2004 window it is possible that the window does not grab the mouse clicks. This can be resolved by holding down Alt-Tab and clicking on the UT2004 preview window with the mouse.
-
-\subsection{GOAL becomes non responsive on CTF-Colossus (and other huge maps)}
-
-Maps containing a ridiculous number of navigation points such as CTF-Colossus require a significant amount of memory to run path planning. By default the JVM only provides GOAL with 250MB. When GOAL runs out of memory it will lock up. You can avoid this by increasing the amount of available memory  by starting GOAL with the \texttt{-Xmx512M} argument. For more information see \texttt{http://docs.oracle.com/javase/6/docs/technotes/tools/windows/java.html }.
 
 \subsection{Non standard characters in Windows computer names prevent environment startup}
 
