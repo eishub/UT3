@@ -1,0 +1,44 @@
+init module {
+	knowledge{
+		% We are at a certain location if the IDs match, or ...
+		at(UnrealID) :- navigation(reached, UnrealID).
+		% if the coordinates are approximately equal.
+		at(location(X, Y, Z)) :- navigation(reached, location(X1, Y1, Z1)), 
+			round(X) =:= round(X1), round(Y) =:= round(Y1), round(Z) =:= round(Z1).
+	}
+	beliefs{
+		% Initially, we are going nowhere.
+		navigation(none, none).
+	}
+	program{
+		% Save our initial location as our starting point.
+		if bel( percept(orientation(Location, _, _)) ) then insert( target(Location) ).
+		% Take a random navpoint as our target; note that it might not be reachable though.
+		if bel( percept(navPoint(UnrealID, _, _))) then insert( target(UnrealID) ).
+	}
+	actionspec{
+		% Make a best effort attempt to navigate to a certain location on the map.
+		navigate(Destination) {
+			pre{ not(navigation(navigating, _)) }
+			post{ true }
+		}
+	}
+}
+
+main module {
+	program{
+		% Try to go to our destination if we want to be there.
+		if goal( at(Destination) ) then navigate(Destination).
+	}
+}
+
+event module {
+	program {	
+		% Update the navigation state of the bot ('send on change' percept).
+		forall bel( navigation(OldStatus, OldDest),  percept(navigation(Status, Destination)) )
+			do delete( navigation(OldStatus, OldDest) ) + insert( navigation(Status, Destination) ).
+
+		% If the current goal has been reached, pick a new goal.			
+		if not( goal( at(_) ) ), bel( target(Destination) ) then adopt( at(Destination) ).
+	}
+}

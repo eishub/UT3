@@ -1,0 +1,27 @@
+environment {
+	env = "../../ut-environment.jar".
+	init = [ 	
+		visualizer = "rmi://127.0.0.1:1099",
+		botServer = "ut://127.0.0.1:3000",
+		controlServer = "ut://127.0.0.1:3001",
+		logLevel = "WARNING", 
+		bots = [
+				[
+				 	["name", "Bot 1"],
+					["skill", 5],
+					["skin", "BotA"], 
+					%["team", "red"],
+					["logLevel", "WARNING"]
+				]
+			]
+	].
+}
+
+agentfiles {
+	"UTbot.goal" [name=bot] .
+}
+
+launchpolicy {
+    when [type=bot,max=1]@env do launch *:bot.
+}
+
