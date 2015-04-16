@@ -70,14 +70,16 @@
 		<pack name="Unreal 2004 Goal Environment" id="unrealgoalpack"
 			required="no" parent="ut2004pack" preselected="no">
 			<description>Files specific to Unreal GOAL environment.</description>
+			<singlefile src="ut2004environment/goal-ut2004-environment.jar" target="${GOAL_HOME}${FILE_SEPARATOR}GOALagents${FILE_SEPARATOR}ut-environment.jar" />
+			<!-- Disabled. Need uniform name to get sample agents working both in ut2004 and ut3  
 			<fileset dir="ut2004environment" targetdir="${GOAL_HOME}${FILE_SEPARATOR}environments" />
+			 -->
 		</pack>
 
-		<pack name="Example Agents" id="examplepack" required="no" preselected="no" parent="ut2004pack">
+		<pack name="Unreal 2004 Goal Environment and Example Agents" id="examplepack" required="no" preselected="no" parent="ut2004pack">
 			<description>Various examples of GOAL agents for the UT2004
 				Environment.</description>
 			<fileset dir="examples" targetdir="${GOAL_HOME}${FILE_SEPARATOR}GOALagents" />
-			<singlefile src="ut2004environment/goal-ut2004-environment.jar" target="${GOAL_HOME}${FILE_SEPARATOR}GOALagents${FILE_SEPARATOR}ut-environment.jar" />
 		</pack>
 	</packs>
 </installation>

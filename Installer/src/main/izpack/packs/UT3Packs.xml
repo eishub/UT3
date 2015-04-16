@@ -34,14 +34,14 @@
 		<pack name="Unreal 3 Goal Environment" id="unreal3goalpack"
 			required="no" parent="ut3pack">
 			<description>Files specific to Unreal GOAL environment.</description>
-			<fileset dir="ut3environment" targetdir="${INSTALL_PATH}" />
+			<!--  <fileset dir="ut3environment" targetdir="${INSTALL_PATH}" /> -->
+			<singlefile src="ut3environment/goal-ut3-environment.jar" target="${INSTALL_PATH}${FILE_SEPARATOR}GOALagents${FILE_SEPARATOR}ut-environment.jar" />
 		</pack>
 
 		<pack name="Example Agents" id="examplepackut3" required="no" parent="ut3goalpack">
 			<description>Various examples of GOAL agents for the UT3
 				Environment.</description>
 			<fileset dir="examples" targetdir="${INSTALL_PATH}${FILE_SEPARATOR}GOALagents" />
-			<singlefile src="ut3environment/goal-ut3-environment.jar" target="${INSTALL_PATH}${FILE_SEPARATOR}GOALagents${FILE_SEPARATOR}ut-environment.jar" />
 		</pack>
 
 		<pack name="Visualizer" id="visualizerpackut3" required="no">
