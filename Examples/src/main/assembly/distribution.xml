@@ -12,13 +12,8 @@
 			<directory>${project.basedir}/src/main/goal</directory>
 			<outputDirectory>/</outputDirectory>
 			<includes>
-				<include>**/*</include>
+				<include>deathmatch/*</include>
 			</includes>
-			<excludes>
-				<exclude>**/advancedctf/</exclude>
-				<exclude>**/simplectf/</exclude>
-				<exclude>**/unittestbot/</exclude>				
-			</excludes>
 		</fileSet>
 	</fileSets>
 
