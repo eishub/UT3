@@ -6,7 +6,7 @@
 	<groupId>nl.tudelft.goal</groupId>
 	<artifactId>goal-unreal-visualizer-frame</artifactId>
 	<name>UTVisualizerFrame</name>
-	<version>3.5.5</version>
+	<version>3.5.6-SNAPSHOT</version>
 
 	<description>An OpenGL frame to visualize Unreal Tournament.</description>
 	<url>https://github.com/eishub/UT3</url>

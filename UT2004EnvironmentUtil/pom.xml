@@ -7,7 +7,7 @@
 	<groupId>nl.tudelft.goal</groupId>
 	<artifactId>goal-ut2004-environment-util</artifactId>
 	<name>goal-ut2004-environment-util</name>
-	<version>3.5.5</version>
+	<version>3.5.6-SNAPSHOT</version>
 	<description>Shared utilities for the entire UT2004 Environment project</description>
 	<url>https://github.com/eishub/UT3</url>
 	<licenses>
