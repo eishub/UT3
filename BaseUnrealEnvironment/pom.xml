@@ -53,7 +53,7 @@
 		<dependency>
 			<groupId>nl.tudelft.goal</groupId>
 			<artifactId>goal-ut2004-environment-util</artifactId>
-			<version>3.5.5-SNAPSHOT</version>
+			<version>3.5.5</version>
 		</dependency>
 		<dependency>
 			<groupId>eishub</groupId>
