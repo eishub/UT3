@@ -81,6 +81,13 @@ import eis.iilang.Action;
 import eis.iilang.EnvironmentState;
 import eis.iilang.Parameter;
 
+/**
+ * extended version of EIS environment, adding common translators ,
+ * initialization code and code to add new agents
+ * 
+ * @author mpkorstanje?
+ *
+ */
 @SuppressWarnings("rawtypes")
 public abstract class AbstractUnrealEnvironment extends
 		SimpleTransitioningEnvironment implements IComponent {
@@ -107,7 +114,7 @@ public abstract class AbstractUnrealEnvironment extends
 
 	/**
 	 * Constructs the Unreal Environment. The environment won't be ready until
-	 * until is has has been initialized.
+	 * is has has been initialized.
 	 * 
 	 */
 	public AbstractUnrealEnvironment() {
@@ -341,7 +348,7 @@ public abstract class AbstractUnrealEnvironment extends
 
 		}
 
-		// 8. Everything aokay
+		// 8. Everything okay
 	}
 
 	/**
