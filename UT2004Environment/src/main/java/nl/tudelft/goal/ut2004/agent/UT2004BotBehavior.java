@@ -750,6 +750,8 @@ public class UT2004BotBehavior extends UT2004BotModuleController<UT2004Bot>
 			for (NavPoint n : navPoints) {
 				unrealIds.add(n.getId());
 			}
+		} else {
+			distance = -1;
 		}
 		return new Percept(fromNav.getId(), toNav.getId(), distance, unrealIds);
 	}
