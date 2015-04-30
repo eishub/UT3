@@ -743,11 +743,17 @@ public class UT2004BotBehavior extends UT2004BotModuleController<UT2004Bot>
 
 		double distance = sfwMap.getDistance(fromNav, toNav);
 		List<NavPoint> navPoints = sfwMap.getPath(fromNav, toNav);
-		List<UnrealId> unrealIds = new ArrayList<UnrealId>(navPoints.size());
-		for (NavPoint n : navPoints) {
-			unrealIds.add(n.getId());
+		// can be null : locations both exist but no connecting path exists
+
+		List<UnrealId> unrealIds = new ArrayList<UnrealId>();
+		if (navPoints != null) {
+			for (NavPoint n : navPoints) {
+				unrealIds.add(n.getId());
+			}
+		} else {
+			distance = -1;
 		}
-		return new Percept(from, to, distance, unrealIds);
+		return new Percept(fromNav.getId(), toNav.getId(), distance, unrealIds);
 	}
 
 	/**

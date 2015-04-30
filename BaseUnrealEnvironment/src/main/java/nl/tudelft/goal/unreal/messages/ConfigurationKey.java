@@ -35,11 +35,17 @@ public enum ConfigurationKey implements Key {
 	 * 
 	 */
 	BOTS("bots"),
+
+	/**
+	 * List of native bots (not connected with GOAL)
+	 */
+	NATIVE_BOTS("nativebots"),
 	/**
 	 * Address of the server.
 	 * 
 	 * Should be of the form protocol//host:port
 	 */
+
 	BOT_SERVER("botServer"),
 	/**
 	 * Address of the server.
@@ -60,9 +66,6 @@ public enum ConfigurationKey implements Key {
 	 * 
 	 */
 	VISUALIZER_SERVER("visualizer");
-	
-
-
 
 	// Human readable (camelCase) form of the enum.
 	private String key;
@@ -73,7 +76,7 @@ public enum ConfigurationKey implements Key {
 
 	@Override
 	public String getKey() {
-		
+
 		return key;
 	}
 }

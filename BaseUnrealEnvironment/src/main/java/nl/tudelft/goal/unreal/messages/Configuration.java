@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 
-
 /**
  * Describes the configuration for the environment. This configuration is
  * provided through the init command.
@@ -22,13 +21,15 @@ public class Configuration {
 	public static final String LOCAL_HOST = "127.0.0.1";
 	public static final int CONTROL_SERVER_PORT = 3001;
 	public static final int BOT_SERVER_PORT = 3000;
-	
-	public static final String CONTROL_SERVER = LOCAL_HOST + ":" + CONTROL_SERVER_PORT;
+
+	public static final String CONTROL_SERVER = LOCAL_HOST + ":"
+			+ CONTROL_SERVER_PORT;
 	public static final String BOT_SERVER = LOCAL_HOST + ":" + BOT_SERVER_PORT;
 
 	private static final URI VISUALIZER_SERVER = null;
 	// Environment parameters
 	private List<BotParameters> bots;
+	private List<BotParameters> nativebots = null;
 	private URI visualizer;
 	private URI botServer;
 	private URI controlServer;
@@ -39,8 +40,26 @@ public class Configuration {
 		return bots == null ? new ArrayList<BotParameters>() : bots;
 	}
 
+	/**
+	 * @return native bot settings from the configuration
+	 */
+	public List<BotParameters> getNativeBots() {
+		return nativebots == null ? new ArrayList<BotParameters>() : nativebots;
+	}
+
 	public void setBots(List<BotParameters> bots) {
 		this.bots = bots;
+	}
+
+	/**
+	 * Set native bots to given setting.
+	 * 
+	 * @param arrayList
+	 *            list with {@link BotParameters} for each native bot
+	 */
+	public void setNativeBots(ArrayList<BotParameters> arrayList) {
+		this.nativebots = arrayList;
+
 	}
 
 	public URI getVisualizer() {
@@ -97,11 +116,15 @@ public class Configuration {
 		return botServer == null ? null : botServer.getHost();
 	}
 
+	/**
+	 * @return a default configuration.
+	 */
 	public static Configuration getDefaults() {
 
 		Configuration configuration = new Configuration();
 
 		configuration.setBots(new ArrayList<BotParameters>());
+		configuration.setNativeBots(new ArrayList<BotParameters>());
 		configuration.setVisualizer(VISUALIZER_SERVER);
 
 		try {
@@ -116,10 +139,18 @@ public class Configuration {
 		return configuration;
 	}
 
+	/**
+	 * Copy all un-set values from the given configuration. Already set values
+	 * are left unchanged.
+	 * 
+	 * @param configuration
+	 */
 	public void assignDefaults(Configuration configuration) {
 
 		if (bots == null)
 			bots = configuration.bots;
+		if (nativebots == null)
+			nativebots = configuration.nativebots;
 		if (visualizer == null)
 			visualizer = configuration.visualizer;
 		if (botServer == null)

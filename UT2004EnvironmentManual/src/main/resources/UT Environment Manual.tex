@@ -125,7 +125,7 @@ The UnrealGoal environment can be launched by means of a MAS file from {\Goal}. 
 
 %Rien: Fixed. Geen zijn verplicht. Default waardes ook beschreven.
 
-Several parameters for initializing the UT environment can be set when connecting {\Goal} to UT. This is done by means of the \texttt{init} command that should be included in the \texttt{environment} section of the MAS file. For the UT environment eight parameters are available that can be set using the \texttt{init} command. All of these parameters are optional and do not have to be set using the \texttt{init} command. If a parameter is not provided, the environment will use a default value for the parameter. The following is an example of an \texttt{init} command for UT which sets all eight parameters:
+Several parameters for initializing the UT environment can be set when connecting {\Goal} to UT. This is done by means of the \texttt{init} command that should be included in the \texttt{environment} section of the MAS file. For the UT environment eight parameters are available that can be set using the \texttt{init} command. All of these parameters are optional and do not have to be set using the \texttt{init} command. If a parameter is not provided, the environment will use a default value for the parameter. The following is an example of an \texttt{init} command for UT which sets all parameters:
 
 \begin{verbatim}
 init = [
@@ -140,15 +140,13 @@ init = [
                 ["skin", "BotA"], 
                 ["team", "red"],
                 ["logLevel", "OFF"]
-            ],
-            [
+            ], [
                 ["name", "BotB2"],
                 ["skill", 1],
                 ["skin", "BotB"], 
                 ["team", "red"],
                 ["logLevel", "OFF"]
-            ],
-            [
+            ], [
                 ["name", "BotC3"],
                 ["skill", 7],
                 ["skin", "BotC"], 
@@ -157,7 +155,18 @@ init = [
                 ["startRotation", rotation(0,0,0)],
                 ["startLocation", location(696.12,5900.18,-741.0)]
             ]
-    ]
+    ],
+        nativebots = [
+            [
+                ["name", "Native1"],
+                ["skill", 5],
+                ["team", "blue"]	
+            ], [
+                ["name", "Native2"],
+                ["skill", 5],
+                ["team", "red"]	
+            ]    
+        ],
  ].
 \end{verbatim}
 
@@ -190,6 +199,7 @@ XanM03, XanM02, XanF02, EnigmaM
 	\item \texttt{startRotation}: The starting rotation of the bot provided as a rotation(pitch,yaw,roll). The values of of pitch yaw and roll range from -32768 to 32767. Only the yaw value will be used by the bot.  When this parameter is not provided the starting rotation is not defined.
 \end{itemize}
 	
+	\item \texttt{nativebots}: similar to the \texttt{bots} parameter. These bots are launched as native UT bots. Only name, skill and team are used, the other parameters are ignored. Notice that these bots are not killed when you kill the MAS.  
 \end{itemize}
 
 %

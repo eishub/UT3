@@ -31,8 +31,8 @@ import eis.iilang.Parameter;
  * This environment hides all transitions from its subclasses and provides a
  * better transition model.
  * 
- * It guarantees that initialize, connect, pause, start and kill are be called in
- * this order. The arrow indicates the direction, the brackets indicate these
+ * It guarantees that initialize, connect, pause, start and kill are be called
+ * in this order. The arrow indicates the direction, the brackets indicate these
  * calls are optional.
  * 
  * initalizeEnvironment() ---> connectEnvironment() ---> [pauseEnvironment
@@ -42,16 +42,17 @@ import eis.iilang.Parameter;
  * @author mpkorstanje
  * 
  */
-public abstract class SimpleTransitioningEnvironment extends AbstractEnvironment {
+public abstract class SimpleTransitioningEnvironment extends
+		AbstractEnvironment {
 
 	/**
 	 * Generated serialVersionUID.
 	 */
 	private static final long serialVersionUID = -8671600742206011276L;
 
-
 	@Override
-	public final synchronized void init(Map<String, Parameter> parameters) throws ManagementException {
+	public final synchronized void init(Map<String, Parameter> parameters)
+			throws ManagementException {
 		super.init(parameters);
 
 		// Delegate actual initialization to abstract method.
@@ -62,35 +63,49 @@ public abstract class SimpleTransitioningEnvironment extends AbstractEnvironment
 
 		// Transition to paused because the EIS spec requires this.
 		setState(EnvironmentState.PAUSED);
-		
+
 		createServerEntity();
 
 		// Transition to running because UT can't be started paused.
 		setState(EnvironmentState.RUNNING);
-		
-		// Connect agents once environment state is set to running. 
+
+		// Connect agents once environment state is set to running.
 		// This allows agents to start from the get go.
 		connectAgents();
-	}
-	
-	protected abstract void initializeEnvironment(Map<String, Parameter> parameters) throws ManagementException;
 
-	
+		connectNativeBots();
+	}
+
+	protected abstract void initializeEnvironment(
+			Map<String, Parameter> parameters) throws ManagementException;
+
 	/**
 	 * Creates connection with environment
+	 * 
 	 * @throws ManagementException
 	 */
 	protected abstract void connectEnvironment() throws ManagementException;
-	
+
 	/**
 	 * creates the server entity
+	 * 
 	 * @throws ManagementException
 	 */
 	protected abstract void createServerEntity() throws ManagementException;
 
-
+	/**
+	 * Connect the agents as requested in the init params.
+	 * 
+	 * @throws ManagementException
+	 */
 	protected abstract void connectAgents() throws ManagementException;
 
+	/**
+	 * Connect the native bots as requested in the init params.
+	 * 
+	 * @throws ManagementException
+	 */
+	protected abstract void connectNativeBots() throws ManagementException;
 
 	@Override
 	public final synchronized void kill() throws ManagementException {
