@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>nl.tudelft.goal</groupId>
 	<artifactId>goal-visualizer-dependencies</artifactId>
-	<version>3.5.5-SNAPSHOT</version>
+	<version>3.5.5</version>
 	<name>VisualizerDependencies</name>
 	<description>Dependencies for the visualizer</description>
 	<url>https://github.com/eishub/UT3</url>
@@ -45,7 +45,7 @@
 		<dependency>
 			<groupId>nl.tudelft.goal</groupId>
 			<artifactId>goal-unreal-visualizer</artifactId>
-			<version>3.5.4-SNAPSHOT</version>
+			<version>3.5.6</version>
 		</dependency>
 	</dependencies>
 

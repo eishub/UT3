@@ -6,7 +6,7 @@
 	<artifactId>goal-ut-environment-examples</artifactId>
 	<name>goal-ut-environment-examples</name>
 	<description>Various example GOAL agents for the UT Enviornment</description>
-	<version>3.5.7-SNAPSHOT</version>
+	<version>3.5.7</version>
 	<url>https://github.com/eishub/UT3</url>
 	<licenses>
 		<license>

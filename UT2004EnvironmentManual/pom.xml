@@ -5,7 +5,7 @@
 	<groupId>nl.tudelft.goal</groupId>
 	<artifactId>goal-ut-environment-documentation</artifactId>
 	<name>goal-ut-environment-documentation</name>
-	<version>3.5.7-SNAPSHOT</version>
+	<version>3.5.7</version>
 	<url>https://github.com/eishub/UT3</url>
 	<licenses>
 		<license>
