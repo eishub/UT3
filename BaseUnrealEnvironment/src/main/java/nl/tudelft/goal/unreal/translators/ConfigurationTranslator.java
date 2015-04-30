@@ -36,6 +36,10 @@ public class ConfigurationTranslator implements Parameter2Java<Configuration> {
 				configuration.setBots(t.translate2Java(value,
 						BotParametersList.class));
 				break;
+			case NATIVE_BOTS:
+				configuration.setNativeBots(t.translate2Java(value,
+						BotParametersList.class));
+				break;
 			case BOT_SERVER:
 				configuration.setBotServer(t.translate2Java(value, URI.class));
 				break;

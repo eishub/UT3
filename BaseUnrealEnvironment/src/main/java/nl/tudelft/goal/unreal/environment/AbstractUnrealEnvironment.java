@@ -54,11 +54,14 @@ import cz.cuni.amis.pogamut.base.utils.logging.AgentLogger;
 import cz.cuni.amis.pogamut.base.utils.logging.IAgentLogger;
 import cz.cuni.amis.pogamut.base.utils.logging.LogCategory;
 import cz.cuni.amis.pogamut.base3d.worldview.IVisionWorldView;
+import cz.cuni.amis.pogamut.base3d.worldview.object.Location;
+import cz.cuni.amis.pogamut.base3d.worldview.object.Rotation;
 import cz.cuni.amis.pogamut.ut2004.agent.params.UT2004AgentParameters;
 import cz.cuni.amis.pogamut.ut2004.bot.IUT2004BotController;
 import cz.cuni.amis.pogamut.ut2004.bot.impl.UT2004Bot;
 import cz.cuni.amis.pogamut.ut2004.bot.impl.UT2004BotController;
 import cz.cuni.amis.pogamut.ut2004.bot.params.UT2004BotParameters;
+import cz.cuni.amis.pogamut.ut2004.communication.messages.gbcommands.AddBot;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbcommands.Pause;
 import cz.cuni.amis.pogamut.ut2004.factory.guice.remoteagent.UT2004ServerFactory;
 import cz.cuni.amis.pogamut.ut2004.factory.guice.remoteagent.UT2004ServerModule;
@@ -233,6 +236,15 @@ public abstract class AbstractUnrealEnvironment extends
 		}
 
 	}
+
+	@Override
+	protected void connectNativeBots() throws ManagementException {
+		for (BotParameters bot : configuration.getNativeBots()) {
+			//utServer.connectNativeBot(bot.getAgentId().getName().getFlag(), bot.getSkin().name(), bot.getTeam());
+			utServer.getAct().act(new AddBot(bot.getAgentId().getName().getFlag(), null, null, bot.getSkill(), bot.getTeam(), ""));
+		}
+	}
+
 
 	/**
 	 * Make serverRunner and register entities.
