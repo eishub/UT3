@@ -71,7 +71,7 @@
 		<!-- Information for documentation to include in installer -->
 		<documentation.groupId>${project.groupId}</documentation.groupId>
 		<documentation.artifactId>goal-ut-environment-documentation</documentation.artifactId>
-		<documentation.version>3.5.6</documentation.version>
+		<documentation.version>3.5.7-SNAPSHOT</documentation.version>
 		<documentation.classifier>bin</documentation.classifier>
 
 		<!-- Information for examples to include in installer -->
