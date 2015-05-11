@@ -54,8 +54,6 @@ import cz.cuni.amis.pogamut.base.utils.logging.AgentLogger;
 import cz.cuni.amis.pogamut.base.utils.logging.IAgentLogger;
 import cz.cuni.amis.pogamut.base.utils.logging.LogCategory;
 import cz.cuni.amis.pogamut.base3d.worldview.IVisionWorldView;
-import cz.cuni.amis.pogamut.base3d.worldview.object.Location;
-import cz.cuni.amis.pogamut.base3d.worldview.object.Rotation;
 import cz.cuni.amis.pogamut.ut2004.agent.params.UT2004AgentParameters;
 import cz.cuni.amis.pogamut.ut2004.bot.IUT2004BotController;
 import cz.cuni.amis.pogamut.ut2004.bot.impl.UT2004Bot;
@@ -205,6 +203,19 @@ public abstract class AbstractUnrealEnvironment extends
 			configuration = Translator.getInstance().translate2Java(
 					parameterMap, Configuration.class);
 			configuration.assignDefaults(Configuration.getDefaults());
+
+			/** workaround for issue with Pogamut #3529 */
+			HashMap<String, String> newenv = new HashMap<String, String>();
+			newenv.put("pogamut.ut2004.server.host",
+					configuration.getControlServerHost());
+			newenv.put("pogamut.ut2004.server.port",
+					"" + configuration.getControlServerPort());
+			newenv.put("pogamut.ut2004.bot.host",
+					configuration.getBotServerHost());
+			newenv.put("pogamut.ut2004.bot.port",
+					"" + configuration.getBotServerPort());
+			EnvironmentUtil.setEnv(newenv);
+
 		} catch (TranslationException e) {
 			throw new ManagementException("Invalid parameters", e);
 		}
@@ -240,11 +251,13 @@ public abstract class AbstractUnrealEnvironment extends
 	@Override
 	protected void connectNativeBots() throws ManagementException {
 		for (BotParameters bot : configuration.getNativeBots()) {
-			//utServer.connectNativeBot(bot.getAgentId().getName().getFlag(), bot.getSkin().name(), bot.getTeam());
-			utServer.getAct().act(new AddBot(bot.getAgentId().getName().getFlag(), null, null, bot.getSkill(), bot.getTeam(), ""));
+			// utServer.connectNativeBot(bot.getAgentId().getName().getFlag(),
+			// bot.getSkin().name(), bot.getTeam());
+			utServer.getAct().act(
+					new AddBot(bot.getAgentId().getName().getFlag(), null,
+							null, bot.getSkill(), bot.getTeam(), ""));
 		}
 	}
-
 
 	/**
 	 * Make serverRunner and register entities.
