@@ -6,7 +6,7 @@
 	<name>Unreal 3/2004 Environment Installer</name>
 	<groupId>nl.tudelft.goal</groupId>
 	<artifactId>goal-ut-environment-installer</artifactId>
-	<version>3.7.7-SNAPSHOT</version>
+	<version>3.7.7</version>
 	<packaging>pom</packaging>
 	<url>https://github.com/eishub/UT3</url>
 	<licenses>
@@ -54,12 +54,12 @@
 		<!-- Information for UT2004 environment to include in installer -->
 		<environment.groupId>${project.groupId}</environment.groupId>
 		<environment.artifactId>goal-ut2004-environment</environment.artifactId>
-		<environment.version>3.5.6</environment.version>
+		<environment.version>3.5.7</environment.version>
 		<environment.classifier>eis_environment</environment.classifier>
 
 		<environment3.groupId>${project.groupId}</environment3.groupId>
 		<environment3.artifactId>goal-ut3-environment</environment3.artifactId>
-		<environment3.version>3.5.6</environment3.version>
+		<environment3.version>3.5.7</environment3.version>
 		<environment3.classifier>eis_environment</environment3.classifier>
 
 		<!-- Information for visualizer to include in installer -->
