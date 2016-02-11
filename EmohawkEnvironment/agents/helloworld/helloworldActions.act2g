@@ -1,0 +1,5 @@
+use helloworld as knowledge.
+
+define jump with
+	pre{ true }
+	post{ true }
