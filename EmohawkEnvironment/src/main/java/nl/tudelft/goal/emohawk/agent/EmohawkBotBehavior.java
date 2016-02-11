@@ -48,26 +48,33 @@ import eis.eis2java.annotation.AsAction;
 import eis.eis2java.annotation.AsPercept;
 import eis.eis2java.translation.Filter.Type;
 import eis.eis2java.util.AllPerceptsModule;
-import eis.eis2java.util.AllPerceptsProvider;
 import eis.exceptions.ActException;
 import eis.exceptions.EntityException;
 import eis.exceptions.PerceiveException;
 import nl.tudelft.goal.emohawk.messages.Action;
 import nl.tudelft.goal.emohawk.messages.Percept;
 import nl.tudelft.goal.emohawk.messages.UnrealIdOrLocation;
+import nl.tudelft.goal.unreal.environment.MyAllPerceptsProvider;
+import nl.tudelft.goal.unreal.environment.PerceptsReadyListener;
 import nl.tudelft.goal.unreal.messages.BotParameters;
 import nl.tudelft.goal.unreal.messages.Parameters;
 
-public class EmohawkBotBehavior extends EmohawkBotController<UT2004Bot> implements AllPerceptsProvider {
+public class EmohawkBotBehavior extends EmohawkBotController<UT2004Bot> implements MyAllPerceptsProvider {
 	private Semaphore logic = new Semaphore(0, true);
 	private WalkAlongProperties walkAlongProperties;
 	private BotParameters parameters;
 	protected AllPerceptsModule percepts;
-
 	/**
 	 * Queued up actions.
 	 */
 	private BlockingQueue<Action> actions = new LinkedBlockingQueue<Action>(1);
+	private PerceptsReadyListener listener = null;
+	private boolean initialized;
+
+	@Override
+	public void setPerceptsReadyListener(PerceptsReadyListener l) {
+		this.listener = l;
+	}
 
 	@Override
 	@SuppressWarnings("rawtypes")
@@ -84,6 +91,8 @@ public class EmohawkBotBehavior extends EmohawkBotController<UT2004Bot> implemen
 		}
 		Parameters defaults = BotParameters.getDefaults();
 		this.parameters.assignDefaults(defaults);
+
+		this.initialized = false;
 	}
 
 	@Override
@@ -145,6 +154,12 @@ public class EmohawkBotBehavior extends EmohawkBotController<UT2004Bot> implemen
 			this.percepts.updatePercepts();
 		} catch (PerceiveException e) {
 			throw new PogamutException("Could not update percepts", e);
+		}
+
+		// 2. notify that percepts are ready (if this is first round).
+		if (!this.initialized) {
+			this.listener.notifyPerceptsReady();
+			this.initialized = true;
 		}
 	}
 

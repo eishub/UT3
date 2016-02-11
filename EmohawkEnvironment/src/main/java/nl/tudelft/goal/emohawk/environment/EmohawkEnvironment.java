@@ -157,7 +157,6 @@ public class EmohawkEnvironment extends AbstractUnrealEnvironment {
 					System.out.println("Unable to register entity");
 					e.printStackTrace();
 				}
-
 			}
 		});
 	}
