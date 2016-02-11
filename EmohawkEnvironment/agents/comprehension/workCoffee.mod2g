@@ -1,0 +1,13 @@
+use comprehension as knowledge.
+use comprehensionActions.
+
+module workCoffee {
+	% Order a coffee by emoting one. (typos in emote are in source).
+	if bel(not(orderedOne)) then emote(none,cofee_36,none) + insert(orderedOne).
+	% No, actually make that a double.
+	if bel(not(orderedDoubleEspresso)) then emote(cofee_36,none,cofee_36) + insert(orderedDoubleEspresso).
+	% That was some good cofee!
+	if bel(not(jumped)) then jump + insert(jumped).
+	% Time to get back to work!
+	if true then drop(coffee) + adopt(work) + delete(orderedOne,orderedDoubleEspresso,jumped).
+}

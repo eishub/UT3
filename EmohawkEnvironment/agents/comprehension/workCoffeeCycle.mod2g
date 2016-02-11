@@ -1,0 +1,21 @@
+use comprehension as knowledge.
+use comprehensionActions.
+use work.
+use workCoffee.
+
+%%
+% This module describes an everlasting work-coffee cycle. Brief moments of work
+% interrupted by a walk to the coffee machine.
+%%
+module workCoffeeCycle {
+	%If we are going places, don't bother.
+	if bel(navigation(traveling)) then skip.
+	% If we are at home, we work.
+	if a-goal(work), bel(at(home)) then work.
+	% If we want to work but are not at home, we go home.
+	if a-goal(work), bel(home(Location,Range)) then runTo(Location).	
+	% We can order coffee at the restaurant.
+	if a-goal(coffee), bel(at(restaurant)) then workCoffee.		
+	% If we want coffee, we get it at the resaurant.
+	if a-goal(coffee), bel(restaurant(Location,Range)) then runTo(Location).
+}

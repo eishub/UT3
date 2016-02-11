@@ -4,14 +4,20 @@ use "..\..\target\goal-emohawk-environment-3.5.7-jar-with-dependencies.jar" as e
 	controlServer = "ut://127.0.0.1:3001",
 	bots = [
 			[
-			 	["name", "SimpleGuy1"]
+			 	["name", "Jan"]
+			],
+			
+			[
+			 	["name", "Pier"]
 			]
 		   ].
 
-define helloworld as agent {
-	use helloworldMain as main.
+define creation as agent {
+	use creationMain as main.
+	use creationInit as init.
+	use creationEvent as event.
 }
 
 launchpolicy{
-	when type=bot launch helloworld.
+	when type=bot launch creation.
 }

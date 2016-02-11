@@ -1,0 +1,10 @@
+use comprehension as knowledge.
+use comprehensionActions.
+
+%%
+% Simulates the agents attempt at work. Only to result in a desire for more coffee.
+%%
+module work {
+	if bel(not(triedWork)) then emote(none,hammer_179,none) + insert(triedWork).
+	if true then drop(work) + adopt(coffee) + delete(triedWork).
+}

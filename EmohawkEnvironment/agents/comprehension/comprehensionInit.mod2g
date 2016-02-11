@@ -1,0 +1,12 @@
+use comprehension as knowledge.
+
+module comprehensionInit {
+	% (1) Stores the destination of the last walkTo and runTo actions.
+	% (2) The state of the navigation. Indicates if the agent is navigating towards 
+	% a destination, got stuck or is waiting for a new location to go to. Will be 
+	% updated by percepts.
+	% (3)Information about ourself. Will be updated with percepts. 
+	if true then insert(destination(none), navigation(unknown), self(unknown,unknown,unknown,unknown,unknown,unknown,unknown)).
+	% This agent wants to have some coffee.
+	if true then adopt(coffee).
+}

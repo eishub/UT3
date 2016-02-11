@@ -1,0 +1,6 @@
+use creation as knowledge.
+
+module creationInit {
+	% Stores the destination of the last walkTo and runTo actions.
+	if true then insert(destination(none)).
+}

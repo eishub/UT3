@@ -1,0 +1,51 @@
+use creation as knowledge.
+
+% Stops the agent in place. Next navigation state percept will be navigation(waiting).
+define stop with
+	pre {true}
+	post {true}
+		
+% Makes the agent run to the destintion. Next navigation state percept will be 
+% navigation(traveling).
+define runTo(Destination) with
+	pre {destination(PreviousDestination)}
+	post {not(destination(PreviousDestination)),destination(Destination)}
+		
+% Makes the agent walk tot he destination. Next navigation state percept will be 
+% navigation(traveling).
+define walkTo(Destination) with
+	pre {destination(PreviousDestination)}
+	post {not(destination(PreviousDestination)),destination(Destination)}		
+		
+% Makes the agent follow the player with the given ID. Next navigation state 
+% percept will be navigation(traveling).
+define walkAlong(PlayerID) with
+	pre {true}
+	post {true}
+
+% Makes the agent display the given emoticons. The next self percepts will 
+% contain the emoticons.  
+define emote(Left,Center,Right) with
+	pre {true}
+	post {true}			
+		
+% As it says on the tin.
+define jump with
+	pre {true}
+	post {true}					
+
+% Turns the given numbers of degrees.
+define turn(Degrees) with
+	pre {true}
+	post {true}					
+
+	
+% Turns to the given location.
+define turnTo(Location) with
+	pre {true}
+	post {true}					
+		
+% Does nothing.
+define skip with
+	pre {true}
+	post {true}				

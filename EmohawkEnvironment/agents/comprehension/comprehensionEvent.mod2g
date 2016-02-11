@@ -1,0 +1,18 @@
+use comprehension as knowledge.
+
+module comprehensionEvent {
+	%Store all places.
+	forall percept(place(ID,Location,Range)) do insert(place(ID,Location,Range)).	
+		
+	% Update the state of the navigation.
+	forall bel(navigation(OldState)), percept(navigation(NewState)) 
+		do delete (navigation(OldState)) + insert(navigation(NewState)).
+
+	%Update self percept.
+	forall bel(self(OldID,OldName,OldLocation,OldRotation,OldEmoteL,OldEmoteC,OldEmoteR)), percept(self(ID,Name,Location,Rotation,EmoteL,EmoteC,EmoteR)) 
+		do delete (self(OldID,OldName,OldLocation,OldRotation,OldEmoteL,OldEmoteC,OldEmoteR)) + insert(self(ID,Name,Location,Rotation,EmoteL,EmoteC,EmoteR)).
+		
+	%Where are we?
+	forall bel(at(Place)) do delete(at(Place)).
+	forall bel(place(Place,Location,Range),myLocation(MyLocation), distanceLt(Location,MyLocation,Range)) do insert(at(Place)).
+}
