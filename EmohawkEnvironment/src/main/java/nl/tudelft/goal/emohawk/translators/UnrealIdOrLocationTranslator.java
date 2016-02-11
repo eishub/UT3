@@ -1,13 +1,12 @@
 package nl.tudelft.goal.emohawk.translators;
 
-import nl.tudelft.goal.emohawk.messages.UnrealIdOrLocation;
 import cz.cuni.amis.pogamut.base3d.worldview.object.Location;
 import cz.cuni.amis.pogamut.unreal.communication.messages.UnrealId;
 import eis.eis2java.exception.TranslationException;
 import eis.eis2java.translation.Parameter2Java;
 import eis.eis2java.translation.Translator;
 import eis.iilang.Parameter;
-
+import nl.tudelft.goal.emohawk.messages.UnrealIdOrLocation;
 
 public class UnrealIdOrLocationTranslator implements Parameter2Java<UnrealIdOrLocation> {
 
@@ -30,8 +29,9 @@ public class UnrealIdOrLocationTranslator implements Parameter2Java<UnrealIdOrLo
 			translationExceptionLocation = e;
 		}
 
-		String message = String.format("Could not translate to either UnrealId or Location. "
-				+ "\nCause 1: %s\nCause 2: %s", translationExceptionId, translationExceptionLocation);
+		String message = String.format(
+				"Could not translate to either UnrealId or Location. " + "\nCause 1: %s\nCause 2: %s",
+				translationExceptionId, translationExceptionLocation);
 		throw new TranslationException(message);
 
 	}

@@ -1,23 +1,23 @@
- package nl.tudelft.goal.emohawk.translators;
+package nl.tudelft.goal.emohawk.translators;
 
 import java.util.ArrayList;
 
-import nl.tudelft.goal.emohawk.messages.None;
-import nl.tudelft.goal.emohawk.messages.Percept;
 import eis.eis2java.exception.TranslationException;
 import eis.eis2java.translation.Java2Parameter;
 import eis.eis2java.translation.Translator;
 import eis.iilang.Parameter;
 import eis.iilang.ParameterList;
+import nl.tudelft.goal.emohawk.messages.None;
+import nl.tudelft.goal.emohawk.messages.Percept;
 
 /**
  * Translates percepts of objects to arrays such that they can be reasonably be
  * expected to match. When objects translate to multiple elements they are
  * considered to be a {@link ParameterList}. When they translate to an empty
  * list they're ignored. Single element lists are collapsed.
- * 
+ *
  * @author mpkorstanje
- * 
+ *
  */
 public class PerceptTranslator implements Java2Parameter<Percept> {
 

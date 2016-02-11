@@ -5,10 +5,9 @@ import cz.cuni.amis.pogamut.unreal.communication.messages.UnrealId;
 
 public class UnrealIdOrLocation {
 
-
 	@Override
 	public String toString() {
-		return isLocation() ? location.toString() : id.toString();
+		return isLocation() ? this.location.toString() : this.id.toString();
 	}
 
 	private final UnrealId id;
@@ -27,19 +26,19 @@ public class UnrealIdOrLocation {
 	}
 
 	public UnrealId getId() {
-		return id;
+		return this.id;
 	}
 
 	public Location getLocation() {
-		return location;
+		return this.location;
 	}
 
 	public boolean isUnrealId() {
-		return id != null;
+		return this.id != null;
 	}
 
 	public boolean isLocation() {
-		return location != null;
+		return this.location != null;
 	}
 
 }
