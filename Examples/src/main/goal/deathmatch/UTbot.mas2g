@@ -1,7 +1,5 @@
-environment {
-	env = "../../ut-environment.jar".
-	init = [ 	
-		visualizer = "rmi://127.0.0.1:1099",
+use "ut-environment.jar" as environment with
+ 		visualizer = "rmi://127.0.0.1:1099",
 		botServer = "ut://127.0.0.1:3000",
 		controlServer = "ut://127.0.0.1:3001",
 		logLevel = "WARNING", 
@@ -13,15 +11,14 @@ environment {
 					%["team", "red"],
 					["logLevel", "WARNING"]
 				]
-			]
-	].
-}
+			].
 
-agentfiles {
-	"UTbot.goal" [name=bot] .
-}
+define bot as agent {
+	use bot as main module.
+	use botEvents as event module.
+	use botInit as init module.
+} 
 
-launchpolicy {
-    when [type=bot,max=1]@env do launch *:bot.
+launchpolicy{
+	when type=bot launch bot with max=1.
 }
-

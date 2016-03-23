@@ -1,0 +1,7 @@
+use botKnowl as knowledge.
+
+% Make a best effort attempt to navigate to a certain location on the map.
+define navigate(Destination) with
+		pre{ not(navigation(navigating, _)) }
+		post{ true }
+

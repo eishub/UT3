@@ -1,0 +1,8 @@
+use botKnowl as knowledge.
+use bot as actionspec.
+
+module main {
+		% Try to go to our destination if we want to be there.
+		if goal( at(Destination) ) then navigate(Destination).
+}
+
