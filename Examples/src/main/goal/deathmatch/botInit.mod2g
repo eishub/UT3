@@ -3,8 +3,6 @@ use botBel as beliefs.
 use bot as actionspec.
 
 module init {
-		% Save our initial location as our starting point.
-		if percept(orientation(Location, _, _))  then insert( target(Location) ).
 		% Take a random navpoint as our target; note that it might not be reachable though.
 		if percept(navPoint(UnrealID, _, _)) then insert( target(UnrealID) ).
 }

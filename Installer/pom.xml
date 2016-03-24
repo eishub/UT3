@@ -6,7 +6,7 @@
 	<name>Unreal 3/2004 Environment Installer</name>
 	<groupId>nl.tudelft.goal</groupId>
 	<artifactId>goal-ut-environment-installer</artifactId>
-	<version>3.7.7</version>
+	<version>3.7.8-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<url>https://github.com/eishub/UT3</url>
 	<licenses>
@@ -77,7 +77,7 @@
 		<!-- Information for examples to include in installer -->
 		<examples.groupId>${project.groupId}</examples.groupId>
 		<examples.artifactId>goal-ut-environment-examples</examples.artifactId>
-		<examples.version>3.5.7</examples.version>
+		<examples.version>3.5.8-SNAPSHOT</examples.version>
 		<examples.classifier>bin</examples.classifier>
 
 		<!-- Information used by the installer -->
