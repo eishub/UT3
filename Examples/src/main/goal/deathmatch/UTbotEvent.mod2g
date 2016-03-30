@@ -1,0 +1,10 @@
+use UTbot as knowledge.
+
+module UTbotEvent {
+	% Update the navigation state of the bot ('send on change' percept).
+	forall bel( navigation(OldStatus,OldDest)), percept(navigation(Status,Destination))
+		do delete( navigation(OldStatus,OldDest) ) + insert(navigation(Status,Destination)).
+
+	% If the current goal has been reached, pick a new goal.			
+	if not(goal(at(_))), bel(target(Destination)) then adopt(at(Destination)).
+}

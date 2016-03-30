@@ -1,0 +1,6 @@
+use betweenFlags as knowledge.
+use betweenFlags as actionspec.
+
+module betweenFlagsMain {
+	if bel(not(navigation(navigating,_)), flagPosition(UnrealLocID)) then navigate(UnrealLocID).
+}

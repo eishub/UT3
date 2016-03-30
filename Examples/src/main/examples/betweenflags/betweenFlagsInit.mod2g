@@ -1,0 +1,5 @@
+use betweenFlags as knowledge.
+
+module betweenFlagsInit {
+	forall percept(base(Team,UnrealID)) do insert(flagPosition(UnrealID)).
+}

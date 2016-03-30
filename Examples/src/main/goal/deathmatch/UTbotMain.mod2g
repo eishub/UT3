@@ -1,0 +1,7 @@
+use UTbot as knowledge.
+use UTbot as actionspec.
+
+module UTbotMain {
+	% Try to go to our destination if we want to be there.
+	if goal(at(Destination)) then navigate(Destination).
+}
