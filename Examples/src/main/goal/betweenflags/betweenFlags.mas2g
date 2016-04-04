@@ -1,9 +1,7 @@
-environment {
-	env = "../../ut-environment.jar".
-	init = [ 	
-		visualizer = "rmi://127.0.0.1:1099",
-		botServer = "ut://127.0.0.1:3000",
-		controlServer = "ut://127.0.0.1:3001",
+use "ut-environment.jar" as environment with
+	visualizer = "rmi://131.180.20.220:1099",
+		botServer = "ut://131.180.20.220:3000",
+		controlServer = "ut://131.180.20.220:3001",
 		logLevel = "WARNING", 
 		bots = [
 				[
@@ -13,15 +11,17 @@ environment {
 					["team", "red"]	,
 					["logLevel", "OFF"]
 				]
-			]
-	].
+			].
+
+define UTbot as agent {
+	use UTbotMain as main.
+	use UTbotInit as init.
+	use UTbotEvent as event.
 }
 
-agentfiles {
-	"betweenFlags.goal" [name=agent] .
+launchpolicy{
+	when type=bot launch UTbot.
 }
 
-launchpolicy {
-    when [type=bot,max=1]@env do launch *:agent .
-}
+
 

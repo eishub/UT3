@@ -1,0 +1,7 @@
+use UTBot as knowledge.
+
+define navigate(Destination) with
+	pre{ true }
+	post{ true }
+
+	
