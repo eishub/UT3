@@ -462,6 +462,8 @@ Parameters 	& \verb|<TargetLabel>|: A single target label. \\
 		& \verb|[<TargetLabel>]|: A list of target labels in order of priority.\\
 		&  A target label can be: \verb|none|, \verb|nearestEnemy|, \verb|nearestFriendly|, \verb|nearestFriendlyWithLinkGun|, \verb|enemyFlagCarrier|, \verb|friendlyFlagCarrier|, \verb|PlayerID| or \verb|location(X,Y,Z)|. The bot takes the first target label and checks if the target is visible. If the target is visible, it will be shot at. Otherwise the bot will try the next target label. When all target labels have been tried and none matched any visible players the bot will not target any opponent.\\
 
+Default & NearestEnemy\\
+
 Effects & 
 	1.	Sets target labels that decide which visible opponent the bot shoots at.\\
 Notes &
@@ -574,6 +576,9 @@ Syntax & \verb|look(<TargetLabel>)|\\
 Parameters 	& \verb|<TargetLabel>|: A single target label. \\
 		& \verb|[<TargetLabel>]|: A list of target labels in order of priority.\\
 		&  A target label can be:  \verb|none|, \verb|nearestEnemy|, \verb|nearestFriendly|, \verb|nearestFriendlyWithLinkGun|, \verb|enemyFlagCarrier|, \verb|friendlyFlagCarrier|, \verb|PlayerID| or \verb|location(X,Y,Z)|. The bot takes the first target label and checks if the target is visible. If the target is visible, it will be looked at. Otherwise the bot will try the next target label. When all target labels have been tried and none matched any visible players the bot will either look in the direction it is traveling or turn around on the spot.\\
+
+Default & NearestEnemy\\
+
 Effects & 1.	If the bot is not actively shooting some one and the target is visible the bot will look at the given target. 
 \end{tabular}
 
