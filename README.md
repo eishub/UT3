@@ -40,7 +40,4 @@ Or use ```mvn deploy``` to push new release to the repository on github/eishub/m
 MAKING INSTALLER
 =================
 
-The installer does not build automatically when you do mvn install/package/deploy.
-This is because the installer is too big to be pushed to github. 
-
-To build the installer, go to the ut-goal/environment/installer directory and execute ```mvn package```
+Please refer to Installer README.md
