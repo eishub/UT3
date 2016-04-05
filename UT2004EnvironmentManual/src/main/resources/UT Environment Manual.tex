@@ -1248,6 +1248,10 @@ When a bot dies in a non-English version of UT the GOAL bot crashes. You can cha
 
 The UT server may occasionally complain that it could not connect to the master server. This can be fixed by either fixing your firewall settings or by disabling the connection to the master server. This can be done by setting \verb|DoUplink=False| and  \verb|UplinkToGamespy=False| under \verb|[IpDrv.MasterServerUplink]| in \verb|UT2004.ini|
 
+\subsection{Slow startup of agents}
+If you use an extra network adapter (e.g., when you run from Virtual Box), the function InetAddress.getLocalHost().getCanonicalHostName() that is called to determine a unique bot id can take several seconds. A workaround is to temporary turn off the virtual adapter.
+
+
 \bibliographystyle{abbrv}
 
 \end{document}
