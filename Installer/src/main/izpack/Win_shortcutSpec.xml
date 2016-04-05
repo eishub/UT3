@@ -1,111 +1,57 @@
 <shortcuts>
 	<skipIfNotSupported />
-	<programGroup defaultName="UnrealGoal"
-		location="applications" />
-	<shortcut 
-		name="Unreal Visualizer"
-		target="${INSTALL_PATH}\Visualizer\${visualizer.artifactId}-${visualizer.version}\${visualizer.artifactId}-${visualizer.version}.jar" 
+	<programGroup defaultName="UnrealGoal" location="applications" />
+	<shortcut name="Unreal Visualizer"
+		target="${INSTALL_PATH}\Visualizer\${visualizer.artifactId}-${visualizer.version}\${visualizer.artifactId}-${visualizer.version}.jar"
 		commandLine=""
-		workingDirectory="${INSTALL_PATH}\Visualizer\${visualizer.artifactId}-${visualizer.version}\" 
-		description="Starts the Visualizer for Unreal"
-     	iconFile=""
-    	iconIndex="0"
-		initialState="normal" 
-		programGroup="yes" 
-		desktop="yes" 
-		applications="yes"
-		startMenu="yes" 
-		startup="no">
+		workingDirectory="${INSTALL_PATH}\Visualizer\${visualizer.artifactId}-${visualizer.version}\"
+		description="Starts the Visualizer for Unreal" iconFile="" iconIndex="0"
+		initialState="normal" programGroup="yes" desktop="yes" applications="yes"
+		startMenu="yes" startup="no">
 
 		<createForPack name="Visualizer" />
 	</shortcut>
-	
-	<shortcut 
-		name="Documentation"
-		target="${INSTALL_PATH}\Documentation" 
-		commandLine=""
-		workingDirectory="${INSTALL_PATH}\Documentation" 
-		description="Open Documentation for the UT2004 Environment"
-     	iconFile=""
-    	iconIndex="0"
-		initialState="normal" 
-		programGroup="yes" 
-		desktop="yes" 
-		applications="no"
-		startMenu="yes" 
-		startup="no">
 
-		<createForPack name="Documentation" />
-	</shortcut>
-	
-	<shortcut 
-		name="CTFServer UG-AbsoluteZero"
-		target="$UT2004_HOME\System\CTFServer UG-AbsoluteZero.bat" 
-		commandLine=""
-		workingDirectory="$UT2004_HOME\System\" 
-		description="Starts CTF Server"
-     	iconFile=""
-    	iconIndex="0"
-		initialState="normal" 
-		programGroup="yes" 
-		desktop="yes" 
-		applications="yes"
-		startMenu="yes" 
-		startup="no">
+	<!-- does not work, points to a directory... <shortcut name="Documentation" 
+		target="${INSTALL_PATH}\Documentation" commandLine="" workingDirectory="${INSTALL_PATH}\Documentation" 
+		description="Open Documentation for the UT Environment" iconFile="" iconIndex="0" 
+		initialState="normal" programGroup="yes" desktop="yes" applications="no" 
+		startMenu="yes" startup="no"> <createForPack name="Documentation" /> </shortcut> -->
+
+	<shortcut name="CTFServer UG-AbsoluteZero"
+		target="$UT2004_HOME\System\CTFServer UG-AbsoluteZero.bat"
+		commandLine="" workingDirectory="$UT2004_HOME\System\" description="Starts CTF Server"
+		iconFile="" iconIndex="0" initialState="normal" programGroup="yes"
+		desktop="yes" applications="yes" startMenu="yes" startup="no">
 
 		<createForPack name="Scripts" />
 	</shortcut>
-		<shortcut 
-		name="CTFServer UG-Chrome"
-		target="$UT2004_HOME\System\CTFServer UG-Chrome.bat" 
-		commandLine=""
-		workingDirectory="$UT2004_HOME\System\" 
-		description="Starts CTF Server"
-     	iconFile=""
-    	iconIndex="0"
-		initialState="normal" 
-		programGroup="yes" 
-		desktop="yes" 
-		applications="yes"
-		startMenu="yes" 
-		startup="no">
+
+	<shortcut name="CTFServer UG-Chrome" target="$UT2004_HOME\System\CTFServer UG-Chrome.bat"
+		commandLine="" workingDirectory="$UT2004_HOME\System\" description="Starts CTF Server"
+		iconFile="" iconIndex="0" initialState="normal" programGroup="yes"
+		desktop="yes" applications="yes" startMenu="yes" startup="no">
 
 		<createForPack name="Scripts" />
 	</shortcut>
-		<shortcut 
-		name="CTFServer UG-Grendelkeep"
-		target="$UT2004_HOME\System\CTFServer UG-Grendelkeep.bat" 
-		commandLine=""
-		workingDirectory="$UT2004_HOME\System\" 
-		description="Starts CTF Server"
-     	iconFile=""
-    	iconIndex="0"
-		initialState="normal" 
-		programGroup="yes" 
-		desktop="yes" 
-		applications="yes"
-		startMenu="yes" 
-		startup="no">
+
+	<shortcut name="CTFServer UG-Grendelkeep"
+		target="$UT2004_HOME\System\CTFServer UG-Grendelkeep.bat" commandLine=""
+		workingDirectory="$UT2004_HOME\System\" description="Starts CTF Server"
+		iconFile="" iconIndex="0" initialState="normal" programGroup="yes"
+		desktop="yes" applications="yes" startMenu="yes" startup="no">
 
 		<createForPack name="Scripts" />
 	</shortcut>
-		<shortcut 
-		name="Unreal Tournament - Low"
-		target="$UT2004_HOME\System\startUT2004low.bat" 
-		commandLine=""
-		workingDirectory="$UT2004_HOME\System\" 
-		description="Starts Unreal Tournament with low priority"
-     	iconFile=""
-    	iconIndex="0"
-		initialState="normal" 
-		programGroup="yes" 
-		desktop="yes" 
-		applications="yes"
-		startMenu="yes" 
-		startup="no">
+
+	<shortcut name="Unreal Tournament - Low" target="$UT2004_HOME\System\startUT2004low.bat"
+		commandLine="" workingDirectory="$UT2004_HOME\System\"
+		description="Starts Unreal Tournament with low priority" iconFile=""
+		iconIndex="0" initialState="normal" programGroup="yes" desktop="yes"
+		applications="yes" startMenu="yes" startup="no">
 
 		<createForPack name="Scripts" />
-	</shortcut>	
-	
-	
+	</shortcut>
+
+
 </shortcuts>
