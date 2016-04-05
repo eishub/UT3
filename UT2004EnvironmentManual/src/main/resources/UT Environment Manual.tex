@@ -123,12 +123,9 @@ This section explains how to connect a {\Goal} multi-agent systems to UT by star
 
 The UnrealGoal environment can be launched by means of a MAS file from {\Goal}. The general structure and set-up of such files is discussed in more detail in the {\Goal} Programming Guide. Here we only discuss the initialization parameters that are specific for the UT environment.
 
-%Rien: Fixed. Geen zijn verplicht. Default waardes ook beschreven.
-
-Several parameters for initializing the UT environment can be set when connecting {\Goal} to UT. This is done by means of the \texttt{init} command that should be included in the \texttt{environment} section of the MAS file. For the UT environment eight parameters are available that can be set using the \texttt{init} command. All of these parameters are optional and do not have to be set using the \texttt{init} command. If a parameter is not provided, the environment will use a default value for the parameter. The following is an example of an \texttt{init} command for UT which sets all parameters:
+Several parameters for initializing the UT environment can be set when connecting {\Goal} to UT. For the UT environment six parameters are available. If a parameter is not provided, the environment will use a default value for the parameter. The following is an example for the UT environment which sets all parameters:
 
 \begin{verbatim}
-init = [
     botServer = "ut://127.0.0.1:3000",
     controlServer = "ut://127.0.0.1:3001",
     visualizer = "rmi://127.0.0.1:1099",
@@ -156,7 +153,7 @@ init = [
                 ["startLocation", location(696.12,5900.18,-741.0)]
             ]
     ],
-        nativebots = [
+    nativebots = [
             [
                 ["name", "Native1"],
                 ["skill", 5],
@@ -166,13 +163,11 @@ init = [
                 ["skill", 5],
                 ["team", "red"]	
             ]    
-        ],
- ].
+    ]
 \end{verbatim}
 
-\noindent The meaning of each of the parameters is explained as follows:
+\noindent The meaning of each of the parameters is as follows:
 \begin{itemize}
-
 
 	\item \texttt{botServer}: IP address of host running the UT server with the GameBots modifications. The bots will be created on this server. \textit{Default value:} local host port 3000, meaning that if no address is provided the environment will connect to a server on the the local host port 3000.
 	\item \texttt{controlServer}: IP address of host running the UT server with the GameBots modifications. This is used for the control connection to server to allow adding bots. \textit{Default value:} local host port 3001, meaning that if no address is provided the environment will connect to a server on the the local host port 3001.
