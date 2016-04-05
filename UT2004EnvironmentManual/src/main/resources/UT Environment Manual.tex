@@ -31,6 +31,7 @@
 \author{Lennard de Rijk}
 \author{Peter Evers}
 \author{Michiel Hegemans}
+\author{Vincent Koeman}
 
 \affil{Delft University of Technology, The Netherlands}
 %
@@ -44,7 +45,7 @@
 \section{Introduction}
 %
 
-This manual describes the interface between {\Goal} and \textsc{Unreal Tournament 2004/3} (UT).
+This manual describes the \textsc{Unreal Tournament 2004/3} (UT) EIS interface.
 
 The manual is organized as follows. Section \ref{sec:setup} discusses how to install the environment and how to run it. In Section \ref{sec:masspec} the initialization parameters that can be set in a \texttt{.mas2g} file are discussed. Section \ref{sec:vis} introduces the \emph{visualizer} that provides (i) a 3D map which displays all bots as well as the flags, (ii) options for managing the UT server, and (iii) options for managing bots. In Section \ref{sec:unrealgoalbot} the UnrealGoal bot is described, a software layer between {\Goal} agents and UT bots that implements low-level behaviour (including e.g. a path planner). Section \ref{sec:actions} documents the actions that the interface provides and can be performed by a {\Goal} agent. Finally, Section \ref{sec:percepts} documents the percepts that a {\Goal} agent receives when connected to the UT environment.
 
@@ -61,8 +62,7 @@ This section explains how to startup a dedicated server to which the bots of the
 
 \subsection{Installation}
 
-To install GOAL and the unreal environment (in this order), you can run the installer.  Please ensure that GOAL and Unreal Tournament have been installed. For UT3 make sure you install the UT3Patch4 and the UT3TitanPack otherwise
-the server will crash.
+To install the unreal environment, you can run the installer.  Please ensure that Java and Unreal Tournament have been installed. For UT3 make sure you install the UT3Patch4 and the UT3TitanPack otherwise the server will crash.
 
 \subsection{Startup Scripts UT2004}
 
@@ -76,8 +76,6 @@ The run scripts for an UT3 server can be found in the \PVerb{Unreal Tournament 3
 
 You can adopt these script to suit your own needs. For more command line parameters you can consult \url{http://wiki.unrealadmin.org/UT3_Command_line_options}.
 
-%Wouter: CHECK this is also in the Unreal installation manual. 
-% Rien: Yes, but that is ok.
 \subsection{Dedicated Server UT2004}
 
 To setup your own dedicated UT2004 server you can use the UnrealOS execution environment (\textsc{ucc}) from the command prompt. The ucc is located in the \PVerb{Unreal Tournament 2004\System} directory. 
@@ -112,6 +110,21 @@ For more information on managing a dedicated server please consult the UnrealAdm
 \subsection{Disabling Translocators UT2004}
 
 The translocator is a device that players and bots in UT can use to move across the map quickly. The UnrealGoal bot is unable to use this device. To keep things fair you can disable the translocator by appending \verb|\?Translocator=False| to the command that starts the dedicated server.
+
+\subsection{Running on non-Windows OSs}
+UT3 is only available for the Windows operating system. Therefore users of Linux or OSX have to run Windows with UT3 elsewhere. There are a number of options:
+
+\begin{itemize}
+\item Run UT3 on a separate windows machine, e.g. a machine on the Drebbelweg. 
+\item Run UT3 in VirtualBox (\url{https://www.virtualbox.org}); you can then run your agents (e.g., GOAL) either on your native OS or also in the virtual box.
+\item Make your system dual-boot (e.g.  Bootcamp for OSX: \url{https://support.apple.com/nl-nl/HT201468}) and run Windows on your machine from a separate partition.
+\end{itemize}
+
+As TU Delft student, you can get a free Windows license through \url{http://www.ma3d.com/productverification.php}.
+
+If UT runs on a different operating system than where you run your agents, then you will have to set up the init parameters for botServer, controlServer, and visualizer as discussed in the section \ref{sec:masspec}).
+
+Running the server only (without the visuals of UT.exe) is sufficient for connecting and running the agents. UT3.exe may be slow but good enough for testing and debugging.
 
 %
 %
