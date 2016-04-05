@@ -28,6 +28,45 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
+import cz.cuni.amis.pogamut.base.agent.navigation.IPathPlanner;
+import cz.cuni.amis.pogamut.base.communication.worldview.listener.annotation.EventListener;
+import cz.cuni.amis.pogamut.base.communication.worldview.object.IWorldObject;
+import cz.cuni.amis.pogamut.base.utils.math.DistanceUtils;
+import cz.cuni.amis.pogamut.base3d.worldview.object.ILocated;
+import cz.cuni.amis.pogamut.base3d.worldview.object.Location;
+import cz.cuni.amis.pogamut.unreal.communication.messages.UnrealId;
+import cz.cuni.amis.pogamut.ut2004.agent.module.sensomotoric.Weapon;
+import cz.cuni.amis.pogamut.ut2004.agent.module.sensor.WeaponPref;
+import cz.cuni.amis.pogamut.ut2004.agent.navigation.UT2004AStarPathPlanner;
+import cz.cuni.amis.pogamut.ut2004.agent.navigation.UT2004GetBackToNavGraph;
+import cz.cuni.amis.pogamut.ut2004.agent.navigation.UT2004Navigation;
+import cz.cuni.amis.pogamut.ut2004.agent.navigation.UT2004PathExecutor;
+import cz.cuni.amis.pogamut.ut2004.agent.navigation.UT2004RunStraight;
+import cz.cuni.amis.pogamut.ut2004.agent.navigation.loquenavigator.LoqueNavigator;
+import cz.cuni.amis.pogamut.ut2004.agent.navigation.stuckdetector.UT2004DistanceStuckDetector;
+import cz.cuni.amis.pogamut.ut2004.agent.navigation.stuckdetector.UT2004PositionStuckDetector;
+import cz.cuni.amis.pogamut.ut2004.agent.navigation.stuckdetector.UT2004TimeStuckDetector;
+import cz.cuni.amis.pogamut.ut2004.agent.params.UT2004AgentParameters;
+import cz.cuni.amis.pogamut.ut2004.bot.impl.UT2004Bot;
+import cz.cuni.amis.pogamut.ut2004.bot.impl.UT2004BotModuleController;
+import cz.cuni.amis.pogamut.ut2004.communication.messages.UT2004ItemType;
+import cz.cuni.amis.pogamut.ut2004.communication.messages.gbcommands.GetPath;
+import cz.cuni.amis.pogamut.ut2004.communication.messages.gbcommands.Initialize;
+import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.BotKilled;
+import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.FlagInfo;
+import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.Item;
+import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.NavPoint;
+import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.PathList;
+import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.Player;
+import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.PlayerKilled;
+import cz.cuni.amis.pogamut.ut2004.utils.UT2004BotRunner;
+import cz.cuni.amis.utils.exception.PogamutException;
+import eis.eis2java.annotation.AsAction;
+import eis.eis2java.annotation.AsPercept;
+import eis.eis2java.translation.Filter.Type;
+import eis.eis2java.util.AllPerceptsModule;
+import eis.exceptions.EntityException;
+import eis.exceptions.PerceiveException;
 import nl.tudelft.goal.unreal.actions.Action;
 import nl.tudelft.goal.unreal.actions.ActionQueue;
 import nl.tudelft.goal.unreal.environment.MyAllPerceptsProvider;
@@ -71,49 +110,9 @@ import nl.tudelft.pogamut.ut2004.agent.module.shooting.weapon.RocketLauncherShoo
 import nl.tudelft.pogamut.ut2004.agent.module.shooting.weapon.ShieldGunShooting;
 import nl.tudelft.pogamut.ut2004.agent.module.shooting.weapon.ShockRifleShooting;
 import nl.tudelft.pogamut.ut2004.agent.module.shooting.weapon.SniperRifleShooting;
-import cz.cuni.amis.pogamut.base.agent.navigation.IPathPlanner;
-import cz.cuni.amis.pogamut.base.communication.worldview.listener.annotation.EventListener;
-import cz.cuni.amis.pogamut.base.communication.worldview.object.IWorldObject;
-import cz.cuni.amis.pogamut.base.utils.math.DistanceUtils;
-import cz.cuni.amis.pogamut.base3d.worldview.object.ILocated;
-import cz.cuni.amis.pogamut.base3d.worldview.object.Location;
-import cz.cuni.amis.pogamut.unreal.communication.messages.UnrealId;
-import cz.cuni.amis.pogamut.ut2004.agent.module.sensomotoric.Weapon;
-import cz.cuni.amis.pogamut.ut2004.agent.module.sensor.WeaponPref;
-import cz.cuni.amis.pogamut.ut2004.agent.navigation.UT2004AStarPathPlanner;
-import cz.cuni.amis.pogamut.ut2004.agent.navigation.UT2004GetBackToNavGraph;
-import cz.cuni.amis.pogamut.ut2004.agent.navigation.UT2004Navigation;
-import cz.cuni.amis.pogamut.ut2004.agent.navigation.UT2004PathExecutor;
-import cz.cuni.amis.pogamut.ut2004.agent.navigation.UT2004RunStraight;
-import cz.cuni.amis.pogamut.ut2004.agent.navigation.loquenavigator.LoqueNavigator;
-import cz.cuni.amis.pogamut.ut2004.agent.navigation.stuckdetector.UT2004DistanceStuckDetector;
-import cz.cuni.amis.pogamut.ut2004.agent.navigation.stuckdetector.UT2004PositionStuckDetector;
-import cz.cuni.amis.pogamut.ut2004.agent.navigation.stuckdetector.UT2004TimeStuckDetector;
-import cz.cuni.amis.pogamut.ut2004.agent.params.UT2004AgentParameters;
-import cz.cuni.amis.pogamut.ut2004.bot.impl.UT2004Bot;
-import cz.cuni.amis.pogamut.ut2004.bot.impl.UT2004BotModuleController;
-import cz.cuni.amis.pogamut.ut2004.communication.messages.UT2004ItemType;
-import cz.cuni.amis.pogamut.ut2004.communication.messages.gbcommands.GetPath;
-import cz.cuni.amis.pogamut.ut2004.communication.messages.gbcommands.Initialize;
-import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.BotKilled;
-import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.FlagInfo;
-import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.Item;
-import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.NavPoint;
-import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.PathList;
-import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.Player;
-import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.PlayerKilled;
-import cz.cuni.amis.pogamut.ut2004.utils.UT2004BotRunner;
-import cz.cuni.amis.utils.exception.PogamutException;
-import eis.eis2java.annotation.AsAction;
-import eis.eis2java.annotation.AsPercept;
-import eis.eis2java.translation.Filter.Type;
-import eis.eis2java.util.AllPerceptsModule;
-import eis.exceptions.EntityException;
-import eis.exceptions.PerceiveException;
 
 @SuppressWarnings("rawtypes")
-public class UT2004BotBehavior extends UT2004BotModuleController<UT2004Bot>
-		implements MyAllPerceptsProvider {
+public class UT2004BotBehavior extends UT2004BotModuleController<UT2004Bot> implements MyAllPerceptsProvider {
 
 	protected List<ContextSelector> targetSelector = new ArrayList<ContextSelector>();
 	protected List<ContextSelector> lookSelector = new ArrayList<ContextSelector>();
@@ -173,12 +172,12 @@ public class UT2004BotBehavior extends UT2004BotModuleController<UT2004Bot>
 	/**
 	 * Initialize projectiles and weaponshooting modules.
 	 */
+	@Override
 	protected void initializeModules(UT2004Bot bot) {
 		super.initializeModules(bot);
 
 		projectiles = new UT2004Projectiles(bot, info);
-		weaponShooting = new WeaponryShooting(bot, info, weaponry, weaponPrefs,
-				shoot);
+		weaponShooting = new WeaponryShooting(bot, info, weaponry, weaponPrefs, shoot);
 
 		// Setup percept module.
 		try {
@@ -194,26 +193,16 @@ public class UT2004BotBehavior extends UT2004BotModuleController<UT2004Bot>
 	 * Adds handlers to deal with different weapons.
 	 */
 	protected void initializeWeaponShootings() {
-		weaponShooting.addWeaponShooting(new LinkGunShooting(bot, info, shoot,
-				weaponry));
-		weaponShooting.addWeaponShooting(new ShockRifleShooting(bot, info,
-				shoot, weaponry, projectiles));
-		weaponShooting.addWeaponShooting(new MinigunShooting(bot, info, shoot,
-				weaponry));
-		weaponShooting.addWeaponShooting(new FlakCannonShooting(bot, info,
-				shoot, weaponry));
-		weaponShooting.addWeaponShooting(new ShieldGunShooting(bot, info,
-				shoot, weaponry, projectiles, senses));
-		weaponShooting.addWeaponShooting(new BioRifleShooting(bot, info, shoot,
-				weaponry));
-		weaponShooting.addWeaponShooting(new AssaultRifleShooting(bot, info,
-				shoot, weaponry));
-		weaponShooting.addWeaponShooting(new RocketLauncherShooting(bot, info,
-				shoot, weaponry));
-		weaponShooting.addWeaponShooting(new LigthningGunShooting(bot, info,
-				shoot, weaponry));
-		weaponShooting.addWeaponShooting(new SniperRifleShooting(bot, info,
-				shoot, weaponry));
+		weaponShooting.addWeaponShooting(new LinkGunShooting(bot, info, shoot, weaponry));
+		weaponShooting.addWeaponShooting(new ShockRifleShooting(bot, info, shoot, weaponry, projectiles));
+		weaponShooting.addWeaponShooting(new MinigunShooting(bot, info, shoot, weaponry));
+		weaponShooting.addWeaponShooting(new FlakCannonShooting(bot, info, shoot, weaponry));
+		weaponShooting.addWeaponShooting(new ShieldGunShooting(bot, info, shoot, weaponry, projectiles, senses));
+		weaponShooting.addWeaponShooting(new BioRifleShooting(bot, info, shoot, weaponry));
+		weaponShooting.addWeaponShooting(new AssaultRifleShooting(bot, info, shoot, weaponry));
+		weaponShooting.addWeaponShooting(new RocketLauncherShooting(bot, info, shoot, weaponry));
+		weaponShooting.addWeaponShooting(new LigthningGunShooting(bot, info, shoot, weaponry));
+		weaponShooting.addWeaponShooting(new SniperRifleShooting(bot, info, shoot, weaponry));
 	}
 
 	/**
@@ -243,23 +232,20 @@ public class UT2004BotBehavior extends UT2004BotModuleController<UT2004Bot>
 		pathPlanner = new UT2004AStarPathPlanner(bot);
 		sfwMap = new SharedFloydWarshallMap(bot);
 		pathExecutor = new UT2004PathExecutor<ILocated>(bot, info, move,
-				new LoqueNavigator<ILocated>(bot, info, move, bot.getLog()),
-				bot.getLog());
+				new LoqueNavigator<ILocated>(bot, info, move, bot.getLog()), bot.getLog());
 
 		// add stuck detectors that watch over the path-following, if it
 		// (heuristicly) finds out that the bot has stuck somewhere,
 		// it reports an appropriate path event and the path executor will stop
 		// following the path which in turn allows
 		// us to issue another follow-path command in the right time
-		pathExecutor.addStuckDetector(new UT2004TimeStuckDetector(bot, 3000,
-				100000));
+		pathExecutor.addStuckDetector(new UT2004TimeStuckDetector(bot, 3000, 100000));
 		pathExecutor.addStuckDetector(new UT2004PositionStuckDetector(bot));
 		pathExecutor.addStuckDetector(new UT2004DistanceStuckDetector(bot));
 
 		getBackToNavGraph = new UT2004GetBackToNavGraph(bot, info, move);
 		runStraight = new UT2004RunStraight(bot, info, move);
-		navigation = new UT2004Navigation(bot, pathExecutor, sfwMap,
-				getBackToNavGraph, runStraight);
+		navigation = new UT2004Navigation(bot, pathExecutor, sfwMap, getBackToNavGraph, runStraight);
 	}
 
 	/**
@@ -303,7 +289,8 @@ public class UT2004BotBehavior extends UT2004BotModuleController<UT2004Bot>
 
 		// TODO: This is executed for every bot while we use a shared map.
 		if (navBuilder.isUsed()) {
-			log.info("Navigation graph has been altered by 'navBuilder', triggering recomputation of Floyd-Warshall path matrix...");
+			log.info(
+					"Navigation graph has been altered by 'navBuilder', triggering recomputation of Floyd-Warshall path matrix...");
 			Level oldLevel = sfwMap.getLog().getLevel();
 			sfwMap.getLog().setLevel(Level.FINER);
 			sfwMap.refreshPathMatrix();
@@ -377,8 +364,7 @@ public class UT2004BotBehavior extends UT2004BotModuleController<UT2004Bot>
 		// ...is determined by the first filter to match.
 		ILocated shootSelected = null;
 		for (Selector<ILocated> selector : targetSelector) {
-			shootSelected = selector.select(players.getVisiblePlayers()
-					.values());
+			shootSelected = selector.select(players.getVisiblePlayers().values());
 			if (shootSelected != null) {
 				break;
 			}
@@ -389,8 +375,7 @@ public class UT2004BotBehavior extends UT2004BotModuleController<UT2004Bot>
 		// This will be look at if our shoot target is not visible.
 		ILocated lookSelected = null;
 		for (Selector<ILocated> selector : lookSelector) {
-			lookSelected = selector
-					.select(players.getVisiblePlayers().values());
+			lookSelected = selector.select(players.getVisiblePlayers().values());
 			if (lookSelected != null) {
 				break;
 			}
@@ -442,6 +427,7 @@ public class UT2004BotBehavior extends UT2004BotModuleController<UT2004Bot>
 	 * 
 	 * @return a previously prepared batch of percepts.
 	 */
+	@Override
 	public Map<Method, Object> getAllPercepts() {
 		return percepts.getAllPercepts();
 	}
@@ -470,8 +456,7 @@ public class UT2004BotBehavior extends UT2004BotModuleController<UT2004Bot>
 	 *            where the bot should go.
 	 */
 	@AsAction(name = "navigate")
-	public void navigate(final UnrealIdOrLocation destination)
-			throws InterruptedException {
+	public void navigate(final UnrealIdOrLocation destination) throws InterruptedException {
 		log.fine(String.format("called navigate to %s", destination));
 
 		addAction(new Navigate() {
@@ -482,9 +467,9 @@ public class UT2004BotBehavior extends UT2004BotModuleController<UT2004Bot>
 				ILocated object = destination.toILocated(world, info);
 
 				if (object == null) {
-					log.warning(String
-							.format("failed to navigate to %s. The object associated with this Id was not located in the world. Halting.",
-									destination));
+					log.warning(String.format(
+							"failed to navigate to %s. The object associated with this Id was not located in the world. Halting.",
+							destination));
 					navigation.stopNavigation();
 					return;
 				}
@@ -525,7 +510,8 @@ public class UT2004BotBehavior extends UT2004BotModuleController<UT2004Bot>
 	//
 	// ILocated object = destination.toILocated(world, info);
 	// if (object == null) {
-	// log.warning(String.format("failed to continue to %s. The object associated with this Id was not located in the world.",
+	// log.warning(String.format("failed to continue to %s. The object
+	// associated with this Id was not located in the world.",
 	// object));
 	// return;
 	// }
@@ -533,7 +519,8 @@ public class UT2004BotBehavior extends UT2004BotModuleController<UT2004Bot>
 	// if (!navigation.isNavigating()) {
 	// navigation.navigate((ILocated) object);
 	// } else if (navigation.isNavigatingToPlayer()) {
-	// log.warning(String.format("failed to continue to %s. Navigation is navigating to a player",
+	// log.warning(String.format("failed to continue to %s. Navigation is
+	// navigating to a player",
 	// object));
 	// } else {
 	// navigation.setContinueTo((ILocated) object);
@@ -623,8 +610,7 @@ public class UT2004BotBehavior extends UT2004BotModuleController<UT2004Bot>
 					log.info("executed combo %s", combo);
 					body.getAction().startCombo(combo.toString());
 				} else {
-					log.warning("combo %s failed, insufficient adrenaline",
-							combo);
+					log.warning("combo %s failed, insufficient adrenaline", combo);
 				}
 			}
 		});
@@ -659,12 +645,10 @@ public class UT2004BotBehavior extends UT2004BotModuleController<UT2004Bot>
 				body.getAction().throwWeapon();
 
 				if (weapon == null) {
-					log.warning(String
-							.format("Could not drop weapon. Not holding a weapon."));
+					log.warning(String.format("Could not drop weapon. Not holding a weapon."));
 				} else if (weapon.getType() == UT2004ItemType.SHIELD_GUN
 						|| weapon.getType() == UT2004ItemType.TRANSLOCATOR) {
-					log.warning(String.format("Could not drop weapon %s",
-							weapon));
+					log.warning(String.format("Could not drop weapon %s", weapon));
 				} else {
 					log.info("executed drop %s", weapon);
 				}
@@ -712,16 +696,14 @@ public class UT2004BotBehavior extends UT2004BotModuleController<UT2004Bot>
 		ILocated fromObject = from.toILocated(world, info);
 
 		if (fromObject == null) {
-			throw new PogamutException(
-					String.format(
-							"Failed to compute path from %s to %s. The start was not located in the world.",
-							from, to), this);
+			throw new PogamutException(String.format(
+					"Failed to compute path from %s to %s. The start was not located in the world.", from, to), this);
 		}
 		if (toObject == null) {
 			throw new PogamutException(
-					String.format(
-							"Failed to compute path from %s to %s. The destination was not located in the world.",
-							from, to), this);
+					String.format("Failed to compute path from %s to %s. The destination was not located in the world.",
+							from, to),
+					this);
 		}
 
 		// Not put into action queue. Doesn't require dynamic info from world.
@@ -736,10 +718,8 @@ public class UT2004BotBehavior extends UT2004BotModuleController<UT2004Bot>
 		Location fromLocation = fromObject.getLocation();
 		Location toLocation = toObject.getLocation();
 
-		NavPoint fromNav = DistanceUtils.getNearest(world
-				.getAll(NavPoint.class).values(), fromLocation);
-		NavPoint toNav = DistanceUtils.getNearest(world.getAll(NavPoint.class)
-				.values(), toLocation);
+		NavPoint fromNav = DistanceUtils.getNearest(world.getAll(NavPoint.class).values(), fromLocation);
+		NavPoint toNav = DistanceUtils.getNearest(world.getAll(NavPoint.class).values(), toLocation);
 
 		double distance = sfwMap.getDistance(fromNav, toNav);
 		List<NavPoint> navPoints = sfwMap.getPath(fromNav, toNav);
@@ -774,7 +754,8 @@ public class UT2004BotBehavior extends UT2004BotModuleController<UT2004Bot>
 	 * stop shooting.</li>
 	 * <li>Selector: A selector will select a target from the visible players.
 	 * Can be, nearestEnemy, nearestFriendly, nearestFriendlyWithLinkGun,
-	 * enemyFlagCarrier, friendlyFlagCarrier, a PlayerID or a location(X,Y,Z).</li>
+	 * enemyFlagCarrier, friendlyFlagCarrier, a PlayerID or a location(X,Y,Z).
+	 * </li>
 	 * </ul>
 	 * </p>
 	 * 
@@ -857,8 +838,7 @@ public class UT2004BotBehavior extends UT2004BotModuleController<UT2004Bot>
 	 * </p>
 	 */
 	@AsAction(name = "prefer")
-	public void prefer(final WeaponPrefList weaponList)
-			throws InterruptedException {
+	public void prefer(final WeaponPrefList weaponList) throws InterruptedException {
 		log.fine(String.format("called prefer %s", weaponList));
 
 		addAction(new Prefer() {
@@ -868,8 +848,7 @@ public class UT2004BotBehavior extends UT2004BotModuleController<UT2004Bot>
 				weaponPrefs.clearAllPrefs();
 
 				for (WeaponPref pref : weaponList) {
-					weaponPrefs.addGeneralPref(pref.getWeapon(),
-							pref.isPrimary());
+					weaponPrefs.addGeneralPref(pref.getWeapon(), pref.isPrimary());
 				}
 
 				log.info(String.format("executed prefer %s", weaponList));
@@ -895,7 +874,8 @@ public class UT2004BotBehavior extends UT2004BotModuleController<UT2004Bot>
 	 * slowly turn around.</li>
 	 * <li>Selector: A selector will select a target from the visible players.
 	 * Can be, nearestEnemy, nearestFriendly, nearestFriendlyWithLinkGun,
-	 * enemyFlagCarrier, friendlyFlagCarrier, a PlayerID or a location(X,Y,Z).</li>
+	 * enemyFlagCarrier, friendlyFlagCarrier, a PlayerID or a location(X,Y,Z).
+	 * </li>
 	 * </ul>
 	 * </p>
 	 * 
@@ -946,8 +926,7 @@ public class UT2004BotBehavior extends UT2004BotModuleController<UT2004Bot>
 	 * @throws InterruptedException
 	 */
 	@AsAction(name = "chat")
-	public void chat(final Scope scope, final String message)
-			throws InterruptedException {
+	public void chat(final Scope scope, final String message) throws InterruptedException {
 		log.fine(String.format("called chat: %s", message));
 
 		addAction(new Chat() {
@@ -1031,8 +1010,7 @@ public class UT2004BotBehavior extends UT2004BotModuleController<UT2004Bot>
 	 */
 	@AsPercept(name = "self", filter = Type.ON_CHANGE)
 	public Percept self() {
-		return new Percept(info.getId(), info.getName(), Team.valueOf(info
-				.getTeam()));
+		return new Percept(info.getId(), info.getName(), Team.valueOf(info.getTeam()));
 	}
 
 	/**
@@ -1055,8 +1033,7 @@ public class UT2004BotBehavior extends UT2004BotModuleController<UT2004Bot>
 	 */
 	@AsPercept(name = "orientation", filter = Type.ON_CHANGE)
 	public Percept orientation() {
-		return new Percept(info.getLocation(), info.getRotation(),
-				info.getVelocity());
+		return new Percept(info.getLocation(), info.getRotation(), info.getVelocity());
 	}
 
 	/**
@@ -1072,7 +1049,8 @@ public class UT2004BotBehavior extends UT2004BotModuleController<UT2004Bot>
 	 * <ul>
 	 * <li>Health: A number between 0 and 199, indicating the health.</li>
 	 * <li>Armour: A number between 0 and 150, indicating the armor.</li>
-	 * <li>Adrenaline: An number between 0 and 100, indicating the adrenaline.</li>
+	 * <li>Adrenaline: An number between 0 and 100, indicating the adrenaline.
+	 * </li>
 	 * <li>ActiveCombo: The combo that is currently active, or none when none is
 	 * active.</li>
 	 * </ul>
@@ -1081,9 +1059,8 @@ public class UT2004BotBehavior extends UT2004BotModuleController<UT2004Bot>
 	 */
 	@AsPercept(name = "status", filter = Type.ON_CHANGE)
 	public Percept status() {
-		return new Percept(info.getHealth(), info.getArmor(),
-				info.getAdrenaline(), Combo.parseCombo(info.getSelf()
-						.getCombo()));
+		return new Percept(info.getHealth(), info.getArmor(), info.getAdrenaline(),
+				Combo.parseCombo(info.getSelf().getCombo()));
 	}
 
 	/**
@@ -1113,8 +1090,7 @@ public class UT2004BotBehavior extends UT2004BotModuleController<UT2004Bot>
 	 */
 	@AsPercept(name = "score", filter = Type.ON_CHANGE)
 	public Percept score() {
-		return new Percept(info.getKills(), info.getDeaths(),
-				info.getSuicides());
+		return new Percept(info.getKills(), info.getDeaths(), info.getSuicides());
 	}
 
 	/**
@@ -1146,8 +1122,7 @@ public class UT2004BotBehavior extends UT2004BotModuleController<UT2004Bot>
 			return new Percept(new None(), FireMode.NONE);
 		}
 
-		return new Percept(weapon.getType(), FireMode.valueOf(
-				info.isPrimaryShooting(), info.isSecondaryShooting()));
+		return new Percept(weapon.getType(), FireMode.valueOf(info.isPrimaryShooting(), info.isSecondaryShooting()));
 	}
 
 	/**
@@ -1189,8 +1164,7 @@ public class UT2004BotBehavior extends UT2004BotModuleController<UT2004Bot>
 				// 1 will stand in for infinity
 				percepts.add(new Percept(w.getType(), 1, w.getSecondaryAmmo()));
 			} else {
-				percepts.add(new Percept(w.getType(), w.getPrimaryAmmo(), w
-						.getSecondaryAmmo()));
+				percepts.add(new Percept(w.getType(), w.getPrimaryAmmo(), w.getSecondaryAmmo()));
 			}
 		}
 
@@ -1210,10 +1184,8 @@ public class UT2004BotBehavior extends UT2004BotModuleController<UT2004Bot>
 	 * @param victem
 	 * @param weaponName
 	 */
-	private void fraggedEvent(final long time, final UnrealId killer,
-			final UnrealId victem, final String damageType) {
-		fragged.add(new Percept(time, killer, victem, WeaponDamage
-				.weaponForDamage(damageType)));
+	private void fraggedEvent(final long time, final UnrealId killer, final UnrealId victem, final String damageType) {
+		fragged.add(new Percept(time, killer, victem, WeaponDamage.weaponForDamage(damageType)));
 	}
 
 	/**
@@ -1223,8 +1195,7 @@ public class UT2004BotBehavior extends UT2004BotModuleController<UT2004Bot>
 	 */
 	@EventListener(eventClass = BotKilled.class)
 	public void msgBotKilled(BotKilled msg) {
-		fraggedEvent(msg.getSimTime(), msg.getKiller(), info.getId(),
-				msg.getDamageType());
+		fraggedEvent(msg.getSimTime(), msg.getKiller(), info.getId(), msg.getDamageType());
 	}
 
 	/**
@@ -1235,8 +1206,7 @@ public class UT2004BotBehavior extends UT2004BotModuleController<UT2004Bot>
 
 	@EventListener(eventClass = PlayerKilled.class)
 	public void msgPlayerKilled(PlayerKilled msg) {
-		fraggedEvent(msg.getSimTime(), msg.getKiller(), msg.getId(),
-				msg.getDamageType());
+		fraggedEvent(msg.getSimTime(), msg.getKiller(), msg.getId(), msg.getDamageType());
 	}
 
 	/**
@@ -1254,7 +1224,8 @@ public class UT2004BotBehavior extends UT2004BotModuleController<UT2004Bot>
 	 * <p>
 	 * Notes:
 	 * <ol>
-	 * <li>When the killer and victim id are equal, the bot committed suicide.</li>
+	 * <li>When the killer and victim id are equal, the bot committed suicide.
+	 * </li>
 	 * <li>When the killer is none, the bot respawned.</li>
 	 * </ol>
 	 * </p>
@@ -1303,15 +1274,12 @@ public class UT2004BotBehavior extends UT2004BotModuleController<UT2004Bot>
 
 		// We are going some place that has an unrealid.
 		if (currentTarget instanceof IWorldObject) {
-			IWorldObject targetObject = (IWorldObject) navigation
-					.getCurrentTarget();
-			return new Percept(navigation.getState().getFlag(),
-					targetObject.getId());
+			IWorldObject targetObject = (IWorldObject) navigation.getCurrentTarget();
+			return new Percept(navigation.getState().getFlag(), targetObject.getId());
 		}
 
 		// We are going to a location(x,y,z)
-		return new Percept(navigation.getState().getFlag(),
-				currentTarget.getLocation());
+		return new Percept(navigation.getState().getFlag(), currentTarget.getLocation());
 	}
 
 	/**
@@ -1341,8 +1309,7 @@ public class UT2004BotBehavior extends UT2004BotModuleController<UT2004Bot>
 		List<Percept> percepts = new ArrayList<Percept>(navPoints.size());
 
 		for (NavPoint p : navPoints) {
-			percepts.add(new Percept(p.getId(), p.getLocation(), p
-					.getOutgoingEdges().keySet()));
+			percepts.add(new Percept(p.getId(), p.getLocation(), p.getOutgoingEdges().keySet()));
 		}
 
 		return percepts;
@@ -1391,8 +1358,7 @@ public class UT2004BotBehavior extends UT2004BotModuleController<UT2004Bot>
 			// Pogamut does not consider the manually placed items to be
 			// dropped. See ticket #2487.
 			if (!item.isDropped() && item.getNavPoint() != null) {
-				percepts.add(new Percept(item.getNavPointId(), item.getType()
-						.getCategory(), item.getType()));
+				percepts.add(new Percept(item.getNavPointId(), item.getType().getCategory(), item.getType()));
 			}
 		}
 		return percepts;
@@ -1420,7 +1386,7 @@ public class UT2004BotBehavior extends UT2004BotModuleController<UT2004Bot>
 		List<Percept> percepts = new ArrayList<Percept>(navPoints.size());
 
 		for (NavPoint p : navPoints) {
-			if (p.isVisible()) {
+			if (p.isVisible() && p.isItemSpawned()) {
 				percepts.add(new Percept(p.getId()));
 			}
 		}
@@ -1443,7 +1409,8 @@ public class UT2004BotBehavior extends UT2004BotModuleController<UT2004Bot>
 	 * Syntax: base(Team, UnrealID)
 	 * <ul>
 	 * <li>Team: Either red or blue.</li>
-	 * <li>UnrealID: The UnrealId of the navpoint this flagbase is placed on.</li>
+	 * <li>UnrealID: The UnrealId of the navpoint this flagbase is placed on.
+	 * </li>
 	 * </ul>
 	 * </p>
 	 */
@@ -1456,8 +1423,7 @@ public class UT2004BotBehavior extends UT2004BotModuleController<UT2004Bot>
 
 		for (FlagInfo flag : flags) {
 			Team team = Team.valueOf(flag.getTeam());
-			NavPoint nav = DistanceUtils.getNearest(navPoints,
-					game.getFlagBase(team.id()));
+			NavPoint nav = DistanceUtils.getNearest(navPoints, game.getFlagBase(team.id()));
 			percepts.add(new Percept(team, nav.getId()));
 		}
 
@@ -1490,8 +1456,7 @@ public class UT2004BotBehavior extends UT2004BotModuleController<UT2004Bot>
 	 */
 	@AsPercept(name = "game", filter = Type.ON_CHANGE)
 	public Percept game() {
-		return new Percept(game.getGameType(), game.getMapName(),
-				game.getTeamScoreLimit(), game.getRemainingTime());
+		return new Percept(game.getGameType(), game.getMapName(), game.getTeamScoreLimit(), game.getRemainingTime());
 	}
 
 	/**
@@ -1514,7 +1479,8 @@ public class UT2004BotBehavior extends UT2004BotModuleController<UT2004Bot>
 	 * <p>
 	 * Notes
 	 * <ol>
-	 * <li>For CTF the score is the number of times the ag has been captured.</li>
+	 * <li>For CTF the score is the number of times the ag has been captured.
+	 * </li>
 	 * <li>Once either team reaches the goal score from the Game- info percept,
 	 * the game is over.</li>
 	 * </ol>
@@ -1523,8 +1489,7 @@ public class UT2004BotBehavior extends UT2004BotModuleController<UT2004Bot>
 	 */
 	@AsPercept(name = "teamScore", filter = Type.ON_CHANGE)
 	public Percept teamScore() {
-		return new Percept(game.getTeamScore(info.getTeam()),
-				game.getTeamScore(1 - info.getTeam()));
+		return new Percept(game.getTeamScore(info.getTeam()), game.getTeamScore(1 - info.getTeam()));
 	}
 
 	/**
@@ -1548,8 +1513,7 @@ public class UT2004BotBehavior extends UT2004BotModuleController<UT2004Bot>
 	 * <p>
 	 * Notes:
 	 * <ol>
-	 * <li>
-	 * See also the flag percept</li>
+	 * <li>See also the flag percept</li>
 	 * </ol>
 	 * <p>
 	 * 
@@ -1561,8 +1525,7 @@ public class UT2004BotBehavior extends UT2004BotModuleController<UT2004Bot>
 		Collection<Percept> percepts = new ArrayList<Percept>(flags.size());
 
 		for (FlagInfo flag : flags) {
-			percepts.add(new Percept(Team.valueOf(flag.getTeam()), FlagState
-					.valueOfIgnoreCase(flag.getState())));
+			percepts.add(new Percept(Team.valueOf(flag.getTeam()), FlagState.valueOfIgnoreCase(flag.getState())));
 		}
 
 		return percepts;
@@ -1588,7 +1551,8 @@ public class UT2004BotBehavior extends UT2004BotModuleController<UT2004Bot>
 	 * <ul>
 	 * <li>UnrealID: The UnrealID of this item.</li>
 	 * <li>Label: The category of the pick up.</li>
-	 * <li>ItemType: The actual item type of the item located on the pickup.</li>
+	 * <li>ItemType: The actual item type of the item located on the pickup.
+	 * </li>
 	 * <li>NavPointId: The UnrealId of the navpoint this item is placed when
 	 * spawned.</li>
 	 * <li>Location: location in the world when this item is dropped.</li>
@@ -1598,8 +1562,7 @@ public class UT2004BotBehavior extends UT2004BotModuleController<UT2004Bot>
 	 * <p>
 	 * Notes:
 	 * <ol>
-	 * <li>
-	 * TODO: A full over view of which category Label belongs to which item
+	 * <li>TODO: A full over view of which category Label belongs to which item
 	 * type.</li>
 	 * </ol>
 	 * <p>
@@ -1608,18 +1571,17 @@ public class UT2004BotBehavior extends UT2004BotModuleController<UT2004Bot>
 	@AsPercept(name = "item", multiplePercepts = true, filter = Type.ON_CHANGE_NEG)
 	public Collection<Percept> item() {
 		Collection<Item> visibleItems = items.getVisibleItems().values();
-		Collection<Percept> percepts = new ArrayList<Percept>(
-				visibleItems.size());
+		Collection<Percept> percepts = new ArrayList<Percept>(visibleItems.size());
 
 		for (Item item : visibleItems) {
 			// Pogamut does not consider the manually placed items to be
 			// dropped. See ticket #2487.
 			if (item.isDropped() || item.getNavPointId() == null) {
-				percepts.add(new Percept(item.getId(), item.getType()
-						.getCategory(), item.getType(), item.getLocation()));
+				percepts.add(
+						new Percept(item.getId(), item.getType().getCategory(), item.getType(), item.getLocation()));
 			} else {
-				percepts.add(new Percept(item.getId(), item.getType()
-						.getCategory(), item.getType(), item.getNavPointId()));
+				percepts.add(
+						new Percept(item.getId(), item.getType().getCategory(), item.getType(), item.getNavPointId()));
 			}
 		}
 
@@ -1650,8 +1612,7 @@ public class UT2004BotBehavior extends UT2004BotModuleController<UT2004Bot>
 	 * <p>
 	 * Notes:
 	 * <ol>
-	 * <li>
-	 * See also the flagStatus percept.</li>
+	 * <li>See also the flagStatus percept.</li>
 	 * </ol>
 	 * <p>
 	 * 
@@ -1664,8 +1625,7 @@ public class UT2004BotBehavior extends UT2004BotModuleController<UT2004Bot>
 
 		for (FlagInfo flag : flags) {
 			if (flag.isVisible())
-				percepts.add(new Percept(Team.valueOf(flag.getTeam()), flag
-						.getHolder(), flag.getLocation()));
+				percepts.add(new Percept(Team.valueOf(flag.getTeam()), flag.getHolder(), flag.getLocation()));
 		}
 
 		return percepts;
@@ -1688,7 +1648,8 @@ public class UT2004BotBehavior extends UT2004BotModuleController<UT2004Bot>
 	 * <li>UnrealId: Unique identifier for this bot assigned by Unreal.</li>
 	 * <li>Team: Either red or blue.</li>
 	 * <li>location(X,Y,Z): Location of the bot in the world.</li>
-	 * <li>Weapon: The weapon the bot is holding. TODO: Any of the following:</li>
+	 * <li>Weapon: The weapon the bot is holding. TODO: Any of the following:
+	 * </li>
 	 * <li>FireMode: Mode of shooting, either primary, secondary or none.</li>
 	 * </ul>
 	 * </p>
@@ -1701,9 +1662,8 @@ public class UT2004BotBehavior extends UT2004BotModuleController<UT2004Bot>
 		Collection<Percept> wrapped = new ArrayList<Percept>(visible.size());
 
 		for (Player p : visible) {
-			wrapped.add(new Percept(p.getId(), p.getName(), Team.valueOf(p
-					.getTeam()), p.getLocation(), UT2004ItemType.getItemType(p
-					.getWeapon()), FireMode.valueOf(p.getFiring())));
+			wrapped.add(new Percept(p.getId(), p.getName(), Team.valueOf(p.getTeam()), p.getLocation(),
+					UT2004ItemType.getItemType(p.getWeapon()), FireMode.valueOf(p.getFiring())));
 		}
 
 		return wrapped;
@@ -1730,8 +1690,7 @@ public class UT2004BotBehavior extends UT2004BotModuleController<UT2004Bot>
 	 */
 	@AsPercept(name = "udamage", filter = Type.ON_CHANGE)
 	public Percept udamage() {
-		return new Percept(info.hasUDamage() ? info.getRemainingUDamageTime()
-				: 0);
+		return new Percept(info.hasUDamage() ? info.getRemainingUDamageTime() : 0);
 	}
 
 }

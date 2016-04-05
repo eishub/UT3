@@ -27,44 +27,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
-import nl.tudelft.goal.unreal.actions.Action;
-import nl.tudelft.goal.unreal.actions.ActionQueue;
-import nl.tudelft.goal.unreal.environment.MyAllPerceptsProvider;
-import nl.tudelft.goal.unreal.environment.PerceptsReadyListener;
-import nl.tudelft.goal.unreal.floydwarshall.SharedFloydWarshallMap;
-import nl.tudelft.goal.unreal.messages.BotParameters;
-import nl.tudelft.goal.unreal.messages.None;
-import nl.tudelft.goal.unreal.messages.Percept;
-import nl.tudelft.goal.unreal.messages.UnrealIdOrLocation;
-import nl.tudelft.goal.unreal.util.Selector;
-import nl.tudelft.goal.ut2004.util.Team;
-import nl.tudelft.goal.ut3.actions.Look;
-import nl.tudelft.goal.ut3.actions.Navigate;
-import nl.tudelft.goal.ut3.actions.Prefer;
-import nl.tudelft.goal.ut3.actions.Respawn;
-import nl.tudelft.goal.ut3.actions.Shoot;
-import nl.tudelft.goal.ut3.actions.Stop;
-import nl.tudelft.goal.ut3.messages.FireMode;
-import nl.tudelft.goal.ut3.messages.FlagState;
-import nl.tudelft.goal.ut3.messages.SelectorList;
-import nl.tudelft.goal.ut3.messages.WeaponPrefList;
-import nl.tudelft.goal.ut3.selector.ContextSelector;
-import nl.tudelft.goal.ut3.selector.NearestEnemy;
-import nl.tudelft.pogamut.unreal.agent.module.sensor.Projectiles;
-import nl.tudelft.pogamut.unreal.agent.module.shooting.WeaponryShooting;
-import nl.tudelft.pogamut.unreal.agent.module.shooting.util.FocusProvider;
-import nl.tudelft.pogamut.unreal.agent.module.shooting.util.OrderedFocusProvider;
-import nl.tudelft.pogamut.ut3.agent.module.sensor.UT3Projectiles;
-import nl.tudelft.pogamut.ut3.agent.module.shooting.weapon.BioRifleShooting;
-import nl.tudelft.pogamut.ut3.agent.module.shooting.weapon.EnforcerShooting;
-import nl.tudelft.pogamut.ut3.agent.module.shooting.weapon.FlakCannonShooting;
-import nl.tudelft.pogamut.ut3.agent.module.shooting.weapon.ImpactHammerShooting;
-import nl.tudelft.pogamut.ut3.agent.module.shooting.weapon.LinkGunShooting;
-import nl.tudelft.pogamut.ut3.agent.module.shooting.weapon.RocketLauncherShooting;
-import nl.tudelft.pogamut.ut3.agent.module.shooting.weapon.ShockRifleShooting;
-import nl.tudelft.pogamut.ut3.agent.module.shooting.weapon.SlowVolumeShooting;
-import nl.tudelft.pogamut.ut3.agent.module.shooting.weapon.SniperRifleShooting;
-import nl.tudelft.pogamut.ut3.agent.module.shooting.weapon.StingerMinigunShooting;
 import cz.cuni.amis.pogamut.base.agent.navigation.IPathPlanner;
 import cz.cuni.amis.pogamut.base.communication.worldview.listener.annotation.EventListener;
 import cz.cuni.amis.pogamut.base.communication.worldview.object.IWorldObject;
@@ -109,10 +71,47 @@ import eis.eis2java.translation.Filter.Type;
 import eis.eis2java.util.AllPerceptsModule;
 import eis.exceptions.EntityException;
 import eis.exceptions.PerceiveException;
+import nl.tudelft.goal.unreal.actions.Action;
+import nl.tudelft.goal.unreal.actions.ActionQueue;
+import nl.tudelft.goal.unreal.environment.MyAllPerceptsProvider;
+import nl.tudelft.goal.unreal.environment.PerceptsReadyListener;
+import nl.tudelft.goal.unreal.floydwarshall.SharedFloydWarshallMap;
+import nl.tudelft.goal.unreal.messages.BotParameters;
+import nl.tudelft.goal.unreal.messages.None;
+import nl.tudelft.goal.unreal.messages.Percept;
+import nl.tudelft.goal.unreal.messages.UnrealIdOrLocation;
+import nl.tudelft.goal.unreal.util.Selector;
+import nl.tudelft.goal.ut2004.util.Team;
+import nl.tudelft.goal.ut3.actions.Look;
+import nl.tudelft.goal.ut3.actions.Navigate;
+import nl.tudelft.goal.ut3.actions.Prefer;
+import nl.tudelft.goal.ut3.actions.Respawn;
+import nl.tudelft.goal.ut3.actions.Shoot;
+import nl.tudelft.goal.ut3.actions.Stop;
+import nl.tudelft.goal.ut3.messages.FireMode;
+import nl.tudelft.goal.ut3.messages.FlagState;
+import nl.tudelft.goal.ut3.messages.SelectorList;
+import nl.tudelft.goal.ut3.messages.WeaponPrefList;
+import nl.tudelft.goal.ut3.selector.ContextSelector;
+import nl.tudelft.goal.ut3.selector.NearestEnemy;
+import nl.tudelft.pogamut.unreal.agent.module.sensor.Projectiles;
+import nl.tudelft.pogamut.unreal.agent.module.shooting.WeaponryShooting;
+import nl.tudelft.pogamut.unreal.agent.module.shooting.util.FocusProvider;
+import nl.tudelft.pogamut.unreal.agent.module.shooting.util.OrderedFocusProvider;
+import nl.tudelft.pogamut.ut3.agent.module.sensor.UT3Projectiles;
+import nl.tudelft.pogamut.ut3.agent.module.shooting.weapon.BioRifleShooting;
+import nl.tudelft.pogamut.ut3.agent.module.shooting.weapon.EnforcerShooting;
+import nl.tudelft.pogamut.ut3.agent.module.shooting.weapon.FlakCannonShooting;
+import nl.tudelft.pogamut.ut3.agent.module.shooting.weapon.ImpactHammerShooting;
+import nl.tudelft.pogamut.ut3.agent.module.shooting.weapon.LinkGunShooting;
+import nl.tudelft.pogamut.ut3.agent.module.shooting.weapon.RocketLauncherShooting;
+import nl.tudelft.pogamut.ut3.agent.module.shooting.weapon.ShockRifleShooting;
+import nl.tudelft.pogamut.ut3.agent.module.shooting.weapon.SlowVolumeShooting;
+import nl.tudelft.pogamut.ut3.agent.module.shooting.weapon.SniperRifleShooting;
+import nl.tudelft.pogamut.ut3.agent.module.shooting.weapon.StingerMinigunShooting;
 
 @SuppressWarnings("rawtypes")
-public class UT3BotBehavior extends UT3BotModuleController<UT2004Bot> implements
-		MyAllPerceptsProvider {
+public class UT3BotBehavior extends UT3BotModuleController<UT2004Bot> implements MyAllPerceptsProvider {
 
 	protected List<ContextSelector> targetSelector = new ArrayList<ContextSelector>();
 	protected List<ContextSelector> lookSelector = new ArrayList<ContextSelector>();
@@ -172,8 +171,7 @@ public class UT3BotBehavior extends UT3BotModuleController<UT2004Bot> implements
 		super.initializeModules(bot);
 
 		projectiles = new UT3Projectiles(bot, info);
-		weaponShooting = new WeaponryShooting(bot, info, weaponry, weaponPrefs,
-				shoot);
+		weaponShooting = new WeaponryShooting(bot, info, weaponry, weaponPrefs, shoot);
 
 		// Setup percept module.
 		try {
@@ -190,28 +188,18 @@ public class UT3BotBehavior extends UT3BotModuleController<UT2004Bot> implements
 	 */
 	protected void initializeWeaponShootings() {
 
-		weaponShooting.addWeaponShooting(new LinkGunShooting(bot, info, shoot,
-				weaponry));
-		weaponShooting.addWeaponShooting(new ShockRifleShooting(bot, info,
-				shoot, weaponry, projectiles));
-		weaponShooting.addWeaponShooting(new StingerMinigunShooting(bot, info,
-				shoot, weaponry));
-		weaponShooting.addWeaponShooting(new FlakCannonShooting(bot, info,
-				shoot, weaponry));
-		weaponShooting.addWeaponShooting(new ImpactHammerShooting(bot, info,
-				shoot, weaponry));
-		weaponShooting.addWeaponShooting(new BioRifleShooting(bot, info, shoot,
-				weaponry));
-		weaponShooting.addWeaponShooting(new EnforcerShooting(bot, info, shoot,
-				weaponry));
-		weaponShooting.addWeaponShooting(new RocketLauncherShooting(bot, info,
-				shoot, weaponry));
+		weaponShooting.addWeaponShooting(new LinkGunShooting(bot, info, shoot, weaponry));
+		weaponShooting.addWeaponShooting(new ShockRifleShooting(bot, info, shoot, weaponry, projectiles));
+		weaponShooting.addWeaponShooting(new StingerMinigunShooting(bot, info, shoot, weaponry));
+		weaponShooting.addWeaponShooting(new FlakCannonShooting(bot, info, shoot, weaponry));
+		weaponShooting.addWeaponShooting(new ImpactHammerShooting(bot, info, shoot, weaponry));
+		weaponShooting.addWeaponShooting(new BioRifleShooting(bot, info, shoot, weaponry));
+		weaponShooting.addWeaponShooting(new EnforcerShooting(bot, info, shoot, weaponry));
+		weaponShooting.addWeaponShooting(new RocketLauncherShooting(bot, info, shoot, weaponry));
 
-		weaponShooting.addWeaponShooting(new SniperRifleShooting(bot, info,
-				shoot, weaponry));
+		weaponShooting.addWeaponShooting(new SniperRifleShooting(bot, info, shoot, weaponry));
 
-		weaponShooting.addWeaponShooting(new SlowVolumeShooting(bot, info,
-				shoot, weaponry));
+		weaponShooting.addWeaponShooting(new SlowVolumeShooting(bot, info, shoot, weaponry));
 	}
 
 	/**
@@ -241,23 +229,20 @@ public class UT3BotBehavior extends UT3BotModuleController<UT2004Bot> implements
 		pathPlanner = new UT2004AStarPathPlanner(bot);
 		sfwMap = new SharedFloydWarshallMap(bot);
 		pathExecutor = new UT2004PathExecutor<ILocated>(bot, info, move,
-				new LoqueNavigator<ILocated>(bot, info, move, bot.getLog()),
-				bot.getLog());
+				new LoqueNavigator<ILocated>(bot, info, move, bot.getLog()), bot.getLog());
 
 		// add stuck detectors that watch over the path-following, if it
 		// (heuristicly) finds out that the bot has stuck somewhere,
 		// it reports an appropriate path event and the path executor will stop
 		// following the path which in turn allows
 		// us to issue another follow-path command in the right time
-		pathExecutor.addStuckDetector(new UT2004TimeStuckDetector(bot, 3000,
-				100000));
+		pathExecutor.addStuckDetector(new UT2004TimeStuckDetector(bot, 3000, 100000));
 		pathExecutor.addStuckDetector(new UT2004PositionStuckDetector(bot));
 		pathExecutor.addStuckDetector(new UT2004DistanceStuckDetector(bot));
 
 		getBackToNavGraph = new UT2004GetBackToNavGraph(bot, info, move);
 		runStraight = new UT2004RunStraight(bot, info, move);
-		navigation = new UT2004Navigation(bot, pathExecutor, sfwMap,
-				getBackToNavGraph, runStraight);
+		navigation = new UT2004Navigation(bot, pathExecutor, sfwMap, getBackToNavGraph, runStraight);
 	}
 
 	/**
@@ -300,7 +285,8 @@ public class UT3BotBehavior extends UT3BotModuleController<UT2004Bot> implements
 
 		// TODO: This is executed for every bot while we use a shared map.
 		if (navBuilder.isUsed()) {
-			log.info("Navigation graph has been altered by 'navBuilder', triggering recomputation of Floyd-Warshall path matrix...");
+			log.info(
+					"Navigation graph has been altered by 'navBuilder', triggering recomputation of Floyd-Warshall path matrix...");
 			Level oldLevel = sfwMap.getLog().getLevel();
 			sfwMap.getLog().setLevel(Level.FINER);
 			sfwMap.refreshPathMatrix();
@@ -353,10 +339,12 @@ public class UT3BotBehavior extends UT3BotModuleController<UT2004Bot> implements
 	 * <li>Execute all outstanding action.</li>
 	 * <li>Determine a target to shoot and look at. The target is determined by
 	 * the first {@link Selector} in the list set by
-	 * {@link UT3BotBehavior#target(SelectorList)} that returns a valid target.</li>
+	 * {@link UT3BotBehavior#target(SelectorList)} that returns a valid target.
+	 * </li>
 	 * <li>Determine a target to look at. The target is determined by the first
 	 * {@link Selector} in the list set by
-	 * {@link UT3BotBehavior#look(SelectorList)} that returns a valid target.</li>
+	 * {@link UT3BotBehavior#look(SelectorList)} that returns a valid target.
+	 * </li>
 	 * <li>Look at something</li>
 	 * <ol>
 	 * <li>If we are navigating, navigation will ensure that we look at either
@@ -384,8 +372,7 @@ public class UT3BotBehavior extends UT3BotModuleController<UT2004Bot> implements
 		// ...is determined by the first filter to match.
 		ILocated shootSelected = null;
 		for (Selector<ILocated> selector : targetSelector) {
-			shootSelected = selector.select(players.getVisiblePlayers()
-					.values());
+			shootSelected = selector.select(players.getVisiblePlayers().values());
 			if (shootSelected != null) {
 				break;
 			}
@@ -405,8 +392,7 @@ public class UT3BotBehavior extends UT3BotModuleController<UT2004Bot> implements
 		// This will be look at if our shoot target is not visible.
 		ILocated lookSelected = null;
 		for (Selector<ILocated> selector : lookSelector) {
-			lookSelected = selector
-					.select(players.getVisiblePlayers().values());
+			lookSelected = selector.select(players.getVisiblePlayers().values());
 			if (lookSelected != null) {
 				break;
 			}
@@ -457,6 +443,7 @@ public class UT3BotBehavior extends UT3BotModuleController<UT2004Bot> implements
 	 *
 	 * @return a previously prepared batch of percepts.
 	 */
+	@Override
 	public Map<Method, Object> getAllPercepts() {
 		return percepts.getAllPercepts();
 	}
@@ -485,8 +472,7 @@ public class UT3BotBehavior extends UT3BotModuleController<UT2004Bot> implements
 	 *            where the bot should go.
 	 */
 	@AsAction(name = "navigate")
-	public void navigate(final UnrealIdOrLocation destination)
-			throws InterruptedException {
+	public void navigate(final UnrealIdOrLocation destination) throws InterruptedException {
 		log.fine(String.format("called navigate to %s", destination));
 
 		addAction(new Navigate() {
@@ -496,9 +482,9 @@ public class UT3BotBehavior extends UT3BotModuleController<UT2004Bot> implements
 				ILocated object = destination.toILocated(world, info);
 
 				if (object == null) {
-					log.warning(String
-							.format("failed to navigate to %s. The object associated with this Id was not located in the world. Halting.",
-									destination));
+					log.warning(String.format(
+							"failed to navigate to %s. The object associated with this Id was not located in the world. Halting.",
+							destination));
 					navigation.stopNavigation();
 					return;
 				}
@@ -539,7 +525,8 @@ public class UT3BotBehavior extends UT3BotModuleController<UT2004Bot> implements
 	//
 	// ILocated object = destination.toILocated(world, info);
 	// if (object == null) {
-	// log.warning(String.format("failed to continue to %s. The object associated with this Id was not located in the world.",
+	// log.warning(String.format("failed to continue to %s. The object
+	// associated with this Id was not located in the world.",
 	// object));
 	// return;
 	// }
@@ -547,7 +534,8 @@ public class UT3BotBehavior extends UT3BotModuleController<UT2004Bot> implements
 	// if (!navigation.isNavigating()) {
 	// navigation.navigate((ILocated) object);
 	// } else if (navigation.isNavigatingToPlayer()) {
-	// log.warning(String.format("failed to continue to %s. Navigation is navigating to a player",
+	// log.warning(String.format("failed to continue to %s. Navigation is
+	// navigating to a player",
 	// object));
 	// } else {
 	// navigation.setContinueTo((ILocated) object);
@@ -619,8 +607,7 @@ public class UT3BotBehavior extends UT3BotModuleController<UT2004Bot> implements
 		addAction(new nl.tudelft.goal.ut3.actions.Deploy() {
 			@Override
 			public void execute() {
-				if (UT3ItemType.isDeployable(weaponry.getCurrentWeapon()
-						.getType())) {
+				if (UT3ItemType.isDeployable(weaponry.getCurrentWeapon().getType())) {
 					shoot.shoot();
 				}
 			}
@@ -665,16 +652,14 @@ public class UT3BotBehavior extends UT3BotModuleController<UT2004Bot> implements
 		ILocated fromObject = from.toILocated(world, info);
 
 		if (fromObject == null) {
-			throw new PogamutException(
-					String.format(
-							"Failed to compute path from %s to %s. The start was not located in the world.",
-							from, to), this);
+			throw new PogamutException(String.format(
+					"Failed to compute path from %s to %s. The start was not located in the world.", from, to), this);
 		}
 		if (toObject == null) {
 			throw new PogamutException(
-					String.format(
-							"Failed to compute path from %s to %s. The destination was not located in the world.",
-							from, to), this);
+					String.format("Failed to compute path from %s to %s. The destination was not located in the world.",
+							from, to),
+					this);
 		}
 
 		// Not put into action queue. Doesn't require dynamic info from world.
@@ -689,10 +674,8 @@ public class UT3BotBehavior extends UT3BotModuleController<UT2004Bot> implements
 		Location fromLocation = fromObject.getLocation();
 		Location toLocation = toObject.getLocation();
 
-		NavPoint fromNav = DistanceUtils.getNearest(world
-				.getAll(NavPoint.class).values(), fromLocation);
-		NavPoint toNav = DistanceUtils.getNearest(world.getAll(NavPoint.class)
-				.values(), toLocation);
+		NavPoint fromNav = DistanceUtils.getNearest(world.getAll(NavPoint.class).values(), fromLocation);
+		NavPoint toNav = DistanceUtils.getNearest(world.getAll(NavPoint.class).values(), toLocation);
 
 		double distance = sfwMap.getDistance(fromNav, toNav);
 		List<NavPoint> navPoints = sfwMap.getPath(fromNav, toNav);
@@ -727,7 +710,8 @@ public class UT3BotBehavior extends UT3BotModuleController<UT2004Bot> implements
 	 * stop shooting.</li>
 	 * <li>Selector: A selector will select a target from the visible players.
 	 * Can be, nearestEnemy, nearestFriendly, nearestFriendlyWithLinkGun,
-	 * enemyFlagCarrier, friendlyFlagCarrier, a PlayerID or a location(X,Y,Z).</li>
+	 * enemyFlagCarrier, friendlyFlagCarrier, a PlayerID or a location(X,Y,Z).
+	 * </li>
 	 * </ul>
 	 * </p>
 	 *
@@ -807,8 +791,7 @@ public class UT3BotBehavior extends UT3BotModuleController<UT2004Bot> implements
 	 * </p>
 	 */
 	@AsAction(name = "prefer")
-	public void prefer(final WeaponPrefList weaponList)
-			throws InterruptedException {
+	public void prefer(final WeaponPrefList weaponList) throws InterruptedException {
 		log.fine(String.format("called prefer %s", weaponList));
 
 		addAction(new Prefer() {
@@ -818,8 +801,7 @@ public class UT3BotBehavior extends UT3BotModuleController<UT2004Bot> implements
 				addDeployablePreferences(weaponPrefs);
 
 				for (WeaponPref pref : weaponList) {
-					weaponPrefs.addGeneralPref(pref.getWeapon(),
-							pref.isPrimary());
+					weaponPrefs.addGeneralPref(pref.getWeapon(), pref.isPrimary());
 				}
 
 				log.info(String.format("executed prefer %s", weaponList));
@@ -845,7 +827,8 @@ public class UT3BotBehavior extends UT3BotModuleController<UT2004Bot> implements
 	 * slowly turn around.</li>
 	 * <li>Selector: A selector will select a target from the visible players.
 	 * Can be, nearestEnemy, nearestFriendly, nearestFriendlyWithLinkGun,
-	 * enemyFlagCarrier, friendlyFlagCarrier, a PlayerID or a location(X,Y,Z).</li>
+	 * enemyFlagCarrier, friendlyFlagCarrier, a PlayerID or a location(X,Y,Z).
+	 * </li>
 	 * </ul>
 	 * </p>
 	 *
@@ -923,8 +906,8 @@ public class UT3BotBehavior extends UT3BotModuleController<UT2004Bot> implements
 
 	@AsPercept(name = "armor", filter = Type.ON_CHANGE)
 	public Percept armor() {
-		return new Percept(info.getHelmetArmor(), info.getVestArmor(),
-				info.getThighpadArmor(), info.getShieldBeltArmor());
+		return new Percept(info.getHelmetArmor(), info.getVestArmor(), info.getThighpadArmor(),
+				info.getShieldBeltArmor());
 	}
 
 	/**
@@ -947,8 +930,7 @@ public class UT3BotBehavior extends UT3BotModuleController<UT2004Bot> implements
 	 */
 	@AsPercept(name = "self", filter = Type.ON_CHANGE)
 	public Percept self() {
-		return new Percept(info.getId(), info.getName(), Team.valueOf(info
-				.getTeam()));
+		return new Percept(info.getId(), info.getName(), Team.valueOf(info.getTeam()));
 	}
 
 	/**
@@ -971,8 +953,7 @@ public class UT3BotBehavior extends UT3BotModuleController<UT2004Bot> implements
 	 */
 	@AsPercept(name = "orientation", filter = Type.ON_CHANGE)
 	public Percept orientation() {
-		return new Percept(info.getLocation(), info.getRotation(),
-				info.getVelocity());
+		return new Percept(info.getLocation(), info.getRotation(), info.getVelocity());
 	}
 
 	/**
@@ -1024,8 +1005,7 @@ public class UT3BotBehavior extends UT3BotModuleController<UT2004Bot> implements
 	 */
 	@AsPercept(name = "score", filter = Type.ON_CHANGE)
 	public Percept score() {
-		return new Percept(info.getKills(), info.getDeaths(),
-				info.getSuicides());
+		return new Percept(info.getKills(), info.getDeaths(), info.getSuicides());
 	}
 
 	/**
@@ -1055,8 +1035,7 @@ public class UT3BotBehavior extends UT3BotModuleController<UT2004Bot> implements
 		if (weapon == null) {
 			return new Percept(new None(), new None(), FireMode.NONE);
 		}
-		return new Percept(weapon.getType(), FireMode.valueOf(
-				info.isPrimaryShooting(), info.isSecondaryShooting()));
+		return new Percept(weapon.getType(), FireMode.valueOf(info.isPrimaryShooting(), info.isSecondaryShooting()));
 	}
 
 	/**
@@ -1090,8 +1069,7 @@ public class UT3BotBehavior extends UT3BotModuleController<UT2004Bot> implements
 			// deployables in the
 			// inventory
 			{
-				percepts.add(new Percept(w.getType(), w.getPrimaryAmmo(), w
-						.getSecondaryAmmo()));
+				percepts.add(new Percept(w.getType(), w.getPrimaryAmmo(), w.getSecondaryAmmo()));
 			} else {
 				// GameBotsUT3 doesn't switch to the deployable if a bot picks
 				// on up, so we have to to this
@@ -1149,8 +1127,7 @@ public class UT3BotBehavior extends UT3BotModuleController<UT2004Bot> implements
 	 * @param victem
 	 * @param weaponName
 	 */
-	private void fraggedEvent(final long time, final UnrealId killer,
-			final UnrealId victem, final String damageType) {
+	private void fraggedEvent(final long time, final UnrealId killer, final UnrealId victem, final String damageType) {
 		// fragged.add(new Percept(time, killer, victem,
 		// WeaponDamage.weaponForDamage(damageType)));
 		fragged.add(new Percept(time, killer, victem, damageType));
@@ -1163,8 +1140,7 @@ public class UT3BotBehavior extends UT3BotModuleController<UT2004Bot> implements
 	 */
 	@EventListener(eventClass = BotKilled.class)
 	public void msgBotKilled(BotKilled msg) {
-		fraggedEvent(msg.getSimTime(), msg.getKiller(), info.getId(),
-				msg.getWeaponName());
+		fraggedEvent(msg.getSimTime(), msg.getKiller(), info.getId(), msg.getWeaponName());
 	}
 
 	/**
@@ -1174,8 +1150,7 @@ public class UT3BotBehavior extends UT3BotModuleController<UT2004Bot> implements
 	 */
 	@EventListener(eventClass = PlayerKilled.class)
 	public void msgPlayerKilled(PlayerKilled msg) {
-		fraggedEvent(msg.getSimTime(), msg.getKiller(), msg.getId(),
-				msg.getDamageType());
+		fraggedEvent(msg.getSimTime(), msg.getKiller(), msg.getId(), msg.getDamageType());
 	}
 
 	/**
@@ -1193,7 +1168,8 @@ public class UT3BotBehavior extends UT3BotModuleController<UT2004Bot> implements
 	 * <p>
 	 * Notes:
 	 * <ol>
-	 * <li>When the killer and victim id are equal, the bot committed suicide.</li>
+	 * <li>When the killer and victim id are equal, the bot committed suicide.
+	 * </li>
 	 * <li>When the killer is none, the bot respawned.</li>
 	 * </ol>
 	 * </p>
@@ -1241,8 +1217,7 @@ public class UT3BotBehavior extends UT3BotModuleController<UT2004Bot> implements
 		if (lt == null) {
 			lastTarget = new None();
 		} else if (lt instanceof IWorldObject) {
-			IWorldObject targetObject = (IWorldObject) navigation
-					.getLastTarget();
+			IWorldObject targetObject = (IWorldObject) navigation.getLastTarget();
 			lastTarget = targetObject.getId();
 		} else {
 			lastTarget = lt.getLocation();
@@ -1263,8 +1238,7 @@ public class UT3BotBehavior extends UT3BotModuleController<UT2004Bot> implements
 		case NAVIGATING:
 			ILocated currentTarget = navigation.getCurrentTarget();
 			if (currentTarget instanceof IWorldObject) {
-				IWorldObject targetObject = (IWorldObject) navigation
-						.getCurrentTarget();
+				IWorldObject targetObject = (IWorldObject) navigation.getCurrentTarget();
 				p = new Percept(state, targetObject.getId());
 			} else {
 				p = new Percept(state, currentTarget.getLocation());
@@ -1324,8 +1298,7 @@ public class UT3BotBehavior extends UT3BotModuleController<UT2004Bot> implements
 		List<Percept> percepts = new ArrayList<Percept>(navPoints.size());
 
 		for (NavPoint p : navPoints) {
-			percepts.add(new Percept(p.getId(), p.getLocation(), p
-					.getOutgoingEdges().keySet()));
+			percepts.add(new Percept(p.getId(), p.getLocation(), p.getOutgoingEdges().keySet()));
 		}
 
 		return percepts;
@@ -1353,7 +1326,7 @@ public class UT3BotBehavior extends UT3BotModuleController<UT2004Bot> implements
 		List<Percept> percepts = new ArrayList<Percept>(navPoints.size());
 
 		for (NavPoint p : navPoints) {
-			if (p.isVisible()) {
+			if (p.isVisible() && p.isItemSpawned()) {
 				percepts.add(new Percept(p.getId()));
 			}
 		}
@@ -1410,8 +1383,7 @@ public class UT3BotBehavior extends UT3BotModuleController<UT2004Bot> implements
 				if (UT3ItemType.isDeployable(item.getType())) {
 					cat = ItemType.Category.DEPLOYABLE;
 				}
-				percepts.add(new Percept(item.getNavPointId(), cat, item
-						.getType()));
+				percepts.add(new Percept(item.getNavPointId(), cat, item.getType()));
 			}
 		}
 		return percepts;
@@ -1432,7 +1404,8 @@ public class UT3BotBehavior extends UT3BotModuleController<UT2004Bot> implements
 	 * Syntax: base(Team, UnrealID)
 	 * <ul>
 	 * <li>Team: Either red or blue.</li>
-	 * <li>UnrealID: The UnrealId of the navpoint this flagbase is placed on.</li>
+	 * <li>UnrealID: The UnrealId of the navpoint this flagbase is placed on.
+	 * </li>
 	 * </ul>
 	 * </p>
 	 */
@@ -1445,8 +1418,7 @@ public class UT3BotBehavior extends UT3BotModuleController<UT2004Bot> implements
 
 		for (FlagInfo flag : flags) {
 			Team team = Team.valueOf(flag.getTeam());
-			NavPoint nav = DistanceUtils.getNearest(navPoints,
-					game.getFlagBase(team.id()));
+			NavPoint nav = DistanceUtils.getNearest(navPoints, game.getFlagBase(team.id()));
 			percepts.add(new Percept(team, nav.getId()));
 		}
 
@@ -1479,8 +1451,7 @@ public class UT3BotBehavior extends UT3BotModuleController<UT2004Bot> implements
 	 */
 	@AsPercept(name = "game", filter = Type.ON_CHANGE)
 	public Percept game() {
-		return new Percept(game.getGameType(), game.getMapName(),
-				game.getTeamScoreLimit(), game.getRemainingTime());
+		return new Percept(game.getGameType(), game.getMapName(), game.getTeamScoreLimit(), game.getRemainingTime());
 	}
 
 	/**
@@ -1503,7 +1474,8 @@ public class UT3BotBehavior extends UT3BotModuleController<UT2004Bot> implements
 	 * <p>
 	 * Notes
 	 * <ol>
-	 * <li>For CTF the score is the number of times the ag has been captured.</li>
+	 * <li>For CTF the score is the number of times the ag has been captured.
+	 * </li>
 	 * <li>Once either team reaches the goal score from the Game- info percept,
 	 * the game is over.</li>
 	 * </ol>
@@ -1512,8 +1484,7 @@ public class UT3BotBehavior extends UT3BotModuleController<UT2004Bot> implements
 	 */
 	@AsPercept(name = "teamScore", filter = Type.ON_CHANGE)
 	public Percept teamScore() {
-		return new Percept(game.getTeamScore(info.getTeam()),
-				game.getTeamScore(1 - info.getTeam()));
+		return new Percept(game.getTeamScore(info.getTeam()), game.getTeamScore(1 - info.getTeam()));
 	}
 
 	/**
@@ -1537,8 +1508,7 @@ public class UT3BotBehavior extends UT3BotModuleController<UT2004Bot> implements
 	 * <p>
 	 * Notes:
 	 * <ol>
-	 * <li>
-	 * See also the flag percept</li>
+	 * <li>See also the flag percept</li>
 	 * </ol>
 	 * <p>
 	 *
@@ -1550,8 +1520,7 @@ public class UT3BotBehavior extends UT3BotModuleController<UT2004Bot> implements
 		Collection<Percept> percepts = new ArrayList<Percept>(flags.size());
 
 		for (FlagInfo flag : flags) {
-			percepts.add(new Percept(Team.valueOf(flag.getTeam()), FlagState
-					.valueOfIgnoreCase(flag.getState())));
+			percepts.add(new Percept(Team.valueOf(flag.getTeam()), FlagState.valueOfIgnoreCase(flag.getState())));
 		}
 
 		return percepts;
@@ -1577,7 +1546,8 @@ public class UT3BotBehavior extends UT3BotModuleController<UT2004Bot> implements
 	 * <ul>
 	 * <li>UnrealID: The UnrealID of this item.</li>
 	 * <li>Label: The category of the pick up.</li>
-	 * <li>ItemType: The actual item type of the item located on the pickup.</li>
+	 * <li>ItemType: The actual item type of the item located on the pickup.
+	 * </li>
 	 * <li>NavPointId: The UnrealId of the navpoint this item is placed when
 	 * spawned.</li>
 	 * <li>Location: location in the world when this item is dropped.</li>
@@ -1587,8 +1557,7 @@ public class UT3BotBehavior extends UT3BotModuleController<UT2004Bot> implements
 	 * <p>
 	 * Notes:
 	 * <ol>
-	 * <li>
-	 * TODO: A full over view of which category Label belongs to which item
+	 * <li>TODO: A full over view of which category Label belongs to which item
 	 * type.</li>
 	 * </ol>
 	 * <p>
@@ -1597,8 +1566,7 @@ public class UT3BotBehavior extends UT3BotModuleController<UT2004Bot> implements
 	@AsPercept(name = "item", multiplePercepts = true, filter = Type.ON_CHANGE_NEG)
 	public Collection<Percept> item() {
 		Collection<Item> visibleItems = items.getVisibleItems().values();
-		Collection<Percept> percepts = new ArrayList<Percept>(
-				visibleItems.size());
+		Collection<Percept> percepts = new ArrayList<Percept>(visibleItems.size());
 
 		for (Item item : visibleItems) {
 			ItemType.Category cat = item.getType().getCategory();
@@ -1609,11 +1577,9 @@ public class UT3BotBehavior extends UT3BotModuleController<UT2004Bot> implements
 			// Pogamut does not consider the manually placed items to be
 			// dropped. See ticket #2487.
 			if (item.isDropped() || item.getNavPointId() == null) {
-				percepts.add(new Percept(item.getId(), cat, item.getType(),
-						item.getLocation()));
+				percepts.add(new Percept(item.getId(), cat, item.getType(), item.getLocation()));
 			} else {
-				percepts.add(new Percept(item.getId(), cat, item.getType(),
-						item.getNavPointId()));
+				percepts.add(new Percept(item.getId(), cat, item.getType(), item.getNavPointId()));
 			}
 		}
 
@@ -1644,8 +1610,7 @@ public class UT3BotBehavior extends UT3BotModuleController<UT2004Bot> implements
 	 * <p>
 	 * Notes:
 	 * <ol>
-	 * <li>
-	 * See also the flagStatus percept.</li>
+	 * <li>See also the flagStatus percept.</li>
 	 * </ol>
 	 * <p>
 	 *
@@ -1658,8 +1623,7 @@ public class UT3BotBehavior extends UT3BotModuleController<UT2004Bot> implements
 
 		for (FlagInfo flag : flags) {
 			if (flag.isVisible()) {
-				percepts.add(new Percept(Team.valueOf(flag.getTeam()), flag
-						.getHolder(), flag.getLocation()));
+				percepts.add(new Percept(Team.valueOf(flag.getTeam()), flag.getHolder(), flag.getLocation()));
 			}
 		}
 
@@ -1683,7 +1647,8 @@ public class UT3BotBehavior extends UT3BotModuleController<UT2004Bot> implements
 	 * <li>UnrealId: Unique identifier for this bot assigned by Unreal.</li>
 	 * <li>Team: Either red or blue.</li>
 	 * <li>location(X,Y,Z): Location of the bot in the world.</li>
-	 * <li>Weapon: The weapon the bot is holding. TODO: Any of the following:</li>
+	 * <li>Weapon: The weapon the bot is holding. TODO: Any of the following:
+	 * </li>
 	 * <li>FireMode: Mode of shooting, either primary, secondary or none.</li>
 	 * </ul>
 	 * </p>
@@ -1696,9 +1661,8 @@ public class UT3BotBehavior extends UT3BotModuleController<UT2004Bot> implements
 		Collection<Percept> wrapped = new ArrayList<Percept>(visible.size());
 
 		for (Player p : visible) {
-			wrapped.add(new Percept(p.getId(), p.getName(), Team.valueOf(p
-					.getTeam()), p.getLocation(), UT3ItemType.getItemType(p
-					.getWeapon()), FireMode.valueOf(p.getFiring())));
+			wrapped.add(new Percept(p.getId(), p.getName(), Team.valueOf(p.getTeam()), p.getLocation(),
+					UT3ItemType.getItemType(p.getWeapon()), FireMode.valueOf(p.getFiring())));
 		}
 
 		return wrapped;
@@ -1752,9 +1716,7 @@ public class UT3BotBehavior extends UT3BotModuleController<UT2004Bot> implements
 		Collection<Percept> percepts = new ArrayList<Percept>();
 
 		if (info.hasPowerUp()) {
-			percepts.add(new Percept(
-					UT3ItemType.getItemType(info.getPowerUp()), info
-							.getPowerUpTime()));
+			percepts.add(new Percept(UT3ItemType.getItemType(info.getPowerUp()), info.getPowerUpTime()));
 		} else {
 			percepts.add(new Percept(new None(), 0.0));
 		}
@@ -1782,8 +1744,7 @@ public class UT3BotBehavior extends UT3BotModuleController<UT2004Bot> implements
 	 */
 	@AsPercept(name = "slowVolume", filter = Type.ON_CHANGE)
 	public Percept slowvolume() {
-		List<UnrealId> slowVolumeNavPoints = visibility
-				.getVisibleVolumeNavPoints(UT3ItemType.SLOW_VOLUME_CONTENT);
+		List<UnrealId> slowVolumeNavPoints = visibility.getVisibleVolumeNavPoints(UT3ItemType.SLOW_VOLUME_CONTENT);
 		return new Percept(slowVolumeNavPoints);
 	}
 }
