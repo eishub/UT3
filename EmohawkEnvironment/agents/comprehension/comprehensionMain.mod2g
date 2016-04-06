@@ -1,0 +1,11 @@
+use comprehension as knowledge.
+use workCoffeeCycle.
+
+%%
+% The comprehension agent has two activities. A work-coffee cycle and a friendly 
+% meeting at the cinema. The work-coffee cycle has been implemented. The meeting 
+% hasn't been yet.
+%%
+module comprehensionMain {
+	if true then workCoffeeCycle.
+}

@@ -1,18 +1,17 @@
-environment {
-	"Environment-goal-emohawk-environment-3.3.2-SNAPSHOT.jar".
-		init = [
-			botNames = ["SimpleGuy1"],
-			botServer = "ut://127.0.0.1:3000",	
-			logLevel = "INFO"
-		].
+use "..\..\target\goal-emohawk-environment-3.5.7-jar-with-dependencies.jar" as environment with 
+	visualizer = "rmi://127.0.0.1:1099",
+	botServer = "ut://127.0.0.1:3000",
+	controlServer = "ut://127.0.0.1:3001",
+	bots = [
+			[
+			 	["name", "SimpleGuy1"]
+			]
+		   ].
 
+define helloworld as agent {
+	use helloworldMain as main.
 }
 
-agentfiles {
-	"helloworld.goal" [name=unrealgoalfile] .
+launchpolicy{
+	when type=bot launch helloworld.
 }
-
-launchpolicy {
-    when [type=bot,max=1]@env do launch bot:unrealgoalfile . 
-}
-

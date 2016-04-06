@@ -1,7 +1,6 @@
 package nl.tudelft.goal.emohawk.util;
 
 import nl.tudelft.goal.emohawk.translators.EmoticonTypeTranslator;
-import cz.cuni.amis.pogamut.emohawk.agent.module.sensomotoric.EmoticonType;
 
 public class PrintEmoticonTypes {
 

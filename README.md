@@ -20,9 +20,16 @@ A Visualizer is also available. It shows an overview map with the locations of a
 BUILDING
 =======
 
-To build this, you must have
- * UT2004 installed
- * set one environment variable to point to your UT2004 installation, eg ```pogamut.ut2004.home=/Volumes/apps/UT2004```
+To build this, 
+
+To build the installer, open a command line on OSX. You need to have UT2004 installed in /Volumes/apps/UT2004.
+
+ * ```tcsh```
+ * ```setenv pogamut.ut2004.home /Volumes/apps/UT2004```
+ * switch to root of the GOAL UT project
+ * ```mvn install```
+
+
  * The ```UT2004.ini``` in your UT installation must be fixed as follows to disable UplinkToGamespy:
 
 ```
@@ -40,7 +47,4 @@ Or use ```mvn deploy``` to push new release to the repository on github/eishub/m
 MAKING INSTALLER
 =================
 
-The installer does not build automatically when you do mvn install/package/deploy.
-This is because the installer is too big to be pushed to github. 
-
-To build the installer, go to the ut-goal/environment/installer directory and execute ```mvn package```
+Please refer to Installer README.md

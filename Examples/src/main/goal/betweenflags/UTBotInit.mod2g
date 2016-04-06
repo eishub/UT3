@@ -1,0 +1,9 @@
+use UTBot as knowledge.
+use UTBotBeliefs as beliefs.
+
+module init {
+	% The base percept provides the location of all team bases. It is a "send once" percept.
+	% The base position is the position where the flag is located, which we store in the belief base.
+	forall percept(base(Team, UnrealID))  do insert( flagPosition(UnrealID) ).
+
+}

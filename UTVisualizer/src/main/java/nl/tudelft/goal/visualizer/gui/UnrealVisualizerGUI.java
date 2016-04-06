@@ -17,6 +17,7 @@
 package nl.tudelft.goal.visualizer.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -30,7 +31,9 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 
+import cz.cuni.amis.pogamut.ut2004.server.IUT2004Server;
 import nl.tudelft.goal.unreal.util.vecmathcheck.VecmathCheck;
 import nl.tudelft.goal.ut2004.visualizer.controller.ServerController;
 import nl.tudelft.goal.ut2004.visualizer.gui.action.PauseResumeAction;
@@ -45,17 +48,10 @@ import nl.tudelft.goal.ut2004.visualizer.gui.dialogs.ListEnvironmentsDialog;
 import nl.tudelft.goal.ut2004.visualizer.gui.dialogs.ListPlayerDialog;
 import nl.tudelft.goal.ut2004.visualizer.gui.dialogs.ServerConnectionDialog;
 import nl.tudelft.goal.ut2004.visualizer.gui.dialogs.SettingsDialog;
-import nl.tudelft.goal.visualizer.gui.panels.MapPanel;
 import nl.tudelft.goal.ut2004.visualizer.util.WindowPersistenceHelper;
+import nl.tudelft.goal.visualizer.gui.panels.MapPanel;
 import nl.tudelft.pogamut.base.server.ReconnectingServerDefinition;
 import nl.tudelft.pogamut.base.server.ServerDefinition;
-import cz.cuni.amis.pogamut.ut2004.server.IUT2004Server;
-import java.awt.Dimension;
-import java.awt.event.ComponentEvent;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * 
@@ -85,7 +81,7 @@ public class UnrealVisualizerGUI extends JFrame {
 	 * The {@link MapPanel} in use by the {@link UnrealVisualizerGUI}.
 	 */
 	private final MapPanel mapPanel;
-	
+
 	/**
 	 * Helper class to persist this window.
 	 */
@@ -93,13 +89,12 @@ public class UnrealVisualizerGUI extends JFrame {
 
 	public UnrealVisualizerGUI() {
 		super();
-		
+
 		// Create the controllers
 		ServerController.createNewController();
 		ServerController controller = ServerController.getInstance();
-		ServerDefinition<IUT2004Server> serverDefinition = controller
-				.getServerDefinition();
-		
+		ServerDefinition<IUT2004Server> serverDefinition = controller.getServerDefinition();
+
 		// Set up the main window properties
 		setTitle("Unreal Tournament Visualizer for GOAL");
 		setResizable(true);
@@ -109,24 +104,23 @@ public class UnrealVisualizerGUI extends JFrame {
 		// Setup persistence
 		persistenceHelper = new WindowPersistenceHelper(this);
 		persistenceHelper.load();
-		
+
 		// Set up the initial menu bar at the top
 		setupMenuBar();
 
 		// Instantiate the MapPanel and add it to the tabbed pane
 		mapPanel = new MapPanel();
-   
+
 		// Instantiate the mainPanel that contains our tabbed pane
 		JPanel mainPanel = new JPanel(new GridLayout(1, 1));
 		mainPanel.add(mapPanel);
 		add(mainPanel);
 	}
-        
-        @Override
-        public Dimension getPreferredSize() {
-                return new Dimension(WINDOW_WIDTH, WINDOW_HEIGHT);
-        }
-	
+
+	@Override
+	public Dimension getPreferredSize() {
+		return new Dimension(WINDOW_WIDTH, WINDOW_HEIGHT);
+	}
 
 	/**
 	 * Setups the {@link JMenuBar} that is shown at the top of the screen.
@@ -148,7 +142,7 @@ public class UnrealVisualizerGUI extends JFrame {
 			ShowDialogueAction showSettings = new ShowDialogueAction(settingsDialogue, name, description);
 			JMenuItem settings = new JMenuItem(showSettings);
 			applicationMenu.add(settings);
-			
+
 			// Add Exit menu item to Visualizer entry
 			JMenuItem exitVis = new JMenuItem("Exit", KeyEvent.VK_E);
 			exitVis.setToolTipText("Exit the Visualizer");
@@ -161,8 +155,7 @@ public class UnrealVisualizerGUI extends JFrame {
 				}
 			});
 			applicationMenu.add(exitVis);
-			
-		
+
 		}
 		menuBar.add(applicationMenu);
 
@@ -171,14 +164,12 @@ public class UnrealVisualizerGUI extends JFrame {
 		{
 			{
 				ServerController controller = ServerController.getInstance();
-				ServerDefinition<IUT2004Server> serverDefinition = controller
-						.getServerDefinition();
-				ServerConnectionDialog connectionDialog = new ServerConnectionDialog(
-						this, (ReconnectingServerDefinition) serverDefinition);
+				ServerDefinition<IUT2004Server> serverDefinition = controller.getServerDefinition();
+				ServerConnectionDialog connectionDialog = new ServerConnectionDialog(this,
+						(ReconnectingServerDefinition) serverDefinition);
 				String name = "Connection";
 				String description = "Connect to an Unreal Tournament Server.";
-				ShowDialogueAction action = new ShowDialogueAction(
-						connectionDialog, name, description);
+				ShowDialogueAction action = new ShowDialogueAction(connectionDialog, name, description);
 				JMenuItem connect = new JMenuItem(action);
 				server.add(connect);
 			}
@@ -186,12 +177,11 @@ public class UnrealVisualizerGUI extends JFrame {
 			JMenuItem pauseResume = new JMenuItem(new PauseResumeAction());
 			server.add(pauseResume);
 			{
-				ChangeGameSpeedDialog gameSpeedDialog = new ChangeGameSpeedDialog(
-						this);
+				ChangeGameSpeedDialog gameSpeedDialog = new ChangeGameSpeedDialog(this);
 				String name = "Game Speed";
 				String description = "Change the speed of the game.";
-				ShowServerDependentDialogueAction action = new ShowServerDependentDialogueAction(
-						gameSpeedDialog, name, description);
+				ShowServerDependentDialogueAction action = new ShowServerDependentDialogueAction(gameSpeedDialog, name,
+						description);
 				JMenuItem speed = new JMenuItem(action);
 				server.add(speed);
 			}
@@ -200,24 +190,22 @@ public class UnrealVisualizerGUI extends JFrame {
 				ChangeMapDialog changeMapDialog = new ChangeMapDialog(this);
 				String name = "Change Map";
 				String description = "Change the current map.";
-				ShowServerDependentDialogueAction action = new ShowServerDependentDialogueAction(
-						changeMapDialog, name, description);
+				ShowServerDependentDialogueAction action = new ShowServerDependentDialogueAction(changeMapDialog, name,
+						description);
 				JMenuItem change = new JMenuItem(action);
 				server.add(change);
 			}
 			{
-				AddNativeBotDialog addNativeBotDialog = new AddNativeBotDialog(
-						this, null);
+				AddNativeBotDialog addNativeBotDialog = new AddNativeBotDialog(this, null);
 				String name = "Add Native Bot";
 				String description = "Adds a native unreal bot to the game.";
-				ShowServerDependentDialogueAction action = new ShowServerDependentDialogueAction(
-						addNativeBotDialog, name, description);
+				ShowServerDependentDialogueAction action = new ShowServerDependentDialogueAction(addNativeBotDialog,
+						name, description);
 				JMenuItem add = new JMenuItem(action);
 				server.add(add);
 			}
 			{
-				AddUnrealGoalBotDialog addUnrealGoalBotDialog = new AddUnrealGoalBotDialog(
-						this, null);
+				AddUnrealGoalBotDialog addUnrealGoalBotDialog = new AddUnrealGoalBotDialog(this, null);
 				String name = "Add UnrealGoal Bot";
 				String description = "Adds an UnrealGoal bot to the game.";
 				ShowServerEnvironmentDependentDialogueAction action = new ShowServerEnvironmentDependentDialogueAction(
@@ -229,8 +217,8 @@ public class UnrealVisualizerGUI extends JFrame {
 				ListPlayerDialog listPlayerDialog = new ListPlayerDialog(this);
 				String name = "List Players";
 				String description = "Lists all player in the game.";
-				ShowServerDependentDialogueAction action = new ShowServerDependentDialogueAction(
-						listPlayerDialog, name, description);
+				ShowServerDependentDialogueAction action = new ShowServerDependentDialogueAction(listPlayerDialog, name,
+						description);
 				JMenuItem add = new JMenuItem(action);
 				server.add(add);
 			}
@@ -243,8 +231,7 @@ public class UnrealVisualizerGUI extends JFrame {
 			String name = "List Environments";
 			String description = "List Goal Environments connected to the visualizier.";
 			ListEnvironmentsDialog listDialog = new ListEnvironmentsDialog(this);
-			ShowDialogueAction action = new ShowDialogueAction(listDialog,
-					name, description);
+			ShowDialogueAction action = new ShowDialogueAction(listDialog, name, description);
 			JMenuItem list = new JMenuItem(action);
 
 			environments.add(list);
@@ -273,18 +260,23 @@ public class UnrealVisualizerGUI extends JFrame {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		
+
 		if (!VecmathCheck.check()) {
-			JOptionPane.showMessageDialog(null, VecmathCheck.getErrorMessage(),"Version Conflict",JOptionPane.ERROR_MESSAGE);
-			
+			JOptionPane.showMessageDialog(null, VecmathCheck.getErrorMessage(), "Version Conflict",
+					JOptionPane.ERROR_MESSAGE);
+
 			return;
 		}
-		
-		
+
 		SwingUtilities.invokeLater(new Runnable() {
 
 			@Override
 			public void run() {
+				try {
+					UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+				} catch (Exception e) {
+					System.err.println("WARNING. Could not set system look and feel:" + e.getMessage());
+				}
 				UnrealVisualizerGUI vizualiser = new UnrealVisualizerGUI();
 				vizualiser.setVisible(true);
 			}

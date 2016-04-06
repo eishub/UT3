@@ -1,0 +1,8 @@
+use UTBot as knowledge.
+use UTbot as actionspec.
+
+module main {
+		% if our goal differs from actual target, tell bot to go there
+		if goal(at(UnrealLocId)), not(bel(navigation(navigating, UnrealLocId)))
+			then navigate(UnrealLocId).
+}

@@ -1,0 +1,22 @@
+use creation as knowledge.
+
+module creationEvent {
+	% Update the state of the navigation.
+	forall bel(navigation(X)) do delete (navigation(X)).
+	forall percept(navigation(X)) do insert (navigation(X)).
+		
+	%Store all places.
+	forall percept(place(ID,Location,Range)) do insert(place(ID,Location,Range)).
+
+	%Update self percept.
+	forall bel(self(ID,Name,Location,Rotation,EmoteL,EmoteC,EmoteR)) do delete(self(ID,Name,Location,Rotation,EmoteL,EmoteC,EmoteR)). 
+	forall percept(self(ID,Name,Location,Rotation,EmoteL,EmoteC,EmoteR)) do insert(self(ID,Name,Location,Rotation,EmoteL,EmoteC,EmoteR)). 
+
+	%Update percepts of people that we see.
+	forall bel(person(ID,Name,Location,Rotation,EmoteL,EmoteC,EmoteR)) do delete(person(ID,Name,Location,Rotation,EmoteL,EmoteC,EmoteR)). 		
+	forall percept(person(ID,Name,Location,Rotation,EmoteL,EmoteC,EmoteR)) do insert(person(ID,Name,Location,Rotation,EmoteL,EmoteC,EmoteR)). 
+				
+	forall bel(not(visitedPark), parkMeeting(Location), atLocation(Location)) do insert(visitedPark).
+	forall bel(not(visitedCinema), cinemaMeeting(Location), atLocation(Location)) do insert(visitedCinema).
+	forall bel(not(waitedForOther), otherAtParkMeeting) do insert(waitedForOther).
+}

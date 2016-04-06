@@ -1,0 +1,23 @@
+use "..\..\target\goal-emohawk-environment-3.5.7-jar-with-dependencies.jar" as environment with 
+	visualizer = "rmi://127.0.0.1:1099",
+	botServer = "ut://127.0.0.1:3000",
+	controlServer = "ut://127.0.0.1:3001",
+	bots = [
+			[
+			 	["name", "Jan"]
+			],
+			
+			[
+			 	["name", "Pier"]
+			]
+		   ].
+
+define creation as agent {
+	use creationMain as main.
+	use creationInit as init.
+	use creationEvent as event.
+}
+
+launchpolicy{
+	when type=bot launch creation.
+}

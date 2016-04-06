@@ -1,19 +1,19 @@
-environment {
-	"Environment-goal-emohawk-environment-3.3.2-SNAPSHOT.jar".
-		init = [
-			botNames = ["Jan"],
-			%botNames = ["Jan", "Pier"],
-			botServer = "ut://127.0.0.1:3000",	
-			logLevel = "OFF"
-		].
+use "..\..\target\goal-emohawk-environment-3.5.7-jar-with-dependencies.jar" as environment with
+	visualizer = "rmi://127.0.0.1:1099",
+	botServer = "ut://127.0.0.1:3000",
+	controlServer = "ut://127.0.0.1:3001",
+	bots = [
+			[
+			 	["name", "Jan"]
+			]
+		   ].
 
+define comprehension as agent {
+	use comprehensionMain as main.
+	use comprehensionInit as init.
+	use comprehensionEvent as event.
 }
 
-agentfiles {
-	"comprehension.goal" [name=unrealgoalfile] .
+launchpolicy{
+	when type=bot launch comprehension.
 }
-
-launchpolicy {
-    when [type=bot,max=3]@env do launch bot:unrealgoalfile . 
-}
-

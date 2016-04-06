@@ -1,0 +1,7 @@
+use betweenFlags as knowledge.
+
+module betweenFlagsEvents {
+	% Update the navigation state of the bot that is controlled. navigation is a "send on change" percept.
+	forall bel(navigation(OldStatus,OldDest)),  percept(navigation(Status,Destination))
+		do delete(navigation(OldStatus,OldDest)) + insert(navigation(Status,Destination)).
+}

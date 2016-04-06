@@ -1,19 +1,19 @@
 /**
- * Emohawk Bot, an implementation of the environment interface standard that 
- * facilitates the connection between GOAL and Emohawk. 
- * 
+ * Emohawk Bot, an implementation of the environment interface standard that
+ * facilitates the connection between GOAL and Emohawk.
+ *
  * Copyright (C) 2012 Emohawk Bot authors.
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation, either version 3 of the License, or (at your option) any later
  * version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -30,14 +30,8 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.Semaphore;
 
-import nl.tudelft.goal.emohawk.messages.Action;
-import nl.tudelft.goal.emohawk.messages.Percept;
-import nl.tudelft.goal.emohawk.messages.UnrealIdOrLocation;
-import nl.tudelft.goal.unreal.messages.BotParameters;
-import nl.tudelft.goal.unreal.messages.Parameters;
 import SteeringProperties.ObstacleAvoidanceProperties;
 import SteeringProperties.WalkAlongProperties;
-import cz.cuni.amis.pogamut.base.utils.logging.IAgentLogger;
 import cz.cuni.amis.pogamut.base3d.worldview.object.ILocated;
 import cz.cuni.amis.pogamut.emohawk.agent.module.sensomotoric.EmoticonType;
 import cz.cuni.amis.pogamut.emohawk.agent.module.sensomotoric.Place;
@@ -54,55 +48,66 @@ import eis.eis2java.annotation.AsAction;
 import eis.eis2java.annotation.AsPercept;
 import eis.eis2java.translation.Filter.Type;
 import eis.eis2java.util.AllPerceptsModule;
-import eis.eis2java.util.AllPerceptsProvider;
 import eis.exceptions.ActException;
 import eis.exceptions.EntityException;
 import eis.exceptions.PerceiveException;
+import nl.tudelft.goal.emohawk.messages.Action;
+import nl.tudelft.goal.emohawk.messages.Percept;
+import nl.tudelft.goal.emohawk.messages.UnrealIdOrLocation;
+import nl.tudelft.goal.unreal.environment.MyAllPerceptsProvider;
+import nl.tudelft.goal.unreal.environment.PerceptsReadyListener;
+import nl.tudelft.goal.unreal.messages.BotParameters;
+import nl.tudelft.goal.unreal.messages.Parameters;
 
-public class EmohawkBotBehavior extends EmohawkBotController<UT2004Bot> implements AllPerceptsProvider {
-
+public class EmohawkBotBehavior extends EmohawkBotController<UT2004Bot> implements MyAllPerceptsProvider {
 	private Semaphore logic = new Semaphore(0, true);
-
 	private WalkAlongProperties walkAlongProperties;
-
 	private BotParameters parameters;
-
 	protected AllPerceptsModule percepts;
-
 	/**
 	 * Queued up actions.
 	 */
 	private BlockingQueue<Action> actions = new LinkedBlockingQueue<Action>(1);
+	private PerceptsReadyListener listener = null;
+	private boolean initialized;
 
+	@Override
+	public void setPerceptsReadyListener(PerceptsReadyListener l) {
+		this.listener = l;
+	}
+
+	@Override
 	@SuppressWarnings("rawtypes")
 	public void initializeController(UT2004Bot bot) {
 		super.initializeController(bot);
 
 		// Setup parameters
-		IAgentLogger logger = bot.getLogger();
 		UT2004AgentParameters parameters = bot.getParams();
 		if ((parameters instanceof BotParameters)) {
 			this.parameters = (BotParameters) parameters;
 		} else {
-			log.warning("Provided parameters were not a subclass of UnrealGoalParameters, using defaults.");
+			this.log.warning("Provided parameters were not a subclass of UnrealGoalParameters, using defaults.");
 			this.parameters = new BotParameters();
 		}
 		Parameters defaults = BotParameters.getDefaults();
 		this.parameters.assignDefaults(defaults);
+
+		this.initialized = false;
 	}
 
+	@Override
 	protected void initializeModules(UT2004Bot bot) {
 		super.initializeModules(bot);
 
-		steering.addObstacleAvoidanceSteering(new ObstacleAvoidanceProperties());
-		walkAlongProperties = new WalkAlongProperties();
-		walkAlongProperties.setDistanceFromThePartner(200);
-		walkAlongProperties.setGiveWayToPartner(false);
-		steering.addWalkAlongSteering(new WalkAlongProperties());
+		this.steering.addObstacleAvoidanceSteering(new ObstacleAvoidanceProperties());
+		this.walkAlongProperties = new WalkAlongProperties();
+		this.walkAlongProperties.setDistanceFromThePartner(200);
+		this.walkAlongProperties.setGiveWayToPartner(false);
+		this.steering.addWalkAlongSteering(new WalkAlongProperties());
 
 		// Setup percept module.
 		try {
-			percepts = new AllPerceptsModule(this);
+			this.percepts = new AllPerceptsModule(this);
 		} catch (EntityException e) {
 			throw new PogamutException("Could not create percept module", e);
 		}
@@ -112,22 +117,22 @@ public class EmohawkBotBehavior extends EmohawkBotController<UT2004Bot> implemen
 	/**
 	 * Prepares the initialization message for Gamebots using the
 	 * {@link BotParameters} provided to the {@link UT2004BotRunner}.
-	 * 
+	 *
 	 */
 	@Override
 	public Initialize getInitializeCommand() {
-		assert parameters != null;
+		assert this.parameters != null;
 
 		// Prepare init command
 		Initialize init = super.getInitializeCommand();
-		init.setDesiredSkill(parameters.getSkill());
-		init.setSkin(parameters.getSkin().getUnrealName());
-		init.setTeam(parameters.getTeam());
-		init.setShouldLeadTarget(parameters.shouldLeadTarget());
-		init.setLocation(parameters.getInitialLocation());
-		init.setRotation(parameters.getInitialRotation());
+		init.setDesiredSkill(this.parameters.getSkill());
+		init.setSkin(this.parameters.getSkin().getUnrealName());
+		init.setTeam(this.parameters.getTeam());
+		init.setShouldLeadTarget(this.parameters.shouldLeadTarget());
+		init.setLocation(this.parameters.getInitialLocation());
+		init.setRotation(this.parameters.getInitialRotation());
 		// Set log level.
-		bot.getLogger().setLevel(this.parameters.getLogLevel());
+		this.bot.getLogger().setLevel(this.parameters.getLogLevel());
 
 		return init;
 	}
@@ -137,18 +142,24 @@ public class EmohawkBotBehavior extends EmohawkBotController<UT2004Bot> implemen
 		super.logic();
 
 		// Mark that another logic iteration has began
-		log.fine("--- Logic iteration ---");
+		this.log.fine("--- Logic iteration ---");
 
 		// 0. Execute all outstanding actions.
-		while (!actions.isEmpty()) {
-			actions.remove().execute();
+		while (!this.actions.isEmpty()) {
+			this.actions.remove().execute();
 		}
 
 		// 1. Prepare new batch of percepts
 		try {
-			percepts.updatePercepts();
+			this.percepts.updatePercepts();
 		} catch (PerceiveException e) {
 			throw new PogamutException("Could not update percepts", e);
+		}
+
+		// 2. notify that percepts are ready (if this is first round).
+		if (!this.initialized) {
+			this.listener.notifyPerceptsReady();
+			this.initialized = true;
 		}
 	}
 
@@ -158,7 +169,7 @@ public class EmohawkBotBehavior extends EmohawkBotController<UT2004Bot> implemen
 
 		/*
 		 * The bot has stopped so we can release a permit.
-		 * 
+		 *
 		 * TODO: This should not be required as it implies that actions and
 		 * percepts are requested after the environment has been killed. However
 		 * EIS currently allows different threads to manipulate the environment
@@ -166,7 +177,7 @@ public class EmohawkBotBehavior extends EmohawkBotController<UT2004Bot> implemen
 		 * waiting to acquire this agent while another shuts down the
 		 * environment.
 		 */
-		logic.release();
+		this.logic.release();
 	}
 
 	//
@@ -178,17 +189,18 @@ public class EmohawkBotBehavior extends EmohawkBotController<UT2004Bot> implemen
 	@AsPercept(name = "navigation")
 	public String navigation() {
 
-		if (steering.isNavigating()) {
+		if (this.steering.isNavigating()) {
 			return "following";
 			// FIXME: Would like to uss navigator.isExecuting here but it does
 			// not consider all it's components. traveling.
-		} else if (pathExecutor.isExecuting() || getBackToNavGraph.isExecuting() || runStraight.isExecuting()) {
+		} else if (this.pathExecutor.isExecuting() || this.getBackToNavGraph.isExecuting()
+				|| this.runStraight.isExecuting()) {
 			return "traveling";
-		} else if (pathExecutor.isStuck()) {
+		} else if (this.pathExecutor.isStuck()) {
 			return "stuck";
-		} else if (pathExecutor.isPathUnavailable()) {
+		} else if (this.pathExecutor.isPathUnavailable()) {
 			return "path_unavailable";
-		} else if (pathExecutor.isTargetReached()) {
+		} else if (this.pathExecutor.isTargetReached()) {
 			return "destination_reached";
 
 		} else {
@@ -198,7 +210,7 @@ public class EmohawkBotBehavior extends EmohawkBotController<UT2004Bot> implemen
 
 	@AsPercept(name = "navPoint", multiplePercepts = true, filter = Type.ONCE)
 	public List<Percept> perceptNavPoints() {
-		Collection<NavPoint> navPoints = world.getAll(NavPoint.class).values();
+		Collection<NavPoint> navPoints = this.world.getAll(NavPoint.class).values();
 		List<Percept> percepts = new ArrayList<Percept>(navPoints.size());
 
 		for (NavPoint p : navPoints) {
@@ -216,8 +228,8 @@ public class EmohawkBotBehavior extends EmohawkBotController<UT2004Bot> implemen
 
 		Collection<Percept> persons = new ArrayList<Percept>();
 		for (Player p : getPlayers().getVisiblePlayers().values()) {
-			persons.add(new Percept(p.getId(), p.getName(), p.getLocation(), p.getRotation(), p.getEmotLeft(), p.getEmotCenter(), p
-					.getEmotRight()));
+			persons.add(new Percept(p.getId(), p.getName(), p.getLocation(), p.getRotation(), p.getEmotLeft(),
+					p.getEmotCenter(), p.getEmotRight()));
 		}
 		return persons;
 	}
@@ -229,7 +241,8 @@ public class EmohawkBotBehavior extends EmohawkBotController<UT2004Bot> implemen
 		EmoticonType emoteCenter = EmoticonType.get(info.getSelf().getEmotCenter());
 		EmoticonType emoteRight = EmoticonType.get(info.getSelf().getEmotRight());
 
-		return new Percept(info.getId(), info.getName(), info.getLocation(), info.getRotation(), emoteLeft, emoteCenter, emoteRight);
+		return new Percept(info.getId(), info.getName(), info.getLocation(), info.getRotation(), emoteLeft, emoteCenter,
+				emoteRight);
 	}
 
 	@AsPercept(name = "emoticon", multiplePercepts = true, filter = Type.ONCE)
@@ -246,16 +259,17 @@ public class EmohawkBotBehavior extends EmohawkBotController<UT2004Bot> implemen
 
 	@AsPercept(name = "place", multiplePercepts = true, filter = Type.ONCE)
 	public Collection<Place> place() {
-		return places.getPlaces();
+		return this.places.getPlaces();
 	}
 
 	/**
 	 * Returns a previously prepared batch of percepts.
-	 * 
+	 *
 	 * @return a previously prepared batch of percepts.
 	 */
+	@Override
 	public Map<Method, Object> getAllPercepts() {
-		return percepts.getAllPercepts();
+		return this.percepts.getAllPercepts();
 	}
 
 	//
@@ -269,8 +283,8 @@ public class EmohawkBotBehavior extends EmohawkBotController<UT2004Bot> implemen
 
 			@Override
 			public void execute() {
-				steering.stopNavigation();
-				navigation.stopNavigation();
+				EmohawkBotBehavior.this.steering.stopNavigation();
+				EmohawkBotBehavior.this.navigation.stopNavigation();
 
 			}
 		});
@@ -285,10 +299,11 @@ public class EmohawkBotBehavior extends EmohawkBotController<UT2004Bot> implemen
 			@Override
 			public void execute() {
 
-				steering.stopNavigation();
-				if (!move.isRunning())
-					move.setRun();
-				navigation.navigate(location);
+				EmohawkBotBehavior.this.steering.stopNavigation();
+				if (!EmohawkBotBehavior.this.move.isRunning()) {
+					EmohawkBotBehavior.this.move.setRun();
+				}
+				EmohawkBotBehavior.this.navigation.navigate(location);
 			}
 		});
 	}
@@ -301,10 +316,11 @@ public class EmohawkBotBehavior extends EmohawkBotController<UT2004Bot> implemen
 
 			@Override
 			public void execute() {
-				steering.stopNavigation();
-				if (move.isRunning())
-					move.setWalk();
-				navigation.navigate(location);
+				EmohawkBotBehavior.this.steering.stopNavigation();
+				if (EmohawkBotBehavior.this.move.isRunning()) {
+					EmohawkBotBehavior.this.move.setWalk();
+				}
+				EmohawkBotBehavior.this.navigation.navigate(location);
 			}
 		});
 	}
@@ -317,7 +333,7 @@ public class EmohawkBotBehavior extends EmohawkBotController<UT2004Bot> implemen
 		} else {
 			// Assuming ID's were passed properly this must be a player or
 			// navpoint.
-			location = (ILocated) world.get(destination.getId());
+			location = (ILocated) this.world.get(destination.getId());
 		}
 		return location;
 	}
@@ -328,39 +344,41 @@ public class EmohawkBotBehavior extends EmohawkBotController<UT2004Bot> implemen
 
 			@Override
 			public void execute() {
-				navigation.stopNavigation();
-				if (!move.isRunning())
-					move.setRun();
-				walkAlongProperties.setPartnerName(partner.getName());
-				steering.setWalkAlongSteering(walkAlongProperties);
-				steering.startNavigation();
+				EmohawkBotBehavior.this.navigation.stopNavigation();
+				if (!EmohawkBotBehavior.this.move.isRunning()) {
+					EmohawkBotBehavior.this.move.setRun();
+				}
+				EmohawkBotBehavior.this.walkAlongProperties.setPartnerName(partner.getName());
+				EmohawkBotBehavior.this.steering.setWalkAlongSteering(EmohawkBotBehavior.this.walkAlongProperties);
+				EmohawkBotBehavior.this.steering.startNavigation();
 			}
 		});
 	}
 
 	@AsAction(name = "emote")
-	public void emote(final EmoticonType left, final EmoticonType center, final EmoticonType right) throws ActException, InterruptedException {
+	public void emote(final EmoticonType left, final EmoticonType center, final EmoticonType right)
+			throws ActException, InterruptedException {
 		addAction(new Action() {
 
 			@Override
 			public void execute() {
-				emoticons.clearEmoticons();
+				EmohawkBotBehavior.this.emoticons.clearEmoticons();
 
 				if (left == EmoticonType.NONE && center == EmoticonType.NONE && right == EmoticonType.NONE) {
 					return;
 				}
 
 				if (left == EmoticonType.NONE && center != EmoticonType.NONE && right == EmoticonType.NONE) {
-					emoticons.setCenterEmoticonType(center);
+					EmohawkBotBehavior.this.emoticons.setCenterEmoticonType(center);
 					return;
 				}
 
 				if (left != EmoticonType.NONE && center == EmoticonType.NONE && right != EmoticonType.NONE) {
-					emoticons.setDoubleEmoticon(left, right);
+					EmohawkBotBehavior.this.emoticons.setDoubleEmoticon(left, right);
 					return;
 				}
 
-				emoticons.setTripleEmoticon(left, center, right);
+				EmohawkBotBehavior.this.emoticons.setTripleEmoticon(left, center, right);
 			}
 		});
 	}
@@ -378,7 +396,7 @@ public class EmohawkBotBehavior extends EmohawkBotController<UT2004Bot> implemen
 
 			@Override
 			public void execute() {
-				move.turnHorizontal(amount);
+				EmohawkBotBehavior.this.move.turnHorizontal(amount);
 
 			}
 		});
@@ -390,7 +408,7 @@ public class EmohawkBotBehavior extends EmohawkBotController<UT2004Bot> implemen
 
 			@Override
 			public void execute() {
-				move.turnTo(location);
+				EmohawkBotBehavior.this.move.turnTo(location);
 			}
 		});
 	}
@@ -401,7 +419,7 @@ public class EmohawkBotBehavior extends EmohawkBotController<UT2004Bot> implemen
 
 			@Override
 			public void execute() {
-				move.jump();
+				EmohawkBotBehavior.this.move.jump();
 			}
 		});
 	}
@@ -414,11 +432,11 @@ public class EmohawkBotBehavior extends EmohawkBotController<UT2004Bot> implemen
 	/**
 	 * Queues up the action to be executed on the first evaluation of the logic
 	 * cycle.
-	 * 
+	 *
 	 * @param action
-	 * @throws InterruptedException 
+	 * @throws InterruptedException
 	 */
 	public void addAction(Action action) throws InterruptedException {
-		actions.put(action);
+		this.actions.put(action);
 	}
 }

@@ -1,0 +1,18 @@
+use creation as knowledge.
+use creationActions.
+
+module creationMain {
+	if bel(navigation(traveling)) then skip.
+		
+	if bel(not(visitedPark), parkMeeting(Location)) then runTo(Location).
+	%if bel(not(waitedForOther),person(ID,_,_,_,_,_,_)) then turnTo(ID).
+	if bel(not(waitedForOther)) then skip.
+	%if bel(not(turnedToOther),parkMeetingOther(Location)) then turnTo(Location) + insert(turnedToOther).
+	if bel(not(noEmoticonsActive)) then skip.
+	if bel(not(displayedEmoticons1),noEmoticonsActive) then emote(second_girl_66, monster_39, emohawk_rifle_20) + insert(displayedEmoticons1).
+	if bel(not(displayedEmoticons2),noEmoticonsActive) then emote(boy_67,kitty_43, emohawk_rifle_21) + insert(displayedEmoticons2).
+	if bel(not(displayedEmoticons3),noEmoticonsActive) then emote(first_girl_68, hamster_46, energy_drink_22 ) + insert(displayedEmoticons3).
+	if bel(not(visitedCinema), myName('Jan'),person(ID,'Pier',PierLocation,_,_,_,_),myLocation(Location), distanceLt(PierLocation,Location,500)) then walkAlong(ID).
+	if bel(not(visitedCinema), myName('Jan'),person(ID,'Pier',_,_,_,_,_)) then runTo(ID).
+	if bel(not(visitedCinema), cinemaMeeting(Location)) then walkTo(Location).
+}

@@ -1,0 +1,21 @@
+use UTBot as knowledge.
+
+ module event {
+		% Update the navigation state of the bot that is controlled. navigation is a "send on change" percept.
+		forall bel( navigation(OldStatus, OldDest)),  percept(navigation(Status, Destination)) 
+			do delete( navigation(OldStatus, OldDest) ) + insert( navigation(Status, Destination) ).
+
+		% if goal reached, pick new goal.			
+		if not(goal(at(_))), bel(flagPosition(UnrealLocID)) then adopt(at(UnrealLocID)).
+
+		% Keep track of weapons picked up and the level of armour.	
+		forall percept(weapon(Weapon,_,_))  do {
+			if bel( pickedupWeapons(PUW), not(member(Weapon, PUW)) ) 
+				then insert( not(pickedupWeapons(PUW)), pickedupWeapons([Weapon|PUW]) ).
+		}
+		% Next rule keeps track of the maximum level of armour achieved.
+		forall percept(status(_,Armour,_,_)), bel(maxLevelOfArmour(LastMaxArmour), Armour > LastMaxArmour )
+			do delete( maxLevelOfArmour(LastMaxArmour) ) + insert( maxLevelOfArmour(Armour) ).
+
+
+}
