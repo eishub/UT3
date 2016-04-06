@@ -6,6 +6,8 @@ EIS interface that enables GOAL to connect with Unreal Tournament (both UT3 and 
 
 How to use
 ============
+Please refer to http://ii.tudelft.nl/trac/goal/wiki/Projects/UT3 for detailed instructions and downloads.
+
 To use this environment, you must have Unreal Tournament 2004 (UT2004) or Unreal Tournament 3 (UT3) installed on your machine.
  * UT2004 is available for Linux, Mac OSX and Windows.
  * UT3 is available only for Windows.
