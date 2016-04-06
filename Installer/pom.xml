@@ -65,7 +65,7 @@
 		<!-- Information for visualizer to include in installer -->
 		<visualizer.groupId>${project.groupId}</visualizer.groupId>
 		<visualizer.artifactId>goal-unreal-visualizer</visualizer.artifactId>
-		<visualizer.version>3.5.6</visualizer.version>
+		<visualizer.version>3.5.7-SNAPSHOT</visualizer.version>
 		<visualizer.classifier>bin</visualizer.classifier>
 
 		<!-- Information for documentation to include in installer -->
