@@ -1,4 +1,4 @@
-:-dynamic navigation/2, target/1.
+:-dynamic navigation/2,  navPoint/1.
 
 % We are at a certain location if the IDs match, or ...
 at(UnrealID) :- navigation(reached, UnrealID).
