@@ -1,7 +1,7 @@
 use UTbot as knowledge.
 
 % we need random to pick a random navPoint as target. 
-% the rule order is really irrelevant.
+% This also (unfortunately) causes the rule order to change.
 order=random.
 
 module UTbotEvent {
@@ -12,7 +12,7 @@ module UTbotEvent {
 	% if we have no goal, pick a navPoint as target
 	if not(goal(at(_))), bel(navPoint(Target)) then adopt(at(Target)).
 	
-	% no path to destination? Drop the goal...
+	% no path to destination? Change the goal.
 	if bel((navigation(noPath,_); navigation(stuck,_)), navPoint(Target)), 
 	goal(at(X)) then drop(at(X)) + adopt(at(Target))+ print("destination can't be reached!").
 }
