@@ -8,6 +8,12 @@
 	<name>goal-ut3-environment</name>
 	<version>3.5.8</version>
 	<url>https://github.com/eishub/UT3</url>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+
+
 	<licenses>
 		<license>
 			<name>The GNU General Public License, Version 3.0</name>
@@ -143,9 +149,6 @@
 		</repository>
 	</repositories>
 
-	<properties>
-		<environment.main.class>nl.tudelft.goal.ut3.environment.UT3Environment</environment.main.class>
-	</properties>
 
 	<build>
 		<plugins>

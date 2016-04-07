@@ -10,6 +10,11 @@
 	<version>3.5.6</version>
 	<description>Shared utilities for the entire UT2004 Environment project</description>
 	<url>https://github.com/eishub/UT3</url>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+
 	<licenses>
 		<license>
 			<name>The GNU General Public License, Version 3.0</name>

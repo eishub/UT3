@@ -102,6 +102,7 @@
 
 	<properties>
 		<environment.main.class>nl.tudelft.goal.ut2004.environment.UT2004Environment</environment.main.class>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
 	<build>

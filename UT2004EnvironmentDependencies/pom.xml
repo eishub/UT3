@@ -8,6 +8,10 @@
 	<description>Dependencies for the UT2004 environment</description>
 	<url>https://github.com/eishub/UT3</url>
 
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+
 	<repositories>
 		<repository>
 			<id>eishub-mvn-repo</id>
@@ -69,7 +73,7 @@
 					<target>1.6</target>
 				</configuration>
 			</plugin>
-			
+
 			<!-- copies dependencies for old style builds. -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>

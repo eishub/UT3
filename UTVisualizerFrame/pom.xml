@@ -10,6 +10,12 @@
 
 	<description>An OpenGL frame to visualize Unreal Tournament.</description>
 	<url>https://github.com/eishub/UT3</url>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+
+
 	<licenses>
 		<license>
 			<name>The GNU General Public License, Version 3.0</name>
@@ -94,7 +100,7 @@
 					<target>1.6</target>
 				</configuration>
 			</plugin>
-			
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
