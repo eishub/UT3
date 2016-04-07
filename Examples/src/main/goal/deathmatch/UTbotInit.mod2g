@@ -4,6 +4,6 @@ module UTbotInit {
 	% Initially, we are going nowhere.
 	if true then insert(navigation(none, none)).
 
-	% store the map.
-	forall percept(navPoint(UnrealID, _, _)) do insert(navPoint(UnrealID)).
+	% Store all navpoints in the map.
+	forall percept(navPoint(UnrealID,_,_)) do insert(navPoint(UnrealID)).
 }
