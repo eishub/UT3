@@ -11,8 +11,8 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<environment.main.class>nl.tudelft.goal.ut3.environment.UT3Environment</environment.main.class>
 	</properties>
-
 
 	<licenses>
 		<license>
