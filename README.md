@@ -32,6 +32,14 @@ To build the installer, open a command line on OSX. You need to have UT2004 inst
  * ```mvn install```
 
 
+On more recent systems, this does not work because "." is not allowed in environment variable keys. To work around this, you need to do this now
+
+ * ```env "pogamut.ut2004.home=/Volumes/apps/UT2004" bash```
+ * switch to root of the GOAL UT project
+ * ```mvn install```
+
+
+
  * The ```UT2004.ini``` in your UT installation must be fixed as follows to disable UplinkToGamespy:
 
 ```
