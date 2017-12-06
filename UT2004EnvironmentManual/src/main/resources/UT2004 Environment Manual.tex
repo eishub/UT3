@@ -57,7 +57,11 @@ This section explains how to startup a dedicated server to which the bots of the
 \subsection{Installation}
 
 To install the unreal environment, you can run the installer.  Please ensure that GOAL, Unreal Tournament and Patch 3369 have been installed. 
-
+If you run this on recent OSX, the mouse button may not work. To fix this:
+\begin{enumerate}
+\item Edit the UT2004.ini file inside the System folder of the game.
+\item Find the line that reads \verb|ReduceMouseLag=True| and replace it with \verb|ReduceMouseLag=False|.
+\end{enumerate}
 %Wouter: CHECK this is also in the Unreal installation manual. 
 % Rien: Yes, but that is ok.
 \subsection{Dedicated Server}
