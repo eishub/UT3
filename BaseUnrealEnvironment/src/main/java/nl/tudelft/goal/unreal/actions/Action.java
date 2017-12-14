@@ -37,11 +37,11 @@ public abstract class Action {
 	}
 
 	/**
-	 * Returns true if executing the argument action before this action will
-	 * have no effect. This action overrides all effects of the argument action.
-	 * 
 	 * @param action
-	 * @return
+	 *            the action to replace
+	 * @return true if true if executing the argument action before this action
+	 *         will have no effect. This action overrides all effects of the
+	 *         argument action
 	 */
 	public boolean replaces(Action action) {
 
@@ -68,12 +68,12 @@ public abstract class Action {
 	}
 
 	/**
-	 * Returns true if executing the argument action does not impede the
-	 * execution of this action. When false executing this action after the
-	 * argument action will have no effect.
 	 * 
 	 * @param action
-	 * @return
+	 *            the action to check
+	 * @return true if executing the argument action does not impede the
+	 *         execution of this action. When false executing this action after
+	 *         the argument action will have no effect
 	 */
 	public boolean hasEffect(Action action) {
 

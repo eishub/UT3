@@ -2,14 +2,35 @@ use "ut-environment.jar" as environment with
 	visualizer = "rmi://127.0.0.1:1099",
 		botServer = "ut://127.0.0.1:3000",
 		controlServer = "ut://127.0.0.1:3001",
-		logLevel = "ALL", 
+		logLevel = "SEVERE", 
 		bots = [
 				[
 				 	["name", "BetweenFlags 1"],
 					["skill", 5],
 					["skin", "BotA"], 
 					["team", "blue"]	,
-					["logLevel", "ALL"]
+					["logLevel", "SEVERE"]
+				],
+								[
+				 	["name", "BetweenFlags 2"],
+					["skill", 5],
+					["skin", "BotA"], 
+					["team", "blue"]	,
+					["logLevel", "SEVERE"]
+				],
+					[
+				 	["name", "BetweenFlags 3"],
+					["skill", 5],
+					["skin", "BotB"], 
+					["team", "red"]	,
+					["logLevel", "SEVERE"]
+				],
+								[
+				 	["name", "BetweenFlags 4"],
+					["skill", 5],
+					["skin", "BotB"], 
+					["team", "red"]	,
+					["logLevel", "SEVERE"]
 				]
 			].
 

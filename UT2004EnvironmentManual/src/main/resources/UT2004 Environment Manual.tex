@@ -384,7 +384,7 @@ Parameters & \verb|<UnrealID>|: The the unique ID for this navpoint.\\
 \begin{small}
 \begin{tabular}{p{2cm}p{9cm}}
 Description & Percept for all bots in the server.\\
-Type & On change with negation.\\
+Type & Always.\\
 Syntax & \verb|bot(<UnrealID>, <Name>, <Team>, <Position>, <Weapon>, <FireMode>)|\\
 Parameters &
 	\verb|<UnrealID>|: Unique identifier string for this bot assigned by Unreal.\\
@@ -751,12 +751,9 @@ This section describes the percept design that provides a specification for the 
 To limit the percept load, not all percepts are provided at each iteration of the cycle. 
 \begin{itemize}
 \item \textbf{Send once}: ``Send once'' percepts are provided only once when an agent is connected for the first time to the UT environment. Handle these percepts in the \textbf{init} module of the agent.
+\item \textbf{Always}: ``Always'' percepts are provided in every cycle. The full list of current percepts of that type is passed.
+
 \item \textbf{On change}: ``On change'' percepts provide new, up-to-date information that overrides previously perceived information. These percepts are received whenever some change is perceived that invalidates old perceptual information. The new percept provides the most current and up-to-date information.
-\item \textbf{On change with negation}: ``On change with negation'' percepts negate previously observed information and, if available, provide an update. For example, if the agent perceived \texttt{flag(blue,...,location(581.0,4936.31,-742.1)))} but now sees the blue flag's position has changed it will get two percepts:
-\begin{itemize}
-	\item \texttt{percept(not(flag(blue,...,location(581.0,4936.31,-742.1))))}, and
-	\item \texttt{percept(flag(blue,...,location(590.37,4816.16,-742.1)))}
-\end{itemize} where the last percept provides the new, up-to-date information. These percepts thus are provided when a change occurs. In all cases of these percepts, the old percept \texttt{percept(old)} is negated and the agent perceives \texttt{percept(not(old))} which indicates the \texttt{old} fact is no longer true. In case a new relevant observation is available, another percept will be available that provides this information.
 \end{itemize}
 
 %
@@ -841,7 +838,7 @@ Notes &
 \begin{small}
 \begin{tabular}{p{2cm}p{9cm}}
 Description & Information on which weapons the bot currently has in its inventory and their status.\\
-Type & Send on change, with negation.\\
+Type & Always.\\
 Syntax & \verb|weapon(<WeaponType>, <Ammo>, <AltAmmo>)|\\
 Parameters & 
 \verb|<WeaponType>|: none or any of the following: \verb|shield_gun|, \verb|assault_rifle|, \verb|bio_rifle|, \verb|shock_rifle|, \verb|minigun|, \verb|link_gun|, \verb|flak_cannon|, \verb|rocket_launcher|, \verb|lightning_gun|, \verb|sniper_rifle|, \verb|redeemer|.\\
@@ -1030,7 +1027,7 @@ Notes &
 \begin{small}
 \begin{tabular}{p{2cm}p{9cm}}
 Description & Percept that provides information about the current state of the flag.\\
-Type & On change with negation.\\
+Type & Always.\\
 Syntax & \verb|flagState(<Team>, <FlagState>)|\\
 & \verb|<Team>|: Colour of the flag, matches the colour of the team that has to protect this flag.\\ 
 & \verb|<FlagState>|: State of the flag. Either home, held or dropped.\\
@@ -1046,7 +1043,7 @@ The following percepts cover what the bot can see.
 \begin{small}
 \begin{tabular}{p{2cm}p{9cm}}
 Description & Provides information about an item the bot sees in the world.\\
-Type & On change, with negation.\\
+Type & Always.\\
 Syntax & \verb|item(<UnrealID>, <Label>,<ItemType>, <Position>)|\\ 
 Parameters &
 \verb|<UnrealID>|: The UnrealID of this item.\\
@@ -1080,7 +1077,7 @@ other & \verb|udamage|\\
 \begin{small}
 \begin{tabular}{p{2cm}p{9cm}}
 Description & Percept provided when the flag becomes visible to the bot. \\
-Type & On change, with negation.\\
+Type & Always.\\
 Syntax & \verb|flag(<Team>,<HolderUnrealID>, <Position>)|\\
 Parameters & 
 	\verb|<Team>|: Colour of the flag, matches the colour of the team that has to protect this flag.\\
@@ -1096,7 +1093,7 @@ Notes &
 \begin{small}
 \begin{tabular}{p{2cm}p{9cm}}
 Description & Percept provided when another bot becomes visible to this bot.\\
-Type & On change with negation.\\
+Type & Always.\\
 Syntax & \verb|bot(<UnrealID>, <Name>, <Team>, <Position>, <Weapon>, <FireMode>)|\\
 Parameters &
 	\verb|<UnrealID>|: Unique identifier string for this bot assigned by Unreal.\\
@@ -1112,7 +1109,7 @@ Parameters &
 \begin{small}
 \begin{tabular}{p{2cm}p{9cm}}
 Description & Information about point in the map the bot can see.\\
-Type & On change with negation.\\
+Type & Always.\\
 Syntax & \verb|pickup(<UnrealID>)|\\
 Parameters & \verb|<UnrealID>|: The the unique ID for the navpoint this pickup is located on.\\
 
