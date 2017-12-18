@@ -6,7 +6,7 @@
 	<name>Unreal 3/2004 Environment Installer</name>
 	<groupId>nl.tudelft.goal</groupId>
 	<artifactId>goal-ut-environment-installer</artifactId>
-	<version>3.7.10</version>
+	<version>3.8.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<url>https://github.com/eishub/UT3</url>
 	<licenses>
