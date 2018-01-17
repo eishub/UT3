@@ -6,7 +6,7 @@
 	<groupId>nl.tudelft.goal</groupId>
 	<artifactId>goal-ut3-environment</artifactId>
 	<name>goal-ut3-environment</name>
-	<version>3.6.0-SNAPSHOT</version>
+	<version>3.6.0</version>
 	<url>https://github.com/eishub/UT3</url>
 
 	<properties>
@@ -75,7 +75,7 @@
 		<dependency>
 			<groupId>nl.tudelft.goal</groupId>
 			<artifactId>goal-base-unreal-environment</artifactId>
-			<version>3.6.0-SNAPSHOT</version>
+			<version>3.6.0</version>
 			<exclusions>
 				<exclusion>
 					<artifactId>pogamut-ut2004</artifactId>
@@ -86,7 +86,7 @@
 		<dependency>
 			<groupId>nl.tudelft.goal</groupId>
 			<artifactId>goal-ut2004-environment-util</artifactId>
-			<version>3.6.0-SNAPSHOT</version>
+			<version>3.6.0</version>
 			<exclusions>
 				<exclusion>
 					<artifactId>pogamut-ut2004</artifactId>
@@ -109,13 +109,13 @@
 		<dependency>
 			<groupId>eishub</groupId>
 			<artifactId>eis</artifactId>
-			<version>0.6.0-SNAPSHOT</version>
+			<version>0.6.0</version>
 		</dependency>
 
 		<dependency>
 			<groupId>nl.tudelft.goal</groupId>
 			<artifactId>goal-unreal-visualizer</artifactId>
-			<version>3.6.0-SNAPSHOT</version>
+			<version>3.6.0</version>
 			<scope>test</scope>
 			<exclusions>
 				<exclusion>
@@ -127,7 +127,7 @@
 		<dependency>
 			<groupId>nl.tudelft.goal</groupId>
 			<artifactId>goal-ut-visualizer-connection</artifactId>
-			<version>3.6.0-SNAPSHOT</version>
+			<version>3.6.0</version>
 			<exclusions>
 				<exclusion>
 					<artifactId>pogamut-ut2004</artifactId>
