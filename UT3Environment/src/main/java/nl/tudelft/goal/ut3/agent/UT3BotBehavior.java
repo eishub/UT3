@@ -1059,7 +1059,7 @@ public class UT3BotBehavior extends UT3BotModuleController<UT2004Bot> implements
 	 * TODO: List available weapons.
 	 *
 	 */
-	@AsPercept(name = "weapon", multiplePercepts = true, filter = Type.ON_CHANGE_NEG)
+	@AsPercept(name = "weapon", multiplePercepts = true, filter = Type.ALWAYS)
 	public Collection<Percept> weapon() {
 		Collection<Weapon> weapons = weaponry.getWeapons().values();
 		Collection<Percept> percepts = new ArrayList<Percept>(weapons.size());
@@ -1101,7 +1101,7 @@ public class UT3BotBehavior extends UT3BotModuleController<UT2004Bot> implements
 	 *
 	 * @return
 	 */
-	@AsPercept(name = "deployable", filter = Type.ON_CHANGE_NEG)
+	@AsPercept(name = "deployable", filter = Type.ALWAYS)
 	public Collection<Percept> deployable() {
 		Collection<Weapon> weapons = weaponry.getWeapons().values();
 		Collection<Percept> percepts = new ArrayList<Percept>(weapons.size());
@@ -1320,7 +1320,7 @@ public class UT3BotBehavior extends UT3BotModuleController<UT2004Bot> implements
 	 * </ul>
 	 * </p>
 	 */
-	@AsPercept(name = "pickup", multiplePercepts = true, filter = Type.ON_CHANGE_NEG)
+	@AsPercept(name = "pickup", multiplePercepts = true, filter = Type.ALWAYS)
 	public Collection<Percept> visiblePickup() {
 		Collection<NavPoint> navPoints = world.getAll(NavPoint.class).values();
 		List<Percept> percepts = new ArrayList<Percept>(navPoints.size());
@@ -1513,7 +1513,7 @@ public class UT3BotBehavior extends UT3BotModuleController<UT2004Bot> implements
 	 * <p>
 	 *
 	 */
-	@AsPercept(name = "flagState", multiplePercepts = true, filter = Type.ON_CHANGE_NEG)
+	@AsPercept(name = "flagState", multiplePercepts = true, filter = Type.ALWAYS)
 	public Collection<Percept> flagState() {
 
 		Collection<FlagInfo> flags = game.getAllCTFFlagsCollection();
@@ -1563,7 +1563,7 @@ public class UT3BotBehavior extends UT3BotModuleController<UT2004Bot> implements
 	 * <p>
 	 *
 	 */
-	@AsPercept(name = "item", multiplePercepts = true, filter = Type.ON_CHANGE_NEG)
+	@AsPercept(name = "item", multiplePercepts = true, filter = Type.ALWAYS)
 	public Collection<Percept> item() {
 		Collection<Item> visibleItems = items.getVisibleItems().values();
 		Collection<Percept> percepts = new ArrayList<Percept>(visibleItems.size());
@@ -1615,7 +1615,7 @@ public class UT3BotBehavior extends UT3BotModuleController<UT2004Bot> implements
 	 * <p>
 	 *
 	 */
-	@AsPercept(name = "flag", multiplePercepts = true, filter = Type.ON_CHANGE_NEG)
+	@AsPercept(name = "flag", multiplePercepts = true, filter = Type.ALWAYS)
 	public Collection<Percept> flag() {
 
 		Collection<FlagInfo> flags = game.getAllCTFFlagsCollection();
@@ -1655,7 +1655,7 @@ public class UT3BotBehavior extends UT3BotModuleController<UT2004Bot> implements
 	 *
 	 *
 	 */
-	@AsPercept(name = "bot", multiplePercepts = true, filter = Type.ON_CHANGE_NEG)
+	@AsPercept(name = "bot", multiplePercepts = true, filter = Type.ALWAYS)
 	public Collection<Percept> bot() {
 		Collection<Player> visible = players.getVisiblePlayers().values();
 		Collection<Percept> wrapped = new ArrayList<Percept>(visible.size());

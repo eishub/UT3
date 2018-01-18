@@ -4,11 +4,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import nl.tudelft.goal.unreal.messages.Percept;
-import nl.tudelft.goal.unreal.messages.UnrealIdOrLocation;
-import nl.tudelft.goal.ut2004.messages.FireMode;
-import nl.tudelft.goal.ut2004.util.Team;
-
 import com.google.inject.Inject;
 
 import cz.cuni.amis.pogamut.base.communication.command.IAct;
@@ -39,6 +34,10 @@ import cz.cuni.amis.utils.exception.PogamutException;
 import eis.eis2java.annotation.AsAction;
 import eis.eis2java.annotation.AsPercept;
 import eis.eis2java.translation.Filter.Type;
+import nl.tudelft.goal.unreal.messages.Percept;
+import nl.tudelft.goal.unreal.messages.UnrealIdOrLocation;
+import nl.tudelft.goal.ut2004.messages.FireMode;
+import nl.tudelft.goal.ut2004.util.Team;
 
 public class EnvironmentControllerServer extends UT2004Server {
 
@@ -51,8 +50,7 @@ public class EnvironmentControllerServer extends UT2004Server {
 	};
 
 	@Inject
-	public EnvironmentControllerServer(UT2004AgentParameters params,
-			IAgentLogger agentLogger, IComponentBus bus,
+	public EnvironmentControllerServer(UT2004AgentParameters params, IAgentLogger agentLogger, IComponentBus bus,
 			SocketConnection connection, UT2004WorldView worldView, IAct act) {
 		super(params, agentLogger, bus, connection, worldView, act);
 
@@ -81,20 +79,17 @@ public class EnvironmentControllerServer extends UT2004Server {
 			}
 		}
 
-		String message = String.format(
-				"%s was not a ItemType in the %s category.", group, category);
+		String message = String.format("%s was not a ItemType in the %s category.", group, category);
 		throw new PogamutException(message, this);
 	}
 
 	@AsAction(name = "respawn")
-	public void respawn(UnrealId id, UnrealIdOrLocation unrealIdOrLocation,
-			Rotation rotation) {
+	public void respawn(UnrealId id, UnrealIdOrLocation unrealIdOrLocation, Rotation rotation) {
 
 		ILocated location = unrealIdOrLocation.toILocated(getWorldView());
 
 		if (location == null) {
-			String message = String.format(
-					"Could not resolve %s to a location", unrealIdOrLocation);
+			String message = String.format("Could not resolve %s to a location", unrealIdOrLocation);
 			throw new PogamutException(message, this);
 		}
 
@@ -108,8 +103,7 @@ public class EnvironmentControllerServer extends UT2004Server {
 		Player player = getWorldView().get(id, Player.class);
 
 		if (player == null) {
-			String message = String.format("Could not resolve %s to a player",
-					id);
+			String message = String.format("Could not resolve %s to a player", id);
 			throw new PogamutException(message, this);
 		}
 
@@ -123,28 +117,24 @@ public class EnvironmentControllerServer extends UT2004Server {
 	}
 
 	@AsAction(name = "spawnItem")
-	public void spawnItem(UnrealIdOrLocation unrealIdOrLocation,
-			Category category, Group group) {
+	public void spawnItem(UnrealIdOrLocation unrealIdOrLocation, Category category, Group group) {
 
 		ILocated location = unrealIdOrLocation.toILocated(getWorldView());
 
 		if (location == null) {
-			String message = String.format(
-					"Could not resolve %s to a location", unrealIdOrLocation);
+			String message = String.format("Could not resolve %s to a location", unrealIdOrLocation);
 			throw new PogamutException(message, this);
 		}
 
 		for (ItemType item : group.getTypes()) {
 			if (item.getCategory().equals(category)) {
-				SpawnActor spawn = new SpawnActor(location.getLocation(),
-						Rotation.ZERO, item.getName());
+				SpawnActor spawn = new SpawnActor(location.getLocation(), Rotation.ZERO, item.getName());
 				getAct().act(spawn);
 				return;
 			}
 		}
 
-		String message = String.format(
-				"%s was not a ItemType in the %s category.", group, category);
+		String message = String.format("%s was not a ItemType in the %s category.", group, category);
 		throw new PogamutException(message, this);
 
 	}
@@ -172,13 +162,11 @@ public class EnvironmentControllerServer extends UT2004Server {
 	 */
 	@AsPercept(name = "navPoint", multiplePercepts = true, filter = Type.ONCE)
 	public Collection<Percept> navPoint() {
-		Collection<NavPoint> navPoints = getWorldView().getAll(NavPoint.class)
-				.values();
+		Collection<NavPoint> navPoints = getWorldView().getAll(NavPoint.class).values();
 		List<Percept> percepts = new ArrayList<Percept>(navPoints.size());
 
 		for (NavPoint p : navPoints) {
-			percepts.add(new Percept(p.getId(), p.getLocation(), p
-					.getOutgoingEdges().keySet()));
+			percepts.add(new Percept(p.getId(), p.getLocation(), p.getOutgoingEdges().keySet()));
 		}
 
 		return percepts;
@@ -201,23 +189,22 @@ public class EnvironmentControllerServer extends UT2004Server {
 	 * <li>UnrealId: Unique identifier for this bot assigned by Unreal.</li>
 	 * <li>Team: Either red or blue.</li>
 	 * <li>location(X,Y,Z): Location of the bot in the world.</li>
-	 * <li>Weapon: The weapon the bot is holding. TODO: Any of the following:</li>
+	 * <li>Weapon: The weapon the bot is holding. TODO: Any of the
+	 * following:</li>
 	 * <li>FireMode: Mode of shooting, either primary, secondary or none.</li>
 	 * </ul>
 	 * </p>
 	 * 
 	 * 
 	 */
-	@AsPercept(name = "bot", multiplePercepts = true, filter = Type.ON_CHANGE_NEG)
+	@AsPercept(name = "bot", multiplePercepts = true, filter = Type.ALWAYS)
 	public Collection<Percept> bot() {
-		Collection<Player> visible = getWorldView().getAll(Player.class)
-				.values();
+		Collection<Player> visible = getWorldView().getAll(Player.class).values();
 		Collection<Percept> wrapped = new ArrayList<Percept>(visible.size());
 
 		for (Player p : visible) {
-			wrapped.add(new Percept(p.getId(), p.getName(), Team.valueOf(p
-					.getTeam()), p.getLocation(), UT2004ItemType.getItemType(p
-					.getWeapon()), FireMode.valueOf(p.getFiring())));
+			wrapped.add(new Percept(p.getId(), p.getName(), Team.valueOf(p.getTeam()), p.getLocation(),
+					UT2004ItemType.getItemType(p.getWeapon()), FireMode.valueOf(p.getFiring())));
 		}
 
 		return wrapped;

@@ -5,7 +5,7 @@
 	<groupId>nl.tudelft.goal</groupId>
 	<artifactId>goal-emohawk-environment</artifactId>
 	<name>goal-emohawk-environment</name>
-	<version>3.5.7</version>
+	<version>3.6.0</version>
 	<url>https://github.com/eishub/UT3</url>
 	<licenses>
 		<license>
@@ -47,26 +47,26 @@
 		<dependency>
 			<groupId>nl.tudelft.goal</groupId>
 			<artifactId>goal-base-unreal-environment</artifactId>
-			<version>3.5.7</version>
+			<version></version>
 		</dependency>
 
 		<dependency>
 			<groupId>cz.cuni.amis.pogamut</groupId>
 			<artifactId>pogamut-emohawk</artifactId>
-			<version>3.5.4-SNAPSHOT</version>
+			<version>3.6.0-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>
 			<groupId>eishub</groupId>
 			<artifactId>eis</artifactId>
-			<version>0.5.0</version>
+			<version>0.6.0</version>
 		</dependency>
 
 
 		<dependency>
 			<groupId>cz.cuni.amis.pogamut.ut2004</groupId>
 			<artifactId>sposh-ut2004</artifactId>
-			<version>3.5.4-SNAPSHOT</version>
+			<version>3.6.0-SNAPSHOT</version>
 		</dependency>
 
 	</dependencies>

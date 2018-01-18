@@ -7,7 +7,7 @@
 	<artifactId>goal-unreal-visualizer</artifactId>
 	<name>UTVisualizer</name>
 	<description>A visualizer for Unreal Tournament.</description>
-	<version>3.5.7</version>
+	<version>3.6.0</version>
 	<url>https://github.com/eishub/UT3</url>
 
 	<properties>
@@ -52,16 +52,28 @@
 	<!-- <properties> <skipTests>false</skipTests> <maven.javadoc.skip>true</maven.javadoc.skip> 
 		</properties> -->
 
+	<profiles>
+		<profile>
+			<id>java8-doclint-disabled</id>
+			<activation>
+				<jdk>[1.8,)</jdk>
+			</activation>
+			<properties>
+				<javadoc.opts>-Xdoclint:none</javadoc.opts>
+			</properties>
+		</profile>
+	</profiles>
+
 	<dependencies>
 		<dependency>
 			<groupId>nl.tudelft.goal</groupId>
 			<artifactId>goal-unreal-visualizer-frame</artifactId>
-			<version>3.5.6</version>
+			<version>3.6.0</version>
 		</dependency>
 		<dependency>
 			<groupId>nl.tudelft.goal</groupId>
 			<artifactId>goal-ut-visualizer-connection</artifactId>
-			<version>3.5.6</version>
+			<version>3.6.0</version>
 		</dependency>
 		<dependency>
 			<groupId>cz.cuni.amis.pogamut</groupId>
@@ -71,7 +83,7 @@
 		<dependency>
 			<groupId>eishub</groupId>
 			<artifactId>eis</artifactId>
-			<version>0.5.0</version>
+			<version>0.6.0</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
@@ -104,6 +116,9 @@
 						<goals>
 							<goal>jar</goal>
 						</goals>
+						<configuration>
+							<additionalparam>${javadoc.opts}</additionalparam>
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>

@@ -4,7 +4,7 @@
 
 	<groupId>nl.tudelft.goal</groupId>
 	<artifactId>goal-base-unreal-environment</artifactId>
-	<version>3.5.7</version>
+	<version>3.6.0</version>
 	<name>goal-base-unreal-environment</name>
 	<description>Base environment for Unreal Tournament</description>
 	<url>https://github.com/eishub/UT3</url>
@@ -46,7 +46,17 @@
 		<url>https://github.com:eishub/UT3</url>
 	</scm>
 
-
+	<profiles>
+		<profile>
+			<id>java8-doclint-disabled</id>
+			<activation>
+				<jdk>[1.8,)</jdk>
+			</activation>
+			<properties>
+				<javadoc.opts>-Xdoclint:none</javadoc.opts>
+			</properties>
+		</profile>
+	</profiles>
 
 	<dependencies>
 		<dependency>
@@ -57,12 +67,12 @@
 		<dependency>
 			<groupId>nl.tudelft.goal</groupId>
 			<artifactId>goal-ut2004-environment-util</artifactId>
-			<version>3.5.6</version>
+			<version>3.6.0</version>
 		</dependency>
 		<dependency>
 			<groupId>eishub</groupId>
 			<artifactId>eis</artifactId>
-			<version>0.5.0</version>
+			<version>0.6.0</version>
 		</dependency>
 
 		<dependency>
@@ -74,7 +84,7 @@
 		<dependency>
 			<groupId>nl.tudelft.pogamut</groupId>
 			<artifactId>goal-unreal-server-connection</artifactId>
-			<version>3.5.6</version>
+			<version>3.6.0</version>
 		</dependency>
 	</dependencies>
 
@@ -102,6 +112,9 @@
 						<goals>
 							<goal>jar</goal>
 						</goals>
+						<configuration>
+							<additionalparam>${javadoc.opts}</additionalparam>
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>

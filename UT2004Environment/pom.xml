@@ -6,7 +6,7 @@
 	<groupId>nl.tudelft.goal</groupId>
 	<artifactId>goal-ut2004-environment</artifactId>
 	<name>goal-ut2004-environment</name>
-	<version>3.5.8</version>
+	<version>3.6.0</version>
 	<url>https://github.com/eishub/UT3</url>
 	<licenses>
 		<license>
@@ -42,17 +42,29 @@
 		<url>https://github.com:eishub/UT3</url>
 	</scm>
 
+	<profiles>
+		<profile>
+			<id>java8-doclint-disabled</id>
+			<activation>
+				<jdk>[1.8,)</jdk>
+			</activation>
+			<properties>
+				<javadoc.opts>-Xdoclint:none</javadoc.opts>
+			</properties>
+		</profile>
+	</profiles>
+
 	<dependencies>
 
 		<dependency>
 			<groupId>nl.tudelft.goal</groupId>
 			<artifactId>goal-base-unreal-environment</artifactId>
-			<version>3.5.7</version>
+			<version>3.6.0</version>
 		</dependency>
 		<dependency>
 			<groupId>nl.tudelft.goal</groupId>
 			<artifactId>goal-ut2004-environment-util</artifactId>
-			<version>3.5.6</version>
+			<version>3.6.0</version>
 		</dependency>
 		<dependency>
 			<groupId>nl.tudelft.pogamut</groupId>
@@ -62,7 +74,7 @@
 		<dependency>
 			<groupId>eishub</groupId>
 			<artifactId>eis</artifactId>
-			<version>0.5.0</version>
+			<version>0.6.0</version>
 		</dependency>
 
 		<dependency>
@@ -75,7 +87,7 @@
 		<dependency>
 			<groupId>nl.tudelft.goal</groupId>
 			<artifactId>goal-ut-visualizer-connection</artifactId>
-			<version>3.5.6</version>
+			<version>3.6.0</version>
 		</dependency>
 
 		<dependency>
@@ -127,6 +139,9 @@
 						<goals>
 							<goal>jar</goal>
 						</goals>
+						<configuration>
+							<additionalparam>${javadoc.opts}</additionalparam>
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>
